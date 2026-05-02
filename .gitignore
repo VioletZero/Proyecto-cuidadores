@@ -1,0 +1,12 @@
+# Android build files
+android/app/build/
+android/.gradle/
+android/app/src/main/assets/index.android.bundle
+
+# Large Binaries
+*.apk
+*.so
+
+# Python/ML virtual envs (if any)
+venv/
+__pycache__/

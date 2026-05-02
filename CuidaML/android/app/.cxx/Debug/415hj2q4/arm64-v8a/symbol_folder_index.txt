@@ -1,0 +1,1 @@
+/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/intermediates/cxx/Debug/415hj2q4/obj/arm64-v8a
