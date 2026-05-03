@@ -1,0 +1,521 @@
+[
+  {
+    "user_metadata": {
+      "id": "8c335893-c6da-4ea8-942e-a472960bbe24",
+      "fecha": "2026-05-03T19:31:11.598428Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 1,
+        "label": "Poco interés o placer en hacer las cosas (anhedonia)",
+        "score": 1,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 2,
+        "label": "Dificultad para tomar la iniciativa o falta de energía",
+        "score": 1,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 3,
+        "label": "Sentirse decaído, deprimido o sin esperanzas",
+        "score": 1,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 4,
+        "label": "Sentimientos de inutilidad o culpa",
+        "score": 1,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 5,
+        "label": "Sensación de sequedad en la boca o temblores físicos",
+        "score": 1,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 6,
+        "label": "Inquietud o dificultad para quedarse quieto",
+        "score": 1,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 7,
+        "label": "Preocupación excesiva por diferentes cosas",
+        "score": 1,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 8,
+        "label": "Miedo repentino o sensación de pánico inminente",
+        "score": 1,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 9,
+        "label": "Irritabilidad o enojo fácil",
+        "score": 1,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 10,
+        "label": "Dificultad para relajarse después de un esfuerzo",
+        "score": 1,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 11,
+        "label": "Sentir mucha tensión nerviosa",
+        "score": 1,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 12,
+        "label": "Tendencia a sobre-reaccionar a las situaciones",
+        "score": 1,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 13,
+        "label": "Sensación de gasto excesivo de energía al cuidar",
+        "score": 1,
+        "dimension": "Carga del Cuidador"
+      },
+      {
+        "item_id": 14,
+        "label": "Tensión física y mental acumulada por las tareas de cuidado",
+        "score": 1,
+        "dimension": "Carga del Cuidador"
+      },
+      {
+        "item_id": 15,
+        "label": "Sentir que no tiene tiempo personal para sí mismo",
+        "score": 1,
+        "dimension": "Carga del Cuidador"
+      }
+    ],
+    "nlp_corpus": "Me siento descansada últimamente, he podido dormir bien y me ha dado tiempo de cumplir con mis responsabilidades ",
+    "predictive_target": "Bajo"
+  },
+  {
+    "user_metadata": {
+      "id": "20bea32b-9b9b-46b0-9c33-9ff1bd3307bc",
+      "fecha": "2026-05-03T19:54:23.994190Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 1,
+        "label": "¿Has sentido poco interés o placer en hacer las cosas que te gustan?",
+        "score": 4,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 2,
+        "label": "¿Te ha costado tomar la iniciativa o has sentido que te falta energía?",
+        "score": 4,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 3,
+        "label": "¿Te has sentido decaído, triste o sin muchas esperanzas?",
+        "score": 4,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 4,
+        "label": "¿Has sentido que no haces lo suficiente o te has sentido culpable?",
+        "score": 4,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 5,
+        "label": "¿Has notado la boca seca o algún temblor físico sin razón aparente?",
+        "score": 1,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 6,
+        "label": "¿Te has sentido inquieto o te ha costado quedarte quieto?",
+        "score": 2,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 7,
+        "label": "¿Te has preocupado demasiado por diferentes cosas del día a día?",
+        "score": 3,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 8,
+        "label": "¿Has sentido mucho miedo de repente o como si algo malo fuera a pasar?",
+        "score": 3,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 9,
+        "label": "¿Te has sentido más irritable o te has enojado con facilidad?",
+        "score": 2,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 10,
+        "label": "¿Te ha costado relajarte incluso después de haber terminado tus tareas?",
+        "score": 2,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 11,
+        "label": "¿Has sentido mucha tensión o los nervios de punta?",
+        "score": 3,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 12,
+        "label": "¿Sientes que has reaccionado de forma exagerada ante algunas situaciones?",
+        "score": 2,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 13,
+        "label": "¿Sientes que cuidar te consume demasiada energía últimamente?",
+        "score": 4,
+        "dimension": "Carga del Cuidador"
+      },
+      {
+        "item_id": 14,
+        "label": "¿Has sentido mucha carga física o mental acumulada por tus labores de cuidado?",
+        "score": 3,
+        "dimension": "Carga del Cuidador"
+      },
+      {
+        "item_id": 15,
+        "label": "¿Sientes que casi no tienes tiempo libre para ti mismo?",
+        "score": 4,
+        "dimension": "Carga del Cuidador"
+      }
+    ],
+    "nlp_corpus": "No logro descansar bien, esta situacion me esta chupando la vida.",
+    "predictive_target": "Alto"
+  },
+  {
+    "user_metadata": {
+      "id": "441a78a9-ab10-4806-a4aa-067931534ca8",
+      "fecha": "2026-05-03T19:57:06.281285Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 1,
+        "label": "¿Has sentido poco interés o placer en hacer las cosas que te gustan?",
+        "score": 0,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 2,
+        "label": "¿Te ha costado tomar la iniciativa o has sentido que te falta energía?",
+        "score": 0,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 3,
+        "label": "¿Te has sentido decaído, triste o sin muchas esperanzas?",
+        "score": 0,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 4,
+        "label": "¿Has sentido que no haces lo suficiente o te has sentido culpable?",
+        "score": 0,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 5,
+        "label": "¿Has notado la boca seca o algún temblor físico sin razón aparente?",
+        "score": 0,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 6,
+        "label": "¿Te has sentido inquieto o te ha costado quedarte quieto?",
+        "score": 0,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 7,
+        "label": "¿Te has preocupado demasiado por diferentes cosas del día a día?",
+        "score": 0,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 8,
+        "label": "¿Has sentido mucho miedo de repente o como si algo malo fuera a pasar?",
+        "score": 0,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 9,
+        "label": "¿Te has sentido más irritable o te has enojado con facilidad?",
+        "score": 0,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 10,
+        "label": "¿Te ha costado relajarte incluso después de haber terminado tus tareas?",
+        "score": 0,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 11,
+        "label": "¿Has sentido mucha tensión o los nervios de punta?",
+        "score": 0,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 12,
+        "label": "¿Sientes que has reaccionado de forma exagerada ante algunas situaciones?",
+        "score": 0,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 13,
+        "label": "¿Sientes que cuidar te consume demasiada energía últimamente?",
+        "score": 0,
+        "dimension": "Carga del Cuidador"
+      },
+      {
+        "item_id": 14,
+        "label": "¿Has sentido mucha carga física o mental acumulada por tus labores de cuidado?",
+        "score": 0,
+        "dimension": "Carga del Cuidador"
+      },
+      {
+        "item_id": 15,
+        "label": "¿Sientes que casi no tienes tiempo libre para ti mismo?",
+        "score": 0,
+        "dimension": "Carga del Cuidador"
+      }
+    ],
+    "nlp_corpus": "",
+    "predictive_target": "Bajo"
+  },
+  {
+    "user_metadata": {
+      "id": "83a782db-8ce0-4f4b-b401-9238ffe15fdd",
+      "fecha": "2026-05-03T20:03:50.894075Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 1,
+        "label": "¿Has sentido poco interés o placer en hacer las cosas que te gustan?",
+        "score": 0,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 2,
+        "label": "¿Te ha costado tomar la iniciativa o has sentido que te falta energía?",
+        "score": 2,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 3,
+        "label": "¿Te has sentido decaído, triste o sin muchas esperanzas?",
+        "score": 3,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 4,
+        "label": "¿Has sentido que no haces lo suficiente o te has sentido culpable?",
+        "score": 3,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 5,
+        "label": "¿Has notado la boca seca o algún temblor físico sin razón aparente?",
+        "score": 1,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 6,
+        "label": "¿Te has sentido inquieto o te ha costado quedarte quieto?",
+        "score": 3,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 7,
+        "label": "¿Te has preocupado demasiado por diferentes cosas del día a día?",
+        "score": 1,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 8,
+        "label": "¿Has sentido mucho miedo de repente o como si algo malo fuera a pasar?",
+        "score": 1,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 9,
+        "label": "¿Te has sentido más irritable o te has enojado con facilidad?",
+        "score": 3,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 10,
+        "label": "¿Te ha costado relajarte incluso después de haber terminado tus tareas?",
+        "score": 1,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 11,
+        "label": "¿Has sentido mucha tensión o los nervios de punta?",
+        "score": 3,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 12,
+        "label": "¿Sientes que has reaccionado de forma exagerada ante algunas situaciones?",
+        "score": 1,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 13,
+        "label": "¿Sientes que cuidar te consume demasiada energía últimamente?",
+        "score": 4,
+        "dimension": "Carga del Cuidador"
+      },
+      {
+        "item_id": 14,
+        "label": "¿Has sentido mucha carga física o mental acumulada por tus labores de cuidado?",
+        "score": 0,
+        "dimension": "Carga del Cuidador"
+      },
+      {
+        "item_id": 15,
+        "label": "¿Sientes que casi no tienes tiempo libre para ti mismo?",
+        "score": 3,
+        "dimension": "Carga del Cuidador"
+      }
+    ],
+    "nlp_corpus": "Mi día estuvo bien, aunque no pude hacer mucho pude descansar de las tareas.",
+    "predictive_target": "Medio"
+  },
+  {
+    "user_metadata": {
+      "id": "8d5cb379-e241-463c-94c1-3a6e6abe6125",
+      "fecha": "2026-05-03T20:25:32.678186Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 1,
+        "label": "¿Has sentido poco interés o placer en hacer las cosas que te gustan?",
+        "score": 4,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 2,
+        "label": "¿Te ha costado tomar la iniciativa o has sentido que te falta energía?",
+        "score": 4,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 3,
+        "label": "¿Te has sentido decaído, triste o sin muchas esperanzas?",
+        "score": 4,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 4,
+        "label": "¿Has sentido que no haces lo suficiente o te has sentido culpable?",
+        "score": 4,
+        "dimension": "Depresión"
+      },
+      {
+        "item_id": 5,
+        "label": "¿Has notado la boca seca o algún temblor físico sin razón aparente?",
+        "score": 4,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 6,
+        "label": "¿Te has sentido inquieto o te ha costado quedarte quieto?",
+        "score": 4,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 7,
+        "label": "¿Te has preocupado demasiado por diferentes cosas del día a día?",
+        "score": 4,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 8,
+        "label": "¿Has sentido mucho miedo de repente o como si algo malo fuera a pasar?",
+        "score": 4,
+        "dimension": "Ansiedad"
+      },
+      {
+        "item_id": 9,
+        "label": "¿Te has sentido más irritable o te has enojado con facilidad?",
+        "score": 4,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 10,
+        "label": "¿Te ha costado relajarte incluso después de haber terminado tus tareas?",
+        "score": 4,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 11,
+        "label": "¿Has sentido mucha tensión o los nervios de punta?",
+        "score": 4,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 12,
+        "label": "¿Sientes que has reaccionado de forma exagerada ante algunas situaciones?",
+        "score": 4,
+        "dimension": "Estrés"
+      },
+      {
+        "item_id": 13,
+        "label": "¿Sientes que cuidar te consume demasiada energía últimamente?",
+        "score": 4,
+        "dimension": "Carga del Cuidador"
+      },
+      {
+        "item_id": 14,
+        "label": "¿Has sentido mucha carga física o mental acumulada por tus labores de cuidado?",
+        "score": 4,
+        "dimension": "Carga del Cuidador"
+      },
+      {
+        "item_id": 15,
+        "label": "¿Sientes que casi no tienes tiempo libre para ti mismo?",
+        "score": 4,
+        "dimension": "Carga del Cuidador"
+      }
+    ],
+    "nlp_corpus": "Me siento muy cansado y siento que nada vale la pena.",
+    "predictive_target": "Crítico",
+    "dimensiones_evaluadas": {
+      "Física": "Indicadores de fatiga y tensión física severa.",
+      "Psicológica": "Niveles elevados de estrés cognitivo y ansiedad detectados.",
+      "Emocional": "Signos de tristeza profunda, soledad o desánimo.",
+      "Espiritual": "Posible pérdida de esperanza o sentido de propósito."
+    },
+    "intervencion": {
+      "titulo": "Guía de Respiración de Emergencia (Técnica 4-7-8)",
+      "instrucciones": [
+        "1. Inhala profundamente por la nariz durante 4 segundos.",
+        "2. Mantén la respiración durante 7 segundos.",
+        "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
+      ]
+    }
+  }
+]

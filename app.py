@@ -8,6 +8,8 @@ from flask_cors import CORS
 from transformers import BertTokenizer, BertForSequenceClassification
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from datetime import datetime, timezone
+import uuid
 
 # ==========================================
 # 1. Configuración de Recursos de IA y NLP
@@ -114,6 +116,165 @@ def analizar_emocion():
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({"error": "Error interno en el análisis de IA"}), 500
+
+# ==========================================
+# 4. Módulo de Evaluación de Salud Mental
+# ==========================================
+
+# Definición de dimensiones e ítems para ML
+ITEMS_EVALUACION = {
+    1: {"dimension": "Depresión", "label": "¿Has sentido poco interés o placer en hacer las cosas que te gustan?"},
+    2: {"dimension": "Depresión", "label": "¿Te ha costado tomar la iniciativa o has sentido que te falta energía?"},
+    3: {"dimension": "Depresión", "label": "¿Te has sentido decaído, triste o sin muchas esperanzas?"},
+    4: {"dimension": "Depresión", "label": "¿Has sentido que no haces lo suficiente o te has sentido culpable?"},
+    5: {"dimension": "Ansiedad", "label": "¿Has notado la boca seca o algún temblor físico sin razón aparente?"},
+    6: {"dimension": "Ansiedad", "label": "¿Te has sentido inquieto o te ha costado quedarte quieto?"},
+    7: {"dimension": "Ansiedad", "label": "¿Te has preocupado demasiado por diferentes cosas del día a día?"},
+    8: {"dimension": "Ansiedad", "label": "¿Has sentido mucho miedo de repente o como si algo malo fuera a pasar?"},
+    9: {"dimension": "Estrés", "label": "¿Te has sentido más irritable o te has enojado con facilidad?"},
+    10: {"dimension": "Estrés", "label": "¿Te ha costado relajarte incluso después de haber terminado tus tareas?"},
+    11: {"dimension": "Estrés", "label": "¿Has sentido mucha tensión o los nervios de punta?"},
+    12: {"dimension": "Estrés", "label": "¿Sientes que has reaccionado de forma exagerada ante algunas situaciones?"},
+    13: {"dimension": "Carga del Cuidador", "label": "¿Sientes que cuidar te consume demasiada energía últimamente?"},
+    14: {"dimension": "Carga del Cuidador", "label": "¿Has sentido mucha carga física o mental acumulada por tus labores de cuidado?"},
+    15: {"dimension": "Carga del Cuidador", "label": "¿Sientes que casi no tienes tiempo libre para ti mismo?"}
+}
+
+@app.route('/evaluacion_mental', methods=['POST'])
+def evaluacion_mental():
+    try:
+        data = request.json
+        respuestas = data.get('respuestas', [])
+        comentarios_generales = data.get('comentarios_generales', '')
+        user_id = data.get('user_id', str(uuid.uuid4()))
+        ubicacion = data.get('ubicacion', 'Desconocida')
+
+        if not respuestas or len(respuestas) != 15:
+            return jsonify({"error": "Se requieren exactamente 15 respuestas."}), 400
+
+        puntajes_por_dimension = {
+            "Depresión": 0,
+            "Ansiedad": 0,
+            "Estrés": 0,
+            "Carga del Cuidador": 0
+        }
+
+        puntaje_total = 0
+        item_scores = []
+
+        # Procesar cada respuesta
+        for r in respuestas:
+            item_id = int(r.get('item_id'))
+            score = int(r.get('score', 0))
+            
+            # Limitar el score a 0-4
+            score = max(0, min(4, score))
+            puntaje_total += score
+
+            if item_id in ITEMS_EVALUACION:
+                dimension = ITEMS_EVALUACION[item_id]["dimension"]
+                label = ITEMS_EVALUACION[item_id]["label"]
+                puntajes_por_dimension[dimension] += score
+                
+                item_scores.append({
+                    "item_id": item_id,
+                    "label": label,
+                    "score": score,
+                    "dimension": dimension
+                })
+
+        # Análisis NLP del texto de desahogo
+        clase_detectada = "No detectada"
+        if comentarios_generales.strip():
+            clase_detectada = predecir_emocion(comentarios_generales)
+
+        # Trigger Alerta Clínica (Umbral de 70% sobre un max de 16 para Depresión y Ansiedad = 11.2)
+        es_alerta_clinica = False
+        if puntajes_por_dimension["Depresión"] > 11 or puntajes_por_dimension["Ansiedad"] > 11:
+            es_alerta_clinica = True
+
+        # Clasificación de riesgo (Bajo, Medio, Alto, Crítico)
+        if puntaje_total <= 15:
+            riesgo = "Bajo"
+        elif puntaje_total <= 25:
+            riesgo = "Medio"
+        elif puntaje_total < 40 and not es_alerta_clinica:
+            riesgo = "Alto"
+        else:
+            riesgo = "Crítico"
+
+        # Identificación de Patrones Longitudinales (Simulado con BERT)
+        if clase_detectada in ["Sobrecarga", "Depresión"] and riesgo in ["Medio", "Alto"]:
+            riesgo = "Crítico" if riesgo == "Alto" else "Alto"
+
+        # Evaluación Multidimensional
+        # Obtenemos el score de la pregunta 3 para la dimensión Espiritual
+        score_p3 = next((int(r.get('score', 0)) for r in respuestas if int(r.get('item_id')) == 3), 0)
+        
+        resumen_dimensiones = {
+            "Física": "Indicadores de fatiga y tensión física severa." if puntajes_por_dimension["Carga del Cuidador"] > 6 else "Estado físico reportado estable, sin tensión severa.",
+            "Psicológica": "Niveles elevados de estrés cognitivo y ansiedad detectados." if (puntajes_por_dimension["Ansiedad"] + puntajes_por_dimension["Estrés"]) > 15 else "Carga psicológica en rangos manejables.",
+            "Emocional": "Signos de tristeza profunda, soledad o desánimo." if puntajes_por_dimension["Depresión"] > 8 or clase_detectada == "Depresión" else "Equilibrio emocional relativo.",
+            "Espiritual": "Posible pérdida de esperanza o sentido de propósito." if score_p3 >= 3 else "Sentido de propósito y esperanza preservados."
+        }
+
+        # Protocolo de Intervención (Nivel de Riesgo Alto/Crítico)
+        guia_respiracion = None
+        if riesgo in ["Alto", "Crítico"]:
+            guia_respiracion = {
+                "titulo": "Guía de Respiración de Emergencia (Técnica 4-7-8)",
+                "instrucciones": [
+                    "1. Inhala profundamente por la nariz durante 4 segundos.",
+                    "2. Mantén la respiración durante 7 segundos.",
+                    "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
+                ]
+            }
+
+        # Formato de Salida de Datos (ML Ready)
+        evaluacion_ml_ready = {
+            "user_metadata": {
+                "id": user_id,
+                "fecha": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
+                "ubicacion": ubicacion
+            },
+            "item_scores": item_scores,
+            "nlp_corpus": comentarios_generales,
+            "predictive_target": riesgo,
+            "dimensiones_evaluadas": resumen_dimensiones,
+            "intervencion": guia_respiracion
+        }
+
+        # Guardar en archivo JSON local
+        path_evaluaciones = os.path.join('data', 'evaluaciones.json')
+        # Crear data/ si no existe
+        os.makedirs('data', exist_ok=True)
+        
+        evaluaciones_existentes = []
+        if os.path.exists(path_evaluaciones):
+            try:
+                with open(path_evaluaciones, 'r', encoding='utf-8') as f:
+                    evaluaciones_existentes = json.load(f)
+            except json.JSONDecodeError:
+                pass # Si el archivo está vacío o corrupto, lo inicializamos de nuevo
+
+        evaluaciones_existentes.append(evaluacion_ml_ready)
+
+        with open(path_evaluaciones, 'w', encoding='utf-8') as f:
+            json.dump(evaluaciones_existentes, f, ensure_ascii=False, indent=2)
+
+        return jsonify({
+            "status": "success",
+            "puntaje_total": puntaje_total,
+            "riesgo": riesgo,
+            "es_alerta_clinica": es_alerta_clinica,
+            "resumen_dimensiones": resumen_dimensiones,
+            "guia_respiracion": guia_respiracion,
+            "mensaje": "Evaluación procesada y guardada correctamente."
+        }), 200
+
+    except Exception as e:
+        print(f"Error procesando evaluación: {str(e)}")
+        return jsonify({"error": "Error interno en el servidor."}), 500
 
 if __name__ == '__main__':
     # host='0.0.0.0' permite la conexión del teléfono a la IP de la PC [Chat History]
