@@ -2,6 +2,22 @@ import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, StyleSheet } from 'react-native';
 import { globalStyles, theme } from './src/styles/theme';
 
+interface EvaluacionResult {
+  riesgo: string;
+  puntaje_total: number;
+  es_alerta_clinica: boolean;
+  resumen_dimensiones?: {
+    Física: string;
+    Psicológica: string;
+    Emocional: string;
+    Espiritual: string;
+  };
+  guia_respiracion?: {
+    titulo: string;
+    instrucciones: string[];
+  };
+}
+
 const PREGUNTAS = [
   { id: 1, text: "¿Has sentido poco interés o placer en hacer las cosas que te gustan?" },
   { id: 2, text: "¿Te ha costado tomar la iniciativa o has sentido que te falta energía?" },
@@ -21,16 +37,16 @@ const PREGUNTAS = [
 ];
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('evaluacion'); // 'diario' o 'evaluacion'
+  const [currentScreen, setCurrentScreen] = useState<string>('evaluacion'); // 'diario' o 'evaluacion'
 
   // Estado para la evaluación de salud mental
-  const [respuestas, setRespuestas] = useState({});
-  const [comentarios, setComentarios] = useState('');
-  const [resultadoEval, setResultadoEval] = useState(null);
+  const [respuestas, setRespuestas] = useState<Record<number, number>>({});
+  const [comentarios, setComentarios] = useState<string>('');
+  const [resultadoEval, setResultadoEval] = useState<EvaluacionResult | null>(null);
 
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<ScrollView>(null);
 
-  const handleSeleccion = (preguntaId, valor) => {
+  const handleSeleccion = (preguntaId: number, valor: number) => {
     setRespuestas(prev => ({ ...prev, [preguntaId]: valor }));
   };
 
@@ -48,7 +64,7 @@ export default function App() {
     const payload = {
       respuestas: Object.keys(respuestas).map(id => ({
         item_id: parseInt(id),
-        score: respuestas[id]
+        score: respuestas[parseInt(id)]
       })),
       comentarios_generales: comentarios
     };
@@ -64,7 +80,7 @@ export default function App() {
       if (data.error) {
         Alert.alert("Error", data.error);
       } else {
-        setResultadoEval(data);
+        setResultadoEval(data as EvaluacionResult);
         setRespuestas({});
         setComentarios('');
 
@@ -101,7 +117,7 @@ export default function App() {
               <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', marginBottom: 10, fontSize: 12 }}>
                 Hemos detectado niveles altos de sobrecarga. Por favor, antes de continuar, acompáñame en este ejercicio:
               </Text>
-              {resultadoEval.guia_respiracion.instrucciones.map((inst, idx) => (
+              {resultadoEval.guia_respiracion.instrucciones.map((inst: string, idx: number) => (
                 <Text key={idx} style={{ color: '#FFF', fontFamily: 'Nunito-Bold', marginTop: 5 }}>
                   {inst}
                 </Text>
