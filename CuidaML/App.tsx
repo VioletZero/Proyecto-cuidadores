@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, StyleSheet } from 'react-native';
 import { globalStyles, theme } from './src/styles/theme';
 
@@ -6,6 +6,7 @@ interface EvaluacionResult {
   riesgo: string;
   puntaje_total: number;
   es_alerta_clinica: boolean;
+  mensaje_ia?: string;
   resumen_dimensiones?: {
     Física: string;
     Psicológica: string;
@@ -19,40 +20,61 @@ interface EvaluacionResult {
 }
 
 const PREGUNTAS = [
-  { id: 1, text: "¿Has sentido poco interés o placer en hacer las cosas que te gustan?" },
-  { id: 2, text: "¿Te ha costado tomar la iniciativa o has sentido que te falta energía?" },
-  { id: 3, text: "¿Te has sentido decaído, triste o sin muchas esperanzas?" },
-  { id: 4, text: "¿Has sentido que no haces lo suficiente o te has sentido culpable?" },
-  { id: 5, text: "¿Has notado la boca seca o algún temblor físico sin razón aparente?" },
-  { id: 6, text: "¿Te has sentido inquieto o te ha costado quedarte quieto?" },
-  { id: 7, text: "¿Te has preocupado demasiado por diferentes cosas del día a día?" },
-  { id: 8, text: "¿Has sentido mucho miedo de repente o como si algo malo fuera a pasar?" },
-  { id: 9, text: "¿Te has sentido más irritable o te has enojado con facilidad?" },
-  { id: 10, text: "¿Te ha costado relajarte incluso después de haber terminado tus tareas?" },
-  { id: 11, text: "¿Has sentido mucha tensión o los nervios de punta?" },
-  { id: 12, text: "¿Sientes que has reaccionado de forma exagerada ante algunas situaciones?" },
-  { id: 13, text: "¿Sientes que cuidar te consume demasiada energía últimamente?" },
-  { id: 14, text: "¿Has sentido mucha carga física o mental acumulada por tus labores de cuidado?" },
-  { id: 15, text: "¿Sientes que casi no tienes tiempo libre para ti mismo?" }
+  { id: 1, text: "¿Sientes que cuidar a esta persona ocupa gran parte de tu tiempo?" },
+  { id: 2, text: "¿Te sientes estresado/a al intentar equilibrar el cuidado con otras responsabilidades?" },
+  { id: 3, text: "¿Sientes que no tienes suficiente tiempo para ti?" },
+  { id: 4, text: "¿Te has sentido agotado/a física o emocionalmente por cuidar?" },
+  { id: 5, text: "¿Sientes que tu vida social se ha visto afectada por el cuidado?" },
+  { id: 6, text: "¿Te sientes incómodo/a al invitar personas a casa por la situación de cuidado?" },
+  { id: 7, text: "¿Sientes que la persona que cuidas depende demasiado de ti?" },
+  { id: 8, text: "¿Te preocupa no estar haciendo lo suficiente o hacerlo mal?" },
+  { id: 9, text: "¿Te has sentido tenso/a o irritable con frecuencia?" },
+  { id: 10, text: "¿Sientes que tu salud se ha visto afectada por el cuidado?" },
+  { id: 11, text: "¿Sientes que has perdido control sobre tu vida desde que cuidas?" },
+  { id: 12, text: "¿Te gustaría poder delegar el cuidado a alguien más?" },
+  { id: 13, text: "¿Sientes que la relación con la persona que cuidas se ha vuelto difícil?" },
+  { id: 14, text: "¿Sientes culpa por cómo manejas el cuidado?" },
+  { id: 15, text: "¿Sientes que cuidar es una carga pesada para ti?" }
 ];
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<string>('evaluacion'); // 'diario' o 'evaluacion'
+  const [tipoEvaluacion, setTipoEvaluacion] = useState<'diario' | 'baseline'>('diario');
 
   // Estado para la evaluación de salud mental
   const [respuestas, setRespuestas] = useState<Record<number, number>>({});
   const [comentarios, setComentarios] = useState<string>('');
+  const [nombreUsuario, setNombreUsuario] = useState<string>('');
   const [resultadoEval, setResultadoEval] = useState<EvaluacionResult | null>(null);
+  const [preguntasActivas, setPreguntasActivas] = useState(PREGUNTAS);
 
   const scrollViewRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    const fetchPreguntas = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/preguntas_diarias', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        const data = await response.json();
+        if (data.preguntas && data.preguntas.length > 0) {
+          setPreguntasActivas(data.preguntas);
+        }
+      } catch (e) {
+        console.warn("No se pudo cargar EMA, usando fallback.");
+      }
+    };
+    fetchPreguntas();
+  }, []);
 
   const handleSeleccion = (preguntaId: number, valor: number) => {
     setRespuestas(prev => ({ ...prev, [preguntaId]: valor }));
   };
 
   const enviarEvaluacion = async () => {
-    if (Object.keys(respuestas).length < 15) {
-      Alert.alert("Faltan preguntas", "Por favor responde las 15 preguntas antes de enviar.");
+    if (Object.keys(respuestas).length < preguntasActivas.length) {
+      Alert.alert("Faltan preguntas", `Por favor responde las ${preguntasActivas.length} preguntas antes de enviar.`);
       return;
     }
 
@@ -66,7 +88,9 @@ export default function App() {
         item_id: parseInt(id),
         score: respuestas[parseInt(id)]
       })),
-      comentarios_generales: comentarios
+      comentarios_generales: comentarios,
+      nombre_usuario: nombreUsuario.trim() || 'Cuidador',
+      tipo_evaluacion: tipoEvaluacion
     };
 
     try {
@@ -96,19 +120,75 @@ export default function App() {
     }
   };
 
+  const preguntasAMostrar = tipoEvaluacion === 'baseline' ? PREGUNTAS : preguntasActivas;
+
   const renderEvaluacion = () => (
     <ScrollView
       ref={scrollViewRef}
       contentContainerStyle={globalStyles.container}
     >
-      <Text style={[globalStyles.headerTitle, { textAlign: 'center', marginBottom: 20 }]}>¿Cómo te has sentido últimamente?</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20, marginTop: 10 }}>
+        <TouchableOpacity 
+          style={[styles.tabBtn, tipoEvaluacion === 'diario' && styles.tabBtnActive]}
+          onPress={() => { setTipoEvaluacion('diario'); setRespuestas({}); setResultadoEval(null); }}
+        >
+          <Text style={[styles.tabText, tipoEvaluacion === 'diario' && styles.tabTextActive]}>Check-in Diario</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.tabBtn, tipoEvaluacion === 'baseline' && styles.tabBtnActive]}
+          onPress={() => { setTipoEvaluacion('baseline'); setRespuestas({}); setResultadoEval(null); }}
+        >
+          <Text style={[styles.tabText, tipoEvaluacion === 'baseline' && styles.tabTextActive]}>Test Completo</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={[globalStyles.headerTitle, { textAlign: 'center', marginBottom: 20 }]}>
+        {tipoEvaluacion === 'diario' ? 'Hoy queremos saber cómo estás 💛 (30 segundos)' : 'Evaluación Completa de Bienestar'}
+      </Text>
+
+      <View style={[globalStyles.card, { padding: 15, marginBottom: 15 }]}>
+        <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 5 }]}>
+          ¿Cuál es tu nombre?
+        </Text>
+        <TextInput
+          placeholder="Tu nombre (opcional)"
+          placeholderTextColor="#A0A0A0"
+          value={nombreUsuario}
+          onChangeText={setNombreUsuario}
+          style={[globalStyles.bodyText, globalStyles.inputArea, { minHeight: 45, padding: 10, marginBottom: 5 }]}
+        />
+      </View>
+
+      <View style={[globalStyles.card, { padding: 15, marginBottom: 15 }]}>
+        <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', textAlign: 'center', marginBottom: 5 }]}>
+          Escala de Respuestas:
+        </Text>
+        <Text style={[globalStyles.bodyText, { fontSize: 13, textAlign: 'center' }]}>
+          0: Nunca  |  1: Rara vez  |  2: Algunas veces
+        </Text>
+        <Text style={[globalStyles.bodyText, { fontSize: 13, textAlign: 'center' }]}>
+          3: Bastantes veces  |  4: Casi siempre
+        </Text>
+      </View>
 
       {resultadoEval && (
-        <View style={[globalStyles.card, { backgroundColor: resultadoEval.es_alerta_clinica ? theme.colors.alertIntense : theme.colors.primaryPastel }]}>
+        <View style={[globalStyles.card, {
+          backgroundColor:
+            resultadoEval.riesgo === 'Alta' ? (theme.colors.alertIntense || '#1D4ED8') :
+              resultadoEval.riesgo === 'Moderada' ? '#3B82F6' :
+                resultadoEval.riesgo === 'Leve' ? '#93C5FD' :
+                  (theme.colors.primaryPastel || '#DBEAFE')
+        }]}>
           <Text style={[globalStyles.headerTitle, { fontSize: 18, color: '#FFF' }]}>
             Nivel de Riesgo: {resultadoEval.riesgo}
           </Text>
-          
+
+          {resultadoEval.mensaje_ia && (
+            <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', fontSize: 15, marginTop: 10, textAlign: 'center' }}>
+              {resultadoEval.mensaje_ia}
+            </Text>
+          )}
+
           {resultadoEval.guia_respiracion && (
             <View style={{ marginTop: 15, padding: 15, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10 }}>
               <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', fontSize: 16, marginBottom: 5 }}>
@@ -143,10 +223,10 @@ export default function App() {
         </View>
       )}
 
-      {PREGUNTAS.map((p) => (
+      {preguntasAMostrar.map((p: any) => (
         <View key={p.id} style={[globalStyles.card, { padding: 15 }]}>
           <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 10 }]}>
-            {p.id}. {p.text}
+            {tipoEvaluacion === 'baseline' ? `${p.id}. ${p.text}` : p.text}
           </Text>
           <View style={styles.likertContainer}>
             {[0, 1, 2, 3, 4].map(val => (
@@ -160,8 +240,8 @@ export default function App() {
             ))}
           </View>
           <View style={styles.likertLabels}>
-            <Text style={styles.labelSmall}>Nunca</Text>
-            <Text style={styles.labelSmall}>Casi Siempre</Text>
+            <Text style={styles.labelSmall}>Nunca (0)</Text>
+            <Text style={styles.labelSmall}>Casi Siempre (4)</Text>
           </View>
         </View>
       ))}
@@ -198,6 +278,10 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  tabBtn: { flex: 1, padding: 10, borderWidth: 1, borderColor: theme.colors.primaryPastel, alignItems: 'center', marginHorizontal: 5, borderRadius: 8 },
+  tabBtnActive: { backgroundColor: theme.colors.primaryPastel },
+  tabText: { fontFamily: 'Nunito-Bold', color: theme.colors.textMain },
+  tabTextActive: { color: '#FFF' },
   likertContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   likertLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, paddingHorizontal: 5 },
   labelSmall: { fontSize: 10, color: '#777', fontFamily: 'Nunito-Regular' },
