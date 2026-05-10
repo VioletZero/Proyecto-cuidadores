@@ -2,13 +2,34 @@ import { StyleSheet } from 'react-native';
 
 export const theme = {
   colors: {
+    // Básicos
     background: '#FFFFFF', 
     white: '#FFFFFF',
-    primaryPastel: '#AED9E0',   
-    secondaryPastel: '#B8E0D2', 
-    alertIntense: '#4A90E2',    
-    textMain: '#2D3436',        
-    textSecondary: '#636E72',
+    black: '#000000',
+
+    // Escala Principal (Azules)
+    primaryLight: '#DBEAFE',    // Fondo azul muy claro
+    primaryPastel: '#AED9E0',   // Azul pastel (usado en botones y tabs)
+    primaryMain: '#4A90E2',     // Azul intenso (antes alertIntense)
+    primaryDark: '#1D4ED8',     // Azul oscuro para contrastes fuertes
+
+    // Escala Secundaria (Verdes)
+    secondaryLight: '#D1F0E4',  // Verde muy claro
+    secondaryPastel: '#B8E0D2', // Verde pastel (usado en botón principal)
+    secondaryMain: '#52B788',   // Verde principal
+    secondaryDark: '#2D6A4F',   // Verde oscuro
+
+    // Estados / Alertas
+    alertIntense: '#4A90E2',    // Mantenemos compatibilidad
+    success: '#52B788',
+    warning: '#F4A261',
+    error: '#E76F51',
+    
+    // Textos
+    textMain: '#2D3436',        // Gris muy oscuro / Negro suave
+    textSecondary: '#636E72',   // Gris secundario
+    
+    // UI
     borderLight: '#DCDDE1',     // Color para el contorno del input
     inputBg: '#F9F9F9',         // Fondo sutil para el área de texto
     cardShadow: 'rgba(0, 0, 0, 0.05)',

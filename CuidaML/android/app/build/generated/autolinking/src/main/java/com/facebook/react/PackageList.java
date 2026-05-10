@@ -56,7 +56,9 @@ public class PackageList {
     return new ArrayList<>(Arrays.<ReactPackage>asList(
       new MainReactPackage(mConfig),
       // react-native-safe-area-context
-      new com.th3rdwave.safeareacontext.SafeAreaContextPackage()
+      new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
+      // react-native-svg
+      new com.horcrux.svg.SvgPackage()
     ));
   }
 }

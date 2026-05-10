@@ -45,9 +45,8 @@ INJECTED from /home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/A
 INJECTED from /home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:1:1-27:12
 INJECTED from /home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:1:1-27:12
 MERGED from [:react-native-safe-area-context] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
+MERGED from [:react-native-svg] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
 MERGED from [com.facebook.react:react-android:0.84.1] /home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/AndroidManifest.xml:2:1-24:12
-MERGED from [androidx.appcompat:appcompat-resources:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/6ea576ebc50c0f2a3e2ffd4235b189af/transformed/appcompat-resources-1.7.0/AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.appcompat:appcompat:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/f35ad92ce9d828c4f95567a11236a8b0/transformed/appcompat-1.7.0/AndroidManifest.xml:2:1-7:12
 MERGED from [com.facebook.fresco:fresco:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/1396c1d469a9d7a6a623e841f9746a0b/transformed/fresco-3.6.0/AndroidManifest.xml:2:1-7:12
 MERGED from [com.facebook.fresco:imagepipeline-okhttp3:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/6e4abd973af9e55efa82af74aa18cbf9/transformed/imagepipeline-okhttp3-3.6.0/AndroidManifest.xml:2:1-7:12
 MERGED from [com.facebook.fresco:drawee:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/90af28c144f8b6d8132b8a263a69d0cc/transformed/drawee-3.6.0/AndroidManifest.xml:2:1-7:12
@@ -62,7 +61,12 @@ MERGED from [com.facebook.fresco:imagepipeline-base:3.6.0] /home/violetzero/.gra
 MERGED from [com.facebook.fresco:urimod:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/ceed6f95e62880858cdb00d9ca8eb984/transformed/urimod-3.6.0/AndroidManifest.xml:2:1-7:12
 MERGED from [com.facebook.fresco:vito-source:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/949a05c89e6f10d4591a1485b24c5227/transformed/vito-source-3.6.0/AndroidManifest.xml:2:1-7:12
 MERGED from [com.facebook.fresco:middleware:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/a65b5c206786fcc129040b1ec096062a/transformed/middleware-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.appcompat:appcompat-resources:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/6ea576ebc50c0f2a3e2ffd4235b189af/transformed/appcompat-resources-1.7.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.appcompat:appcompat:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/f35ad92ce9d828c4f95567a11236a8b0/transformed/appcompat-1.7.0/AndroidManifest.xml:2:1-7:12
 MERGED from [com.facebook.fresco:ui-common:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/136b01aa68cf669895cc2e2ec4688337/transformed/ui-common-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:ui-core:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/4267d659138c94dff9be4f42a60dfa74/transformed/ui-core-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:soloader:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/27244571161b76e733a9ed31920d5892/transformed/soloader-3.6.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.facebook.fresco:fbcore:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/3292002e767cb1c41f2edba5d3fc68e3/transformed/fbcore-3.6.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.fragment:fragment:1.5.4] /home/violetzero/.gradle/caches/9.0.0/transforms/f64301147489d5e317248d9c5deb6752/transformed/fragment-1.5.4/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.activity:activity:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/ca433ff8c7cc5ed351c84234670c7f29/transformed/activity-1.7.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.autofill:autofill:1.1.0] /home/violetzero/.gradle/caches/9.0.0/transforms/f0940261bb3bc491aa23646909a61c84/transformed/autofill-1.1.0/AndroidManifest.xml:17:1-24:12
@@ -72,8 +76,6 @@ MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] /home/violetzero/.gradle
 MERGED from [androidx.emoji2:emoji2:1.3.0] /home/violetzero/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:17:1-35:12
 MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /home/violetzero/.gradle/caches/9.0.0/transforms/995cdb1de201b219585295ef51135cbf/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /home/violetzero/.gradle/caches/9.0.0/transforms/98e51da9711dc115e896f4b6350356d1/transformed/vectordrawable-1.1.0/AndroidManifest.xml:17:1-24:12
-MERGED from [com.facebook.fresco:soloader:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/27244571161b76e733a9ed31920d5892/transformed/soloader-3.6.0/AndroidManifest.xml:2:1-7:12
-MERGED from [com.facebook.fresco:fbcore:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/3292002e767cb1c41f2edba5d3fc68e3/transformed/fbcore-3.6.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.viewpager:viewpager:1.0.0] /home/violetzero/.gradle/caches/9.0.0/transforms/769d7ef95177d34d330420e32952a148/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.customview:customview:1.0.0] /home/violetzero/.gradle/caches/9.0.0/transforms/6c85a9348785d220109359f049301295/transformed/customview-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.loader:loader:1.0.0] /home/violetzero/.gradle/caches/9.0.0/transforms/1c98d83add0e874a114a11a098667c02/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
@@ -86,7 +88,6 @@ MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] /home/violetzero/.grad
 MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] /home/violetzero/.gradle/caches/9.0.0/transforms/e4ce17d397bc827a0c2cc794c0a6c571/transformed/lifecycle-runtime-2.6.2/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] /home/violetzero/.gradle/caches/9.0.0/transforms/c1dd409eee68f2cb36096e552cb4a21c/transformed/lifecycle-viewmodel-savedstate-2.6.2/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.savedstate:savedstate:1.2.1] /home/violetzero/.gradle/caches/9.0.0/transforms/9c5167adb7ab8c6026cff18bbe8c372b/transformed/savedstate-1.2.1/AndroidManifest.xml:17:1-22:12
-MERGED from [com.facebook.fresco:ui-core:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/4267d659138c94dff9be4f42a60dfa74/transformed/ui-core-3.6.0/AndroidManifest.xml:2:1-7:12
 MERGED from [com.facebook.hermes:hermes-android:250829098.0.9] /home/violetzero/.gradle/caches/9.0.0/transforms/9d34929fdb65a145dc091d62c15d0d86/transformed/hermes-android-250829098.0.9-debug/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:17:1-55:12
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/violetzero/.gradle/caches/9.0.0/transforms/fd52a72bbf28ff57c02aa95b3027cd5b/transformed/startup-runtime-1.1.1/AndroidManifest.xml:17:1-33:12
@@ -140,12 +141,10 @@ INJECTED from /home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/A
 INJECTED from /home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml
 MERGED from [:react-native-safe-area-context] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
 MERGED from [:react-native-safe-area-context] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-svg] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-svg] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.react:react-android:0.84.1] /home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/AndroidManifest.xml:10:5-44
 MERGED from [com.facebook.react:react-android:0.84.1] /home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/AndroidManifest.xml:10:5-44
-MERGED from [androidx.appcompat:appcompat-resources:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/6ea576ebc50c0f2a3e2ffd4235b189af/transformed/appcompat-resources-1.7.0/AndroidManifest.xml:5:5-44
-MERGED from [androidx.appcompat:appcompat-resources:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/6ea576ebc50c0f2a3e2ffd4235b189af/transformed/appcompat-resources-1.7.0/AndroidManifest.xml:5:5-44
-MERGED from [androidx.appcompat:appcompat:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/f35ad92ce9d828c4f95567a11236a8b0/transformed/appcompat-1.7.0/AndroidManifest.xml:5:5-44
-MERGED from [androidx.appcompat:appcompat:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/f35ad92ce9d828c4f95567a11236a8b0/transformed/appcompat-1.7.0/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.fresco:fresco:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/1396c1d469a9d7a6a623e841f9746a0b/transformed/fresco-3.6.0/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.fresco:fresco:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/1396c1d469a9d7a6a623e841f9746a0b/transformed/fresco-3.6.0/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.fresco:imagepipeline-okhttp3:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/6e4abd973af9e55efa82af74aa18cbf9/transformed/imagepipeline-okhttp3-3.6.0/AndroidManifest.xml:5:5-44
@@ -174,8 +173,18 @@ MERGED from [com.facebook.fresco:vito-source:3.6.0] /home/violetzero/.gradle/cac
 MERGED from [com.facebook.fresco:vito-source:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/949a05c89e6f10d4591a1485b24c5227/transformed/vito-source-3.6.0/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.fresco:middleware:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/a65b5c206786fcc129040b1ec096062a/transformed/middleware-3.6.0/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.fresco:middleware:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/a65b5c206786fcc129040b1ec096062a/transformed/middleware-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/6ea576ebc50c0f2a3e2ffd4235b189af/transformed/appcompat-resources-1.7.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/6ea576ebc50c0f2a3e2ffd4235b189af/transformed/appcompat-resources-1.7.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/f35ad92ce9d828c4f95567a11236a8b0/transformed/appcompat-1.7.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/f35ad92ce9d828c4f95567a11236a8b0/transformed/appcompat-1.7.0/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.fresco:ui-common:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/136b01aa68cf669895cc2e2ec4688337/transformed/ui-common-3.6.0/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.fresco:ui-common:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/136b01aa68cf669895cc2e2ec4688337/transformed/ui-common-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:ui-core:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/4267d659138c94dff9be4f42a60dfa74/transformed/ui-core-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:ui-core:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/4267d659138c94dff9be4f42a60dfa74/transformed/ui-core-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:soloader:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/27244571161b76e733a9ed31920d5892/transformed/soloader-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:soloader:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/27244571161b76e733a9ed31920d5892/transformed/soloader-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:fbcore:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/3292002e767cb1c41f2edba5d3fc68e3/transformed/fbcore-3.6.0/AndroidManifest.xml:5:5-44
+MERGED from [com.facebook.fresco:fbcore:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/3292002e767cb1c41f2edba5d3fc68e3/transformed/fbcore-3.6.0/AndroidManifest.xml:5:5-44
 MERGED from [androidx.fragment:fragment:1.5.4] /home/violetzero/.gradle/caches/9.0.0/transforms/f64301147489d5e317248d9c5deb6752/transformed/fragment-1.5.4/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.fragment:fragment:1.5.4] /home/violetzero/.gradle/caches/9.0.0/transforms/f64301147489d5e317248d9c5deb6752/transformed/fragment-1.5.4/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.activity:activity:1.7.0] /home/violetzero/.gradle/caches/9.0.0/transforms/ca433ff8c7cc5ed351c84234670c7f29/transformed/activity-1.7.0/AndroidManifest.xml:20:5-44
@@ -194,10 +203,6 @@ MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /home/violet
 MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /home/violetzero/.gradle/caches/9.0.0/transforms/995cdb1de201b219585295ef51135cbf/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /home/violetzero/.gradle/caches/9.0.0/transforms/98e51da9711dc115e896f4b6350356d1/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /home/violetzero/.gradle/caches/9.0.0/transforms/98e51da9711dc115e896f4b6350356d1/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
-MERGED from [com.facebook.fresco:soloader:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/27244571161b76e733a9ed31920d5892/transformed/soloader-3.6.0/AndroidManifest.xml:5:5-44
-MERGED from [com.facebook.fresco:soloader:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/27244571161b76e733a9ed31920d5892/transformed/soloader-3.6.0/AndroidManifest.xml:5:5-44
-MERGED from [com.facebook.fresco:fbcore:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/3292002e767cb1c41f2edba5d3fc68e3/transformed/fbcore-3.6.0/AndroidManifest.xml:5:5-44
-MERGED from [com.facebook.fresco:fbcore:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/3292002e767cb1c41f2edba5d3fc68e3/transformed/fbcore-3.6.0/AndroidManifest.xml:5:5-44
 MERGED from [androidx.viewpager:viewpager:1.0.0] /home/violetzero/.gradle/caches/9.0.0/transforms/769d7ef95177d34d330420e32952a148/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.viewpager:viewpager:1.0.0] /home/violetzero/.gradle/caches/9.0.0/transforms/769d7ef95177d34d330420e32952a148/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.customview:customview:1.0.0] /home/violetzero/.gradle/caches/9.0.0/transforms/6c85a9348785d220109359f049301295/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
@@ -222,8 +227,6 @@ MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] /home/viol
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] /home/violetzero/.gradle/caches/9.0.0/transforms/c1dd409eee68f2cb36096e552cb4a21c/transformed/lifecycle-viewmodel-savedstate-2.6.2/AndroidManifest.xml:20:5-44
 MERGED from [androidx.savedstate:savedstate:1.2.1] /home/violetzero/.gradle/caches/9.0.0/transforms/9c5167adb7ab8c6026cff18bbe8c372b/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.savedstate:savedstate:1.2.1] /home/violetzero/.gradle/caches/9.0.0/transforms/9c5167adb7ab8c6026cff18bbe8c372b/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
-MERGED from [com.facebook.fresco:ui-core:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/4267d659138c94dff9be4f42a60dfa74/transformed/ui-core-3.6.0/AndroidManifest.xml:5:5-44
-MERGED from [com.facebook.fresco:ui-core:3.6.0] /home/violetzero/.gradle/caches/9.0.0/transforms/4267d659138c94dff9be4f42a60dfa74/transformed/ui-core-3.6.0/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.hermes:hermes-android:250829098.0.9] /home/violetzero/.gradle/caches/9.0.0/transforms/9d34929fdb65a145dc091d62c15d0d86/transformed/hermes-android-250829098.0.9-debug/AndroidManifest.xml:5:5-44
 MERGED from [com.facebook.hermes:hermes-android:250829098.0.9] /home/violetzero/.gradle/caches/9.0.0/transforms/9d34929fdb65a145dc091d62c15d0d86/transformed/hermes-android-250829098.0.9-debug/AndroidManifest.xml:5:5-44
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:21:5-44

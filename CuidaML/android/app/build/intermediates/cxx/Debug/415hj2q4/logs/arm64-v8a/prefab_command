@@ -15,7 +15,7 @@
   --ndk-version \
   27 \
   --output \
-  /tmp/agp-prefab-staging11663539547318994769/staged-cli-output \
+  /tmp/agp-prefab-staging3847071733363480633/staged-cli-output \
   /home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab \
   /home/violetzero/.gradle/caches/9.0.0/transforms/9d34929fdb65a145dc091d62c15d0d86/transformed/hermes-android-250829098.0.9-debug/prefab \
   /home/violetzero/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab

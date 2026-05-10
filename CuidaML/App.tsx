@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, StyleSheet, Linking } from 'react-native';
+import { PieChart } from './src/components/PieChart';
 import { globalStyles, theme } from './src/styles/theme';
 
 interface EvaluacionResult {
@@ -39,6 +40,26 @@ const PREGUNTAS = [
 
 export default function App() {
   const [tipoEvaluacion, setTipoEvaluacion] = useState<'diario' | 'baseline'>('diario');
+  const [vistaActual, setVistaActual] = useState<'evaluacion' | 'historial'>('evaluacion');
+  const [historialData, setHistorialData] = useState<any[]>([]);
+  const [riesgoCritico, setRiesgoCritico] = useState<{ activo: boolean; razon: string | null }>({ activo: false, razon: null });
+  const [mostrarProfesionales, setMostrarProfesionales] = useState(false);
+
+  // Profesionales de apoyo (placeholders editables)
+  const PROFESIONALES = [
+    { nombre: 'Dra. Ana Martínez', especialidad: 'Psicología Clínica', telefono: '59891234567' },
+    { nombre: 'Lic. Carlos Pérez', especialidad: 'Trabajo Social', telefono: '59892345678' },
+    { nombre: 'Dra. Luisa Gómez', especialidad: 'Psicología de Cuidadores', telefono: '59893456789' },
+  ];
+
+  // Colores para el gráfico de torta
+  const EMOTION_COLORS: Record<string, string> = {
+    'Resiliencia':     theme.colors.secondaryMain,
+    'Sobrecarga':      theme.colors.error,
+    'Depresión':       theme.colors.primaryDark,
+    'Ansiedad':        theme.colors.warning,
+    'No detectada':    theme.colors.borderLight,
+  };
 
   // Estado para la evaluación de salud mental
   const [respuestas, setRespuestas] = useState<Record<number, number>>({});
@@ -118,6 +139,42 @@ export default function App() {
     } catch (e) {
       Alert.alert("Error de Conexión", "No se pudo conectar con el servidor Flask.");
     }
+  };
+
+  const fetchHistorial = async () => {
+    try {
+      const [resHist, resRiesgo] = await Promise.all([
+        fetch('http://localhost:5000/historial_evaluaciones'),
+        fetch('http://localhost:5000/nivel_riesgo_acumulado'),
+      ]);
+      const dataHist = await resHist.json();
+      const dataRiesgo = await resRiesgo.json();
+
+      if (dataHist.status === 'success') {
+        setHistorialData(dataHist.historial);
+      }
+      if (dataRiesgo.riesgo_critico !== undefined) {
+        setRiesgoCritico({ activo: dataRiesgo.riesgo_critico, razon: dataRiesgo.razon });
+      }
+      setVistaActual('historial');
+    } catch (e) {
+      Alert.alert("Error", "No se pudo cargar el historial");
+    }
+  };
+
+  // Calcular distribución de emociones para el pie chart
+  const calcularDistribucionEmociones = () => {
+    const conteo: Record<string, number> = {};
+    historialData.forEach(item => {
+      const emocion = item.emocion_detectada || 'No detectada';
+      conteo[emocion] = (conteo[emocion] || 0) + 1;
+    });
+    return Object.entries(conteo).map(([emocion, cantidad]) => ({
+      x: emocion,
+      y: cantidad,
+      label: `${Math.round((cantidad / historialData.length) * 100)}%`,
+      color: EMOTION_COLORS[emocion] || theme.colors.textSecondary,
+    }));
   };
 
   const preguntasAMostrar = tipoEvaluacion === 'baseline' ? PREGUNTAS : preguntasActivas;
@@ -266,13 +323,133 @@ export default function App() {
       <TouchableOpacity style={globalStyles.button} onPress={enviarEvaluacion}>
         <Text style={globalStyles.buttonText}>ENVIAR Y VER RESULTADO</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={[globalStyles.button, { backgroundColor: theme.colors.primaryLight, marginTop: 20 }]} 
+        onPress={fetchHistorial}
+      >
+        <Text style={[globalStyles.buttonText, { fontSize: 16 }]}>VER HISTÓRICO GLOBAL</Text>
+      </TouchableOpacity>
+      
       <View style={{ height: 40 }} />
     </ScrollView>
   );
 
+  const renderHistorial = () => {
+    const pieData = calcularDistribucionEmociones();
+
+    return (
+      <ScrollView contentContainerStyle={globalStyles.container}>
+
+        {/* Header */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 10 }}>
+          <TouchableOpacity onPress={() => { setVistaActual('evaluacion'); setMostrarProfesionales(false); }} style={{ padding: 10 }}>
+            <Text style={{ fontSize: 24, color: theme.colors.textMain }}>←</Text>
+          </TouchableOpacity>
+          <Text style={[globalStyles.headerTitle, { marginBottom: 0, marginLeft: 10 }]}>Histórico</Text>
+        </View>
+
+        {/* Banner de riesgo crítico */}
+        {riesgoCritico.activo && (
+          <View style={[globalStyles.card, { backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain, marginBottom: 15 }]}>
+            <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 15, marginBottom: 6 }]}>
+              💛 Un momento para ti
+            </Text>
+            <Text style={[globalStyles.bodyText, { fontSize: 14, marginBottom: 12 }]}>
+              {riesgoCritico.razon} Sabemos que cuidar a alguien puede ser agotador. ¿Te gustaría hablar con alguien que puede ayudarte?
+            </Text>
+            <TouchableOpacity
+              style={[globalStyles.button, { backgroundColor: theme.colors.secondaryPastel, height: 44 }]}
+              onPress={() => setMostrarProfesionales(v => !v)}
+            >
+              <Text style={[globalStyles.buttonText, { fontSize: 14 }]}>
+                {mostrarProfesionales ? 'Ocultar profesionales' : 'Ver profesionales disponibles'}
+              </Text>
+            </TouchableOpacity>
+
+            {mostrarProfesionales && (
+              <View style={{ marginTop: 12 }}>
+                {PROFESIONALES.map((p, i) => (
+                  <TouchableOpacity
+                    key={i}
+                    style={styles.profesionalCard}
+                    onPress={() => Linking.openURL(`https://wa.me/${p.telefono}?text=Hola%20${encodeURIComponent(p.nombre)}%2C%20me%20gustar%C3%ADa%20recibir%20apoyo%20como%20cuidador%2Fa.`)}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 14 }]}>{p.nombre}</Text>
+                      <Text style={[globalStyles.bodyText, { fontSize: 12, color: theme.colors.textSecondary }]}>{p.especialidad}</Text>
+                    </View>
+                    <Text style={{ fontSize: 22 }}>💬</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* Pie chart de emociones */}
+        {pieData.length > 0 && (
+          <View style={[globalStyles.card, { alignItems: 'center', paddingBottom: 10 }]}>
+            <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 10 }]}>Distribución de Emociones</Text>
+            <PieChart data={pieData} size={220} />
+            {/* Leyenda */}
+            <View style={{ width: '100%', marginTop: 12 }}>
+              {pieData.map((d, i) => (
+                <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+                  <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: d.color, marginRight: 8 }} />
+                  <Text style={[globalStyles.bodyText, { fontSize: 13 }]}>{d.x} — {d.y} evaluación{d.y !== 1 ? 'es' : ''} ({d.label})</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Lista de evaluaciones */}
+        {historialData.length === 0 ? (
+          <Text style={globalStyles.bodyText}>No hay evaluaciones previas guardadas.</Text>
+        ) : (
+          historialData.map((item, index) => {
+            const fecha = new Date(item.user_metadata?.fecha).toLocaleDateString();
+            const hora = new Date(item.user_metadata?.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const riesgo = item.predictive_target || 'Desconocido';
+            const emocion = item.emocion_detectada || 'No calculada';
+            const nombre = item.user_metadata?.nombre;
+            const tipo = item.tipo_evaluacion === 'baseline' ? 'Test Completo' : 'Check-in Diario';
+            const tipoBg = item.tipo_evaluacion === 'baseline' ? theme.colors.secondaryPastel : theme.colors.primaryPastel;
+
+            return (
+              <View key={index} style={[globalStyles.card, { padding: 15, marginBottom: 15 }]}>
+                {/* Fila superior: fecha + badge tipo */}
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 13, color: theme.colors.textSecondary }]}>
+                    {fecha} · {hora}{nombre && nombre !== 'Cuidador' ? `  —  ${nombre}` : ''}
+                  </Text>
+                  <View style={[styles.badge, { backgroundColor: tipoBg }]}>
+                    <Text style={styles.badgeText}>{tipo}</Text>
+                  </View>
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                  <Text style={[globalStyles.bodyText, { fontSize: 14, fontFamily: 'Nunito-Bold' }]}>Riesgo (Zarit):</Text>
+                  <Text style={[globalStyles.bodyText, { fontSize: 14, color: riesgo === 'Alta' || riesgo === 'Moderada' ? theme.colors.error : theme.colors.success }]}>{riesgo}</Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                  <Text style={[globalStyles.bodyText, { fontSize: 14, fontFamily: 'Nunito-Bold' }]}>Emoción (NLP):</Text>
+                  <Text style={[globalStyles.bodyText, { fontSize: 14 }]}>{emocion}</Text>
+                </View>
+              </View>
+            );
+          })
+        )}
+        <View style={{ height: 40 }} />
+      </ScrollView>
+    );
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {renderEvaluacion()}
+      {vistaActual === 'evaluacion' ? renderEvaluacion() : renderHistorial()}
     </View>
   );
 }
@@ -281,7 +458,7 @@ const styles = StyleSheet.create({
   tabBtn: { flex: 1, padding: 10, borderWidth: 1, borderColor: theme.colors.primaryPastel, alignItems: 'center', marginHorizontal: 5, borderRadius: 8 },
   tabBtnActive: { backgroundColor: theme.colors.primaryPastel },
   tabText: { fontFamily: 'Nunito-Bold', color: theme.colors.textMain },
-  tabTextActive: { color: '#FFF' },
+  tabTextActive: { color: theme.colors.textMain },
   likertContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   likertLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, paddingHorizontal: 5 },
   labelSmall: { fontSize: 10, color: '#777', fontFamily: 'Nunito-Regular' },
@@ -292,5 +469,28 @@ const styles = StyleSheet.create({
   },
   likertSelected: { backgroundColor: theme.colors.primaryPastel },
   likertText: { fontFamily: 'Nunito-Bold', fontSize: 16, color: theme.colors.textMain },
-  likertTextSelected: { color: '#FFFFFF' }
+  likertTextSelected: { color: '#FFFFFF' },
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  badgeText: {
+    fontFamily: 'Nunito-Bold',
+    fontSize: 11,
+    color: theme.colors.textMain,
+  },
+  profesionalCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.white,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+    elevation: 1,
+    shadowColor: theme.colors.cardShadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
 });

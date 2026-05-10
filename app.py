@@ -337,6 +337,7 @@ def evaluacion_mental():
             "tipo_evaluacion": tipo_evaluacion,
             "nlp_corpus": comentarios_generales,
             "predictive_target": riesgo,
+            "emocion_detectada": clase_detectada,
             "dimensiones_evaluadas": resumen_dimensiones,
             "intervencion": guia_respiracion
         }
@@ -373,6 +374,78 @@ def evaluacion_mental():
     except Exception as e:
         print(f"Error procesando evaluación: {str(e)}")
         return jsonify({"error": "Error interno en el servidor."}), 500
+
+@app.route('/historial_evaluaciones', methods=['GET'])
+def historial_evaluaciones():
+    try:
+        path_evaluaciones = os.path.join('data', 'evaluaciones.json')
+        if not os.path.exists(path_evaluaciones):
+            return jsonify({"status": "success", "historial": []}), 200
+            
+        with open(path_evaluaciones, 'r', encoding='utf-8') as f:
+            evaluaciones = json.load(f)
+            
+        # Ordenar por fecha descendente
+        evaluaciones.sort(
+            key=lambda x: x.get('user_metadata', {}).get('fecha', ''),
+            reverse=True
+        )
+        
+        # Devolver las últimas 50
+        return jsonify({
+            "status": "success",
+            "historial": evaluaciones[:50]
+        }), 200
+        
+    except Exception as e:
+        print(f"Error leyendo historial: {str(e)}")
+        return jsonify({"error": "Error interno al obtener el historial."}), 500
+
+
+@app.route('/nivel_riesgo_acumulado', methods=['GET'])
+def nivel_riesgo_acumulado():
+    """Analiza las últimas evaluaciones y determina si el riesgo acumulado es crítico."""
+    try:
+        path_evaluaciones = os.path.join('data', 'evaluaciones.json')
+        if not os.path.exists(path_evaluaciones):
+            return jsonify({"riesgo_critico": False, "razon": "Sin historial"}), 200
+
+        with open(path_evaluaciones, 'r', encoding='utf-8') as f:
+            evaluaciones = json.load(f)
+
+        # Ordenar por fecha descendente y tomar las últimas 5
+        evaluaciones.sort(
+            key=lambda x: x.get('user_metadata', {}).get('fecha', ''),
+            reverse=True
+        )
+        recientes = evaluaciones[:5]
+
+        niveles_altos = sum(
+            1 for ev in recientes
+            if ev.get('predictive_target') in ['Alta', 'Moderada']
+        )
+        emociones_criticas = sum(
+            1 for ev in recientes
+            if ev.get('emocion_detectada') in ['Depresión', 'Sobrecarga']
+        )
+
+        riesgo_critico = niveles_altos >= 2 or emociones_criticas >= 2
+        razon = None
+        if riesgo_critico:
+            if emociones_criticas >= 2:
+                razon = "Se han detectado señales de agotamiento emocional en tus evaluaciones recientes."
+            else:
+                razon = "Tus niveles de carga han sido altos en los últimas evaluaciones registradas."
+
+        return jsonify({
+            "riesgo_critico": riesgo_critico,
+            "razon": razon
+        }), 200
+
+    except Exception as e:
+        print(f"Error evaluando riesgo acumulado: {str(e)}")
+        return jsonify({"error": "Error interno."}), 500
+
 
 if __name__ == '__main__':
     # host='0.0.0.0' permite la conexión del teléfono a la IP de la PC [Chat History]

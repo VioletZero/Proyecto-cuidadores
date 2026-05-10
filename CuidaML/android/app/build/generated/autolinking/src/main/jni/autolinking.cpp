@@ -9,6 +9,8 @@
 #include "autolinking.h"
 #include <safeareacontext.h>
 #include <react/renderer/components/safeareacontext/ComponentDescriptors.h>
+#include <rnsvg.h>
+#include <react/renderer/components/rnsvg/ComponentDescriptors.h>
 
 namespace facebook {
 namespace react {
@@ -17,6 +19,10 @@ std::shared_ptr<TurboModule> autolinking_ModuleProvider(const std::string module
 auto module_safeareacontext = safeareacontext_ModuleProvider(moduleName, params);
 if (module_safeareacontext != nullptr) {
 return module_safeareacontext;
+}
+auto module_rnsvg = rnsvg_ModuleProvider(moduleName, params);
+if (module_rnsvg != nullptr) {
+return module_rnsvg;
 }
   return nullptr;
 }
@@ -29,6 +35,35 @@ std::shared_ptr<TurboModule> autolinking_cxxModuleProvider(const std::string mod
 void autolinking_registerProviders(std::shared_ptr<ComponentDescriptorProviderRegistry const> providerRegistry) {
 providerRegistry->add(concreteComponentDescriptorProvider<RNCSafeAreaProviderComponentDescriptor>());
 providerRegistry->add(concreteComponentDescriptorProvider<RNCSafeAreaViewComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGCircleComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGClipPathComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGDefsComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGFeBlendComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGFeColorMatrixComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGFeCompositeComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGFeFloodComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGFeGaussianBlurComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGFeMergeComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGFeOffsetComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGFilterComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGEllipseComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGForeignObjectComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGGroupComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGImageComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGLinearGradientComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGLineComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGMarkerComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGMaskComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGPathComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGPatternComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGRadialGradientComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGRectComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGSvgViewAndroidComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGSymbolComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGTextComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGTextPathComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGTSpanComponentDescriptor>());
+providerRegistry->add(concreteComponentDescriptorProvider<RNSVGUseComponentDescriptor>());
   return;
 }
 

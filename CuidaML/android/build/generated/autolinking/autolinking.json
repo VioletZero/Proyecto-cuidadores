@@ -30,6 +30,61 @@
           "isPureCxxDependency": false
         }
       }
+    },
+    "react-native-svg": {
+      "root": "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg",
+      "name": "react-native-svg",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/RNSVG.podspec",
+          "version": "15.15.4",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android",
+          "packageImportPath": "import com.horcrux.svg.SvgPackage;",
+          "packageInstance": "new SvgPackage()",
+          "buildTypes": [],
+          "libraryName": "rnsvg",
+          "componentDescriptors": [
+            "RNSVGCircleComponentDescriptor",
+            "RNSVGClipPathComponentDescriptor",
+            "RNSVGDefsComponentDescriptor",
+            "RNSVGFeBlendComponentDescriptor",
+            "RNSVGFeColorMatrixComponentDescriptor",
+            "RNSVGFeCompositeComponentDescriptor",
+            "RNSVGFeFloodComponentDescriptor",
+            "RNSVGFeGaussianBlurComponentDescriptor",
+            "RNSVGFeMergeComponentDescriptor",
+            "RNSVGFeOffsetComponentDescriptor",
+            "RNSVGFilterComponentDescriptor",
+            "RNSVGEllipseComponentDescriptor",
+            "RNSVGForeignObjectComponentDescriptor",
+            "RNSVGGroupComponentDescriptor",
+            "RNSVGImageComponentDescriptor",
+            "RNSVGLinearGradientComponentDescriptor",
+            "RNSVGLineComponentDescriptor",
+            "RNSVGMarkerComponentDescriptor",
+            "RNSVGMaskComponentDescriptor",
+            "RNSVGPathComponentDescriptor",
+            "RNSVGPatternComponentDescriptor",
+            "RNSVGRadialGradientComponentDescriptor",
+            "RNSVGRectComponentDescriptor",
+            "RNSVGSvgViewAndroidComponentDescriptor",
+            "RNSVGSymbolComponentDescriptor",
+            "RNSVGTextComponentDescriptor",
+            "RNSVGTextPathComponentDescriptor",
+            "RNSVGTSpanComponentDescriptor",
+            "RNSVGUseComponentDescriptor"
+          ],
+          "cmakeListsPath": "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
     }
   },
   "commands": [
@@ -251,7 +306,7 @@
         {
           "name": "--terminal <string>",
           "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "xterm-256color"
+          "default": "dumb"
         },
         {
           "name": "--binary-path <string>",
@@ -419,7 +474,7 @@
         {
           "name": "--terminal <string>",
           "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "xterm-256color"
+          "default": "dumb"
         },
         {
           "name": "--appId <string>",

@@ -2,4 +2,5 @@
   -C \
   /home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/x86_64 \
   appmodules \
+  react_codegen_rnsvg \
   react_codegen_safeareacontext

@@ -7,7 +7,9 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 set(REACTNATIVE_MERGED_SO true)
 
 add_subdirectory("/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/android/src/main/jni/" safeareacontext_autolinked_build)
+add_subdirectory("/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android/src/main/jni/" rnsvg_autolinked_build)
 
 set(AUTOLINKED_LIBRARIES
   react_codegen_safeareacontext
+  react_codegen_rnsvg
 )
