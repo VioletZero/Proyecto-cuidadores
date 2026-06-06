@@ -1177,5 +1177,52 @@
         "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
       ]
     }
+  },
+  {
+    "user_metadata": {
+      "id": "38f318b0-7e1d-4e80-a1b4-aef09fb04e7e",
+      "nombre": "Oliver",
+      "fecha": "2026-05-30T20:14:50.025381Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 1,
+        "label": "¿Sientes que cuidar a esta persona ocupa gran parte de tu tiempo?",
+        "score": 4,
+        "dimension": "Tiempo/Carga"
+      },
+      {
+        "item_id": 2,
+        "label": "¿Te sientes estresado/a al intentar equilibrar el cuidado con otras responsabilidades?",
+        "score": 4,
+        "dimension": "Psicológica"
+      },
+      {
+        "item_id": 11,
+        "label": "¿Sientes que has perdido control sobre tu vida desde que cuidas?",
+        "score": 4,
+        "dimension": "Psicológica"
+      }
+    ],
+    "puntaje_proporcional": 60.0,
+    "tipo_evaluacion": "diario",
+    "nlp_corpus": "Estoy muy agotado.",
+    "predictive_target": "Alta",
+    "emocion_detectada": "Depresión",
+    "dimensiones_evaluadas": {
+      "Física": "Estado físico reportado estable.",
+      "Psicológica": "Niveles elevados de estrés y preocupación.",
+      "Emocional": "Equilibrio emocional relativo.",
+      "Espiritual": "Mantiene cierto grado de interacción y tiempo personal."
+    },
+    "intervencion": {
+      "titulo": "Guía de Respiración de Emergencia (Técnica 4-7-8)",
+      "instrucciones": [
+        "1. Inhala profundamente por la nariz durante 4 segundos.",
+        "2. Mantén la respiración durante 7 segundos.",
+        "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
+      ]
+    }
   }
 ]
