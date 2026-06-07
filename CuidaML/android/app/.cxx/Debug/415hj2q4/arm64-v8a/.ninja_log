@@ -1,20 +1,26 @@
 # ninja log v5
+8	2898	1780768945163923775	AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/ShadowNodes.cpp.o	2260f537589f2352
 6	5758	1778374422779394357	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/common/cpp/react/renderer/components/rnsvg/RNSVGImageState.cpp.o	ca810db0f8b57514
 11	3456	1777142016455669393	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni/react/renderer/components/safeareacontext/EventEmitters.cpp.o	e2f619ee5c42231
-7283	7340	1778375097527398940	/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/intermediates/cxx/Debug/415hj2q4/obj/arm64-v8a/libappmodules.so	63a181a5c119bce3
-5	7283	1778375097404184353	CMakeFiles/appmodules.dir/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	8f0fb008f214e4db
-0	3	0	/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/arm64-v8a/CMakeFiles/cmake.verify_globs	aa8a72b679b2cca6
+7535	7667	1780768949939112287	/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/intermediates/cxx/Debug/415hj2q4/obj/arm64-v8a/libappmodules.so	fd002de48e866170
+6	7535	1780768949753629641	CMakeFiles/appmodules.dir/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	cdaf48581a5dd5c5
+0	4	0	/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/arm64-v8a/CMakeFiles/cmake.verify_globs	aa8a72b679b2cca6
 9	8298	1778374425305472711	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android/build/generated/source/codegen/jni/react/renderer/components/rnsvg/ComponentDescriptors.cpp.o	42536b3620881f1
+8	1941	1780768944208885634	AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/States.cpp.o	fdf98ee25e6ee174
 14	2819	1777142015817928843	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni/react/renderer/components/safeareacontext/States.cpp.o	518c26e4a886c687
 7	4686	1777142017676124662	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/common/cpp/react/renderer/components/safeareacontext/RNCSafeAreaViewState.cpp.o	1ac8180bb368b226
 6	6268	1777142019257789017	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/common/cpp/react/renderer/components/safeareacontext/RNCSafeAreaViewShadowNode.cpp.o	3be93b4fddd58dca
 5	4206	1777142017188242331	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni/safeareacontext-generated.cpp.o	78faf90f9b9bb0be
 9966	10108	1778374427151769685	/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/intermediates/cxx/Debug/415hj2q4/obj/arm64-v8a/libreact_codegen_rnsvg.so	a9ac6b0401b7b868
-4	72	1780171931681822209	build.ninja	18940b498541a186
+3	236	1780769798540963975	build.ninja	18940b498541a186
+6	2775	1780768945034784904	AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/AsyncStorageSpec-generated.cpp.o	e07d8aa59b27b942
 10	6576	1778374423599031880	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android/build/generated/source/codegen/jni/react/renderer/components/rnsvg/ShadowNodes.cpp.o	422a39c70e552a5d
 10	6380	1778374423395916631	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android/build/generated/source/codegen/jni/react/renderer/components/rnsvg/EventEmitters.cpp.o	45f65b26955c0c25
 8	6525	1778374423549476124	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/common/cpp/react/renderer/components/rnsvg/RNSVGShadowNodes.cpp.o	392561ff2d868b2e
-6	2616	1778375092792266240	CMakeFiles/appmodules.dir/OnLoad.cpp.o	ccd6a484bbdfa193
+8	2954	1780768945219938554	AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/Props.cpp.o	5297f5d17d168fe1
+7	2127	1780768944396342672	AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/EventEmitters.cpp.o	ab27383cfeb88a75
+6	3349	1780768945610695626	CMakeFiles/appmodules.dir/OnLoad.cpp.o	f6b825d227c2223e
+6	3001	1780768945265396081	AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/ComponentDescriptors.cpp.o	5682ac6f05ece0d4
 6	7285	1778374424302933803	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/common/cpp/react/renderer/components/rnsvg/RNSVGImageShadowNode.cpp.o	e3a2feae9c2f59ed
 9	5296	1777142018285743342	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni/react/renderer/components/safeareacontext/Props.cpp.o	af2fe574cbc729cd
 8	5885	1777142018875036509	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni/react/renderer/components/safeareacontext/ComponentDescriptors.cpp.o	c979f97d5e0b2fd2
@@ -26,4 +32,3 @@
 9	8260	1778374425267031467	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/rnsvg.cpp.o	cc9a6380c4a5bf60
 11	3575	1778374420596631087	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android/build/generated/source/codegen/jni/react/renderer/components/rnsvg/States.cpp.o	78ff2dd5c6e29cb9
 0	3	0	/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/arm64-v8a/CMakeFiles/cmake.verify_globs	aa8a72b679b2cca6
-1	4	0	/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/arm64-v8a/CMakeFiles/cmake.verify_globs	aa8a72b679b2cca6

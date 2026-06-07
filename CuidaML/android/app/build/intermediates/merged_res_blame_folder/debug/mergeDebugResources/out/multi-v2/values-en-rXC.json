@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.cuidaml.app-mergeDebugResources-26:/values-en-rXC/values-en-rXC.xml",
+            "outputFile": "com.cuidaml.app-mergeDebugResources-28:/values-en-rXC/values-en-rXC.xml",
             "map": [
                 {
                     "source": "/home/violetzero/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/res/values-en-rXC/values-en-rXC.xml",

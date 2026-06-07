@@ -3,6 +3,31 @@
   "reactNativePath": "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native",
   "reactNativeVersion": "0.84",
   "dependencies": {
+    "@react-native-async-storage/async-storage": {
+      "root": "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/@react-native-async-storage/async-storage",
+      "name": "@react-native-async-storage/async-storage",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/@react-native-async-storage/async-storage/AsyncStorage.podspec",
+          "version": "3.1.1",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/@react-native-async-storage/async-storage/android",
+          "packageImportPath": "import org.asyncstorage.AsyncStoragePackage;",
+          "packageInstance": "new AsyncStoragePackage()",
+          "buildTypes": [],
+          "libraryName": "AsyncStorageSpec",
+          "componentDescriptors": [],
+          "cmakeListsPath": "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-safe-area-context": {
       "root": "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context",
       "name": "react-native-safe-area-context",
@@ -306,7 +331,7 @@
         {
           "name": "--terminal <string>",
           "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "dumb"
+          "default": "xterm-256color"
         },
         {
           "name": "--binary-path <string>",
@@ -474,7 +499,7 @@
         {
           "name": "--terminal <string>",
           "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "dumb"
+          "default": "xterm-256color"
         },
         {
           "name": "--appId <string>",

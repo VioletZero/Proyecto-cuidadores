@@ -55,6 +55,8 @@ public class PackageList {
   public ArrayList<ReactPackage> getPackages() {
     return new ArrayList<>(Arrays.<ReactPackage>asList(
       new MainReactPackage(mConfig),
+      // @react-native-async-storage/async-storage
+      new org.asyncstorage.AsyncStoragePackage(),
       // react-native-safe-area-context
       new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
       // react-native-svg

@@ -7,6 +7,7 @@
  */
 
 #include "autolinking.h"
+#include <AsyncStorageSpec.h>
 #include <safeareacontext.h>
 #include <react/renderer/components/safeareacontext/ComponentDescriptors.h>
 #include <rnsvg.h>
@@ -16,6 +17,10 @@ namespace facebook {
 namespace react {
 
 std::shared_ptr<TurboModule> autolinking_ModuleProvider(const std::string moduleName, const JavaTurboModule::InitParams &params) {
+auto module_AsyncStorageSpec = AsyncStorageSpec_ModuleProvider(moduleName, params);
+if (module_AsyncStorageSpec != nullptr) {
+return module_AsyncStorageSpec;
+}
 auto module_safeareacontext = safeareacontext_ModuleProvider(moduleName, params);
 if (module_safeareacontext != nullptr) {
 return module_safeareacontext;

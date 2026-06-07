@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, StyleSheet, Linking } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PieChart } from './src/components/PieChart';
 import { globalStyles, theme } from './src/styles/theme';
+import { RegistroScreen } from './src/components/RegistroScreen';
 
 interface EvaluacionResult {
   riesgo: string;
@@ -39,6 +42,8 @@ const PREGUNTAS = [
 ];
 
 export default function App() {
+  const [cargando, setCargando] = useState(true);
+  const [usuarioRegistrado, setUsuarioRegistrado] = useState(false);
   const [tipoEvaluacion, setTipoEvaluacion] = useState<'diario' | 'baseline'>('diario');
   const [vistaActual, setVistaActual] = useState<'evaluacion' | 'historial'>('evaluacion');
   const [historialData, setHistorialData] = useState<any[]>([]);
@@ -69,6 +74,85 @@ export default function App() {
   const [preguntasActivas, setPreguntasActivas] = useState(PREGUNTAS);
 
   const scrollViewRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    const cargarDatosUsuario = async () => {
+      const startTime = Date.now();
+      try {
+        const guardado = await AsyncStorage.getItem('@usuario_registrado');
+        const nombre = await AsyncStorage.getItem('@nombre_usuario');
+        if (guardado === 'true' && nombre) {
+          setNombreUsuario(nombre);
+          setUsuarioRegistrado(true);
+
+          // Cargar último resultado si coincide con la fecha de hoy
+          const guardadoFecha = await AsyncStorage.getItem('@ultimo_resultado_fecha');
+          if (guardadoFecha === new Date().toDateString()) {
+            const resultadoStr = await AsyncStorage.getItem('@ultimo_resultado');
+            if (resultadoStr) {
+              setResultadoEval(JSON.parse(resultadoStr));
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Error cargando datos de usuario:', e);
+      } finally {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, 3000 - elapsed);
+        setTimeout(() => {
+          setCargando(false);
+        }, remaining);
+      }
+    };
+    cargarDatosUsuario();
+  }, []);
+
+  const handleRegistroExitoso = async (nombre: string, emailParam?: string, passwordParam?: string, modoLogin?: boolean) => {
+    try {
+      if (modoLogin && emailParam && passwordParam) {
+        // Verificar credenciales guardadas
+        const emailGuardado = await AsyncStorage.getItem('@email_usuario');
+        const passGuardado  = await AsyncStorage.getItem('@pass_usuario');
+        if (emailParam.trim().toLowerCase() !== emailGuardado || passwordParam !== passGuardado) {
+          Alert.alert(
+            'Credenciales incorrectas',
+            'El correo o la contraseña no coinciden con una cuenta registrada. '
+            + 'Si eres nuevo, elige Regístrate.'
+          );
+          return;
+        }
+        // Login exitoso: recuperar nombre guardado
+        const nombreGuardado = await AsyncStorage.getItem('@nombre_usuario') ?? nombre;
+        setNombreUsuario(nombreGuardado);
+        setUsuarioRegistrado(true);
+        return;
+      }
+      // Registro nuevo: guardar todo
+      await AsyncStorage.setItem('@usuario_registrado', 'true');
+      await AsyncStorage.setItem('@nombre_usuario', nombre);
+      if (emailParam) { await AsyncStorage.setItem('@email_usuario', emailParam.trim().toLowerCase()); }
+      if (passwordParam) { await AsyncStorage.setItem('@pass_usuario', passwordParam); }
+      setNombreUsuario(nombre);
+      setUsuarioRegistrado(true);
+    } catch (e) {
+      Alert.alert('Error', 'No se pudieron guardar los datos de registro localmente.');
+    }
+  };
+
+  const cerrarSesion = async () => {
+    try {
+      await AsyncStorage.removeItem('@usuario_registrado');
+      await AsyncStorage.removeItem('@nombre_usuario');
+      await AsyncStorage.removeItem('@ultimo_resultado');
+      await AsyncStorage.removeItem('@ultimo_resultado_fecha');
+      setNombreUsuario('');
+      setUsuarioRegistrado(false);
+      setResultadoEval(null);
+      setVistaActual('evaluacion');
+    } catch (e) {
+      Alert.alert('Error', 'No se pudo cerrar la sesión.');
+    }
+  };
 
   useEffect(() => {
     const fetchPreguntas = async () => {
@@ -126,13 +210,15 @@ export default function App() {
         Alert.alert("Error", data.error);
       } else {
         setResultadoEval(data as EvaluacionResult);
+        await AsyncStorage.setItem('@ultimo_resultado', JSON.stringify(data));
+        await AsyncStorage.setItem('@ultimo_resultado_fecha', new Date().toDateString());
         setRespuestas({});
         setComentarios('');
 
         // Esperar a que el layout se actualice con la tarjeta de resultado antes de hacer scroll
         setTimeout(() => {
           scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-        }, 100);
+        }, 350);
 
         Alert.alert("¡Gracias!", "Tu registro ha sido guardado correctamente.");
       }
@@ -163,16 +249,16 @@ export default function App() {
   };
 
   // Calcular distribución de emociones para el pie chart
-  const calcularDistribucionEmociones = () => {
+  const calcularDistribucionEmociones = (filtered: any[]) => {
     const conteo: Record<string, number> = {};
-    historialData.forEach(item => {
+    filtered.forEach(item => {
       const emocion = item.emocion_detectada || 'No detectada';
       conteo[emocion] = (conteo[emocion] || 0) + 1;
     });
     return Object.entries(conteo).map(([emocion, cantidad]) => ({
       x: emocion,
       y: cantidad,
-      label: `${Math.round((cantidad / historialData.length) * 100)}%`,
+      label: `${Math.round((cantidad / Math.max(1, filtered.length)) * 100)}%`,
       color: EMOTION_COLORS[emocion] || theme.colors.textSecondary,
     }));
   };
@@ -203,18 +289,7 @@ export default function App() {
         {tipoEvaluacion === 'diario' ? 'Hoy queremos saber cómo estás 💛 (30 segundos)' : 'Evaluación Completa de Bienestar'}
       </Text>
 
-      <View style={[globalStyles.card, { padding: 15, marginBottom: 15 }]}>
-        <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 5 }]}>
-          ¿Cuál es tu nombre?
-        </Text>
-        <TextInput
-          placeholder="Tu nombre (opcional)"
-          placeholderTextColor="#A0A0A0"
-          value={nombreUsuario}
-          onChangeText={setNombreUsuario}
-          style={[globalStyles.bodyText, globalStyles.inputArea, { minHeight: 45, padding: 10, marginBottom: 5 }]}
-        />
-      </View>
+
 
       <View style={[globalStyles.card, { padding: 15, marginBottom: 15 }]}>
         <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', textAlign: 'center', marginBottom: 5 }]}>
@@ -324,19 +399,51 @@ export default function App() {
         <Text style={globalStyles.buttonText}>ENVIAR Y VER RESULTADO</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={[globalStyles.button, { backgroundColor: theme.colors.primaryLight, marginTop: 20 }]} 
-        onPress={fetchHistorial}
-      >
-        <Text style={[globalStyles.buttonText, { fontSize: 16 }]}>VER HISTÓRICO GLOBAL</Text>
-      </TouchableOpacity>
-      
+      {/* Sección de profesionales disponibles */}
+      <View style={[globalStyles.card, { marginTop: 20, backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain }]}>
+        <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 15, marginBottom: 6 }]}>
+          👩‍⚕️ Profesionales de apoyo
+        </Text>
+        <Text style={[globalStyles.bodyText, { fontSize: 13, marginBottom: 12, color: theme.colors.textSecondary }]}>
+          Si sientes sobrecarga o necesitas hablar con alguien, tienes profesionales a tu alcance.
+        </Text>
+        <TouchableOpacity
+          style={[globalStyles.button, { backgroundColor: theme.colors.secondaryPastel, height: 44 }]}
+          onPress={() => setMostrarProfesionales(v => !v)}
+        >
+          <Text style={[globalStyles.buttonText, { fontSize: 14 }]}>
+            {mostrarProfesionales ? 'Ocultar profesionales' : 'Ver profesionales disponibles'}
+          </Text>
+        </TouchableOpacity>
+
+        {mostrarProfesionales && (
+          <View style={{ marginTop: 12 }}>
+            {PROFESIONALES.map((p, i) => (
+              <TouchableOpacity
+                key={i}
+                style={styles.profesionalCard}
+                onPress={() => Linking.openURL(`https://wa.me/${p.telefono}?text=Hola%20${encodeURIComponent(p.nombre)}%2C%20me%20gustar%C3%ADa%20recibir%20apoyo%20como%20cuidador%2Fa.`)}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 14 }]}>{p.nombre}</Text>
+                  <Text style={[globalStyles.bodyText, { fontSize: 12, color: theme.colors.textSecondary }]}>{p.especialidad}</Text>
+                </View>
+                <Text style={{ fontSize: 22 }}>💬</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </View>
+
       <View style={{ height: 40 }} />
     </ScrollView>
   );
 
   const renderHistorial = () => {
-    const pieData = calcularDistribucionEmociones();
+    const historialFiltrado = historialData.filter(
+      item => item.user_metadata?.nombre === nombreUsuario
+    );
+    const pieData = calcularDistribucionEmociones(historialFiltrado);
 
     return (
       <ScrollView contentContainerStyle={globalStyles.container}>
@@ -344,19 +451,57 @@ export default function App() {
         {/* Header */}
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 10 }}>
           <TouchableOpacity onPress={() => { setVistaActual('evaluacion'); setMostrarProfesionales(false); }} style={{ padding: 10 }}>
-            <Text style={{ fontSize: 24, color: theme.colors.textMain }}>←</Text>
+            <Text style={styles.backBtnText}>◀ Volver</Text>
           </TouchableOpacity>
           <Text style={[globalStyles.headerTitle, { marginBottom: 0, marginLeft: 10 }]}>Histórico</Text>
         </View>
 
-        {/* Banner de riesgo crítico */}
-        {riesgoCritico.activo && (
+        {/* Banner de riesgo crítico (solo si tiene historial) */}
+        {riesgoCritico.activo && historialFiltrado.length > 0 && (
           <View style={[globalStyles.card, { backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain, marginBottom: 15 }]}>
             <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 15, marginBottom: 6 }]}>
               💛 Un momento para ti
             </Text>
             <Text style={[globalStyles.bodyText, { fontSize: 14, marginBottom: 12 }]}>
               {riesgoCritico.razon} Sabemos que cuidar a alguien puede ser agotador. ¿Te gustaría hablar con alguien que puede ayudarte?
+            </Text>
+            <TouchableOpacity
+              style={[globalStyles.button, { backgroundColor: theme.colors.secondaryPastel, height: 44 }]}
+              onPress={() => setMostrarProfesionales(v => !v)}
+            >
+              <Text style={[globalStyles.buttonText, { fontSize: 14 }]}>
+                {mostrarProfesionales ? 'Ocultar profesionales' : 'Ver profesionales disponibles'}
+              </Text>
+            </TouchableOpacity>
+
+            {mostrarProfesionales && (
+              <View style={{ marginTop: 12 }}>
+                {PROFESIONALES.map((p, i) => (
+                  <TouchableOpacity
+                    key={i}
+                    style={styles.profesionalCard}
+                    onPress={() => Linking.openURL(`https://wa.me/${p.telefono}?text=Hola%20${encodeURIComponent(p.nombre)}%2C%20me%20gustar%C3%ADa%20recibir%20apoyo%20como%20cuidador%2Fa.`)}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 14 }]}>{p.nombre}</Text>
+                      <Text style={[globalStyles.bodyText, { fontSize: 12, color: theme.colors.textSecondary }]}>{p.especialidad}</Text>
+                    </View>
+                    <Text style={{ fontSize: 22 }}>💬</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* Banner de bienvenida y profesionales para usuarios nuevos (sin historial aún) */}
+        {historialFiltrado.length === 0 && (
+          <View style={[globalStyles.card, { backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain, marginBottom: 15 }]}>
+            <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 15, marginBottom: 6 }]}>
+              💛 Apoyo profesional a tu alcance
+            </Text>
+            <Text style={[globalStyles.bodyText, { fontSize: 14, marginBottom: 12 }]}>
+              Queremos acompañarte en cada paso. Si en algún momento sientes sobrecarga o necesitas conversar, ponemos a tu disposición profesionales especializados en apoyo a cuidadores.
             </Text>
             <TouchableOpacity
               style={[globalStyles.button, { backgroundColor: theme.colors.secondaryPastel, height: 44 }]}
@@ -405,10 +550,10 @@ export default function App() {
         )}
 
         {/* Lista de evaluaciones */}
-        {historialData.length === 0 ? (
+        {historialFiltrado.length === 0 ? (
           <Text style={globalStyles.bodyText}>No hay evaluaciones previas guardadas.</Text>
         ) : (
-          historialData.map((item, index) => {
+          historialFiltrado.map((item, index) => {
             const fecha = new Date(item.user_metadata?.fecha).toLocaleDateString();
             const hora = new Date(item.user_metadata?.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const riesgo = item.predictive_target || 'Desconocido';
@@ -447,9 +592,39 @@ export default function App() {
     );
   };
 
+  if (cargando) {
+    return (
+      <View style={styles.splashContainer}>
+        <Text style={styles.splashEmoji}>💛</Text>
+        <Text style={globalStyles.headerTitle}>CuidaML</Text>
+        <Text style={[globalStyles.bodyText, styles.splashText]}>
+          Cargando tu diario de bienestar...
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {vistaActual === 'evaluacion' ? renderEvaluacion() : renderHistorial()}
+      {!usuarioRegistrado ? (
+        <RegistroScreen onRegistroExitoso={(nombre, emailP, passP, login) => handleRegistroExitoso(nombre, emailP, passP, login)} />
+      ) : (
+        <SafeAreaView style={styles.mainSafeArea}>
+          {/* Cabecera de Usuario Autenticado */}
+          <View style={styles.userHeader}>
+            <TouchableOpacity onPress={fetchHistorial} activeOpacity={0.75}>
+              <Text style={styles.userHeaderText}>
+                Hola, <Text style={styles.userNameText}>{nombreUsuario}</Text> 💛
+                {'  '}<Text style={styles.historialHintText}>▶ Mi historial</Text>
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={cerrarSesion} style={styles.logoutBtn}>
+              <Text style={styles.logoutBtnText}>Cerrar sesión 🚪</Text>
+            </TouchableOpacity>
+          </View>
+          {vistaActual === 'evaluacion' ? renderEvaluacion() : renderHistorial()}
+        </SafeAreaView>
+      )}
     </View>
   );
 }
@@ -492,5 +667,66 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+  },
+  userHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F2F6',
+    backgroundColor: '#FFFFFF',
+  },
+  userHeaderText: {
+    fontFamily: 'Nunito-Bold',
+    fontSize: 14,
+    color: '#636E72',
+  },
+  userNameText: {
+    color: '#1D4ED8',
+  },
+  logoutBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#E76F51',
+    borderRadius: 12,
+    backgroundColor: 'rgba(231, 111, 81, 0.05)',
+  },
+  logoutBtnText: {
+    fontFamily: 'Nunito-Bold',
+    fontSize: 11,
+    color: '#E76F51',
+  },
+  splashContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    padding: 24,
+  },
+  splashEmoji: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  splashText: {
+    textAlign: 'center',
+    color: '#636E72',
+    marginTop: 8,
+  },
+  backBtnText: {
+    fontSize: 14,
+    fontFamily: 'Nunito-Bold',
+    color: '#1D4ED8',
+  },
+  historialHintText: {
+    fontSize: 11,
+    fontFamily: 'Nunito-Bold',
+    color: theme.colors.primaryMain,
+    letterSpacing: 0.3,
+  },
+  mainSafeArea: {
+    flex: 1,
   },
 });
