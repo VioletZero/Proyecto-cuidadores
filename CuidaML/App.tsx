@@ -5,6 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PieChart } from './src/components/PieChart';
 import { globalStyles, theme } from './src/styles/theme';
 import { RegistroScreen } from './src/components/RegistroScreen';
+import mensajesSoporte from './src/data/mensajesSoporte.json';
+import { NotificacionModal } from './src/components/NotificacionModal';
 
 interface EvaluacionResult {
   riesgo: string;
@@ -72,6 +74,11 @@ export default function App() {
   const [nombreUsuario, setNombreUsuario] = useState<string>('');
   const [resultadoEval, setResultadoEval] = useState<EvaluacionResult | null>(null);
   const [preguntasActivas, setPreguntasActivas] = useState(PREGUNTAS);
+
+  // Estado para la notificación psicoeducativa
+  const [mensajeNotificacionActivo, setMensajeNotificacionActivo] = useState<any | null>(null);
+  const [modalNotificacionVisible, setModalNotificacionVisible] = useState(false);
+  const [testCycleIndex, setTestCycleIndex] = useState(0);
 
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -172,6 +179,59 @@ export default function App() {
       }
     };
     fetchPreguntas();
+  }, []);
+
+  const processDeepLink = (url: string) => {
+    if (!url) return;
+    const match = url.match(/id=([^&]+)/);
+    if (match && match[1]) {
+      const messageId = match[1];
+      const messageData = mensajesSoporte.find(m => m.id === messageId);
+      if (messageData) {
+        setMensajeNotificacionActivo(messageData);
+        setModalNotificacionVisible(true);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleUrl = (event: { url: string }) => {
+      processDeepLink(event.url);
+    };
+    const subscription = Linking.addEventListener('url', handleUrl);
+
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        processDeepLink(url);
+      }
+    });
+
+    const interval = setInterval(() => {
+      const now = new Date();
+      if (now.getHours() === 13 && now.getMinutes() === 0) {
+        Alert.alert(
+          "CuidaML - Apoyo Diario 💛",
+          "Tienes un nuevo mensaje de apoyo disponible: \"¿Estoy cansado o sobrecargado?\"",
+          [
+            {
+              text: "Ver ahora",
+              onPress: () => {
+                processDeepLink("cuida_ml://notification-popup?id=eje1");
+              }
+            },
+            {
+              text: "Más tarde",
+              style: "cancel"
+            }
+          ]
+        );
+      }
+    }, 60000);
+
+    return () => {
+      subscription.remove();
+      clearInterval(interval);
+    };
   }, []);
 
   const handleSeleccion = (preguntaId: number, valor: number) => {
@@ -409,6 +469,41 @@ export default function App() {
         </Text>
       </TouchableOpacity>
 
+      {/* Botón de Prueba para Desarrolladores */}
+      <TouchableOpacity
+        style={[globalStyles.button, { backgroundColor: '#F1F2F6', marginTop: 10, borderStyle: 'dashed', borderWidth: 1, borderColor: '#A4B0BE' }]}
+        onPress={() => {
+          const ids = ['eje1', 'eje2', 'eje3', 'eje4'];
+          const currentId = ids[testCycleIndex];
+          const nextIndex = (testCycleIndex + 1) % ids.length;
+          setTestCycleIndex(nextIndex);
+
+          const msg = mensajesSoporte.find(m => m.id === currentId);
+          if (msg) {
+            Alert.alert(
+              `Notificación: ${msg.notificationTitle} 💛`,
+              msg.notificationPreview,
+              [
+                {
+                  text: "Ver ahora",
+                  onPress: () => {
+                    processDeepLink(`cuida_ml://notification-popup?id=${currentId}`);
+                  }
+                },
+                {
+                  text: "Más tarde",
+                  style: "cancel"
+                }
+              ]
+            );
+          }
+        }}
+      >
+        <Text style={[globalStyles.buttonText, { fontSize: 13, color: '#57606F' }]}>
+          🔔 SIMULAR NOTIFICACIÓN (EJE {(testCycleIndex + 1)}/4)
+        </Text>
+      </TouchableOpacity>
+
       <View style={{ height: 40 }} />
     </ScrollView>
   );
@@ -559,6 +654,16 @@ export default function App() {
           {vistaActual === 'evaluacion' ? renderEvaluacion() : renderHistorial()}
         </SafeAreaView>
       )}
+
+      {/* Modal Emergente Psicoeducativo de Notificación */}
+      <NotificacionModal
+        visible={modalNotificacionVisible}
+        onClose={(actionType) => {
+          setModalNotificacionVisible(false);
+          console.log("Modal cerrado vía acción:", actionType);
+        }}
+        data={mensajeNotificacionActivo}
+      />
     </View>
   );
 }

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "eje1",
+    "notificationTitle": "Sobrecarga vs Cansancio",
+    "notificationPreview": "¿Cansancio físico o sobrecarga emocional? Aprende a identificar las señales invisibles.",
+    "modalHeader": "Identifica tu Cansancio: ¿Físico o Emocional?",
+    "modalBody": "Es común confundir el cansancio del día a día con la sobrecarga del rol de cuidador. Aprender a diferenciarlos te permitirá actuar a tiempo.\n\n**Señales de Cansancio Físico:**\n* Fatiga muscular o dolor corporal localizado.\n* Ganas de dormir que alivian el malestar tras descansar.\n* Agotamiento derivado de tareas mecánicas directas.\n\n**Señales de Sobrecarga Emocional (Zarit):**\n* Irritabilidad constante o cambios repentinos de humor.\n* Dificultad para conciliar el sueño a pesar de estar exhausto/a.\n* Sentimientos frecuentes de culpa, impotencia o frustración.\n* Aislamiento de amigos y pérdida de interés en tus pasatiempos.\n\n*Recuerda:* El cansancio físico se recupera durmiendo; la sobrecarga emocional requiere liberar la mente, buscar apoyo y delegar responsabilidades.",
+    "actionButtonText": "Entendido"
+  },
+  {
+    "id": "eje2",
+    "notificationTitle": "Permiso para Descansar",
+    "notificationPreview": "Cuidar de ti no es egoísta. Date permiso para pausar y recargar hoy.",
+    "modalHeader": "El Arte de Darse Permiso para Descansar",
+    "modalBody": "Muchos cuidadores sienten culpa cuando se toman tiempo libre. Sin embargo, el descanso no es un lujo, sino una necesidad clínica básica.\n\n**Desmitificando Creencias Limitantes:**\n* **Mito:** *\"Nadie puede cuidarlo tan bien como yo\"*.\n  * **Realidad:** Delegar permite que otros se involucren y te protege del colapso.\n* **Mito:** *\"Es egoísta pensar en mí ahora\"*.\n  * **Realidad:** No puedes verter agua de una jarra vacía. Si tú colapsas, no podrás cuidar a nadie.\n\n**Acciones para tu Descanso:**\n1. Elige una pausa de al menos 15 minutos hoy.\n2. Haz algo que no tenga relación con el cuidado (leer, caminar, tomar un té caliente).\n3. Reconoce mentalmente que estás haciendo un gran trabajo.",
+    "actionButtonText": "Cerrar"
+  },
+  {
+    "id": "eje3",
+    "notificationTitle": "Duelo Anticipado",
+    "notificationPreview": "El duelo silencioso de ver partir a alguien que aún está físicamente con nosotros.",
+    "modalHeader": "El Duelo Anticipado en el Proceso de Cuidado",
+    "modalBody": "El duelo anticipado ocurre cuando empezamos a experimentar la pérdida de un ser querido debido al deterioro cognitivo o físico, antes de su partida física.\n\n**Cómo se Manifiesta:**\n* Tristeza por las habilidades perdidas de la persona.\n* Nostalgia por la relación y la comunicación que solían tener.\n* Ansiedad recurrente por el futuro y la evolución de la enfermedad.\n\n**Consejos para Transitar el Duelo:**\n* **Valida tus emociones:** Sentir enojo, tristeza o culpa es completamente natural.\n* **Honra el presente:** Intenta conectar con la persona desde el afecto actual (una sonrisa, tomar su mano, el silencio compartido).\n* **Comparte tu sentir:** Hablar sobre este duelo silencioso con profesionales o grupos de apoyo alivia considerablemente el peso emocional.",
+    "actionButtonText": "Entendido"
+  },
+  {
+    "id": "eje4",
+    "notificationTitle": "Pausa de Emergencia",
+    "notificationPreview": "Pausa de 5 minutos: Recupera la calma cuando sientas que pierdes el control.",
+    "modalHeader": "Pausa de Emergencia: 5 Minutos para Calmar la Mente",
+    "modalBody": "Cuando la frustración o la tensión superen tus límites, utiliza este protocolo de 5 pasos para restablecer tu equilibrio emocional:\n\n**1. Pausa y Respira Deep (1 min):**\nDetente físicamente. Haz tres respiraciones lentas inhalando por la nariz y exhalando por la boca.\n\n**2. Nombra lo que Sientes (1 min):**\nIdentifica tu emoción sin juzgarla. Di mentalmente: *\"Siento enojo\"* o *\"Siento miedo en este momento\"*.\n\n**3. Separa a la Persona de la Enfermedad (1 min):**\nRecuerda que los comportamientos difíciles son consecuencia de la condición de salud, no un ataque personal hacia ti.\n\n**4. Reconecta con tu Propósito (1 min):**\nTrae a la mente la razón por la que decidiste cuidar. Conecta con el cariño y el respeto.\n\n**5. Sé Compasivo/a Contigo (1 min):**\nRepítete a ti mismo/a: *\"Estoy haciendo lo mejor que puedo bajo estas circunstancias difíciles\"*.",
+    "actionButtonText": "Hacer ejercicio"
+  }
+]
