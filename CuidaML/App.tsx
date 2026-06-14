@@ -123,6 +123,8 @@ export default function App() {
         }
         // Login exitoso: recuperar nombre guardado
         const nombreGuardado = await AsyncStorage.getItem('@nombre_usuario') ?? nombre;
+        await AsyncStorage.setItem('@usuario_registrado', 'true');
+        await AsyncStorage.setItem('@nombre_usuario', nombreGuardado);
         setNombreUsuario(nombreGuardado);
         setUsuarioRegistrado(true);
         return;
@@ -142,7 +144,6 @@ export default function App() {
   const cerrarSesion = async () => {
     try {
       await AsyncStorage.removeItem('@usuario_registrado');
-      await AsyncStorage.removeItem('@nombre_usuario');
       await AsyncStorage.removeItem('@ultimo_resultado');
       await AsyncStorage.removeItem('@ultimo_resultado_fecha');
       setNombreUsuario('');
@@ -399,41 +400,14 @@ export default function App() {
         <Text style={globalStyles.buttonText}>ENVIAR Y VER RESULTADO</Text>
       </TouchableOpacity>
 
-      {/* Sección de profesionales disponibles */}
-      <View style={[globalStyles.card, { marginTop: 20, backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain }]}>
-        <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 15, marginBottom: 6 }]}>
-          👩‍⚕️ Profesionales de apoyo
+      <TouchableOpacity
+        style={[globalStyles.button, { backgroundColor: theme.colors.primaryLight, marginTop: 15 }]}
+        onPress={fetchHistorial}
+      >
+        <Text style={[globalStyles.buttonText, { fontSize: 15 }]}>
+          Historial y Profesionales Disponibles
         </Text>
-        <Text style={[globalStyles.bodyText, { fontSize: 13, marginBottom: 12, color: theme.colors.textSecondary }]}>
-          Si sientes sobrecarga o necesitas hablar con alguien, tienes profesionales a tu alcance.
-        </Text>
-        <TouchableOpacity
-          style={[globalStyles.button, { backgroundColor: theme.colors.secondaryPastel, height: 44 }]}
-          onPress={() => setMostrarProfesionales(v => !v)}
-        >
-          <Text style={[globalStyles.buttonText, { fontSize: 14 }]}>
-            {mostrarProfesionales ? 'Ocultar profesionales' : 'Ver profesionales disponibles'}
-          </Text>
-        </TouchableOpacity>
-
-        {mostrarProfesionales && (
-          <View style={{ marginTop: 12 }}>
-            {PROFESIONALES.map((p, i) => (
-              <TouchableOpacity
-                key={i}
-                style={styles.profesionalCard}
-                onPress={() => Linking.openURL(`https://wa.me/${p.telefono}?text=Hola%20${encodeURIComponent(p.nombre)}%2C%20me%20gustar%C3%ADa%20recibir%20apoyo%20como%20cuidador%2Fa.`)}
-              >
-                <View style={{ flex: 1 }}>
-                  <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 14 }]}>{p.nombre}</Text>
-                  <Text style={[globalStyles.bodyText, { fontSize: 12, color: theme.colors.textSecondary }]}>{p.especialidad}</Text>
-                </View>
-                <Text style={{ fontSize: 22 }}>💬</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-      </View>
+      </TouchableOpacity>
 
       <View style={{ height: 40 }} />
     </ScrollView>
@@ -456,81 +430,44 @@ export default function App() {
           <Text style={[globalStyles.headerTitle, { marginBottom: 0, marginLeft: 10 }]}>Histórico</Text>
         </View>
 
-        {/* Banner de riesgo crítico (solo si tiene historial) */}
-        {riesgoCritico.activo && historialFiltrado.length > 0 && (
-          <View style={[globalStyles.card, { backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain, marginBottom: 15 }]}>
-            <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 15, marginBottom: 6 }]}>
-              💛 Un momento para ti
+        {/* Sección Unificada de Profesionales de Apoyo */}
+        <View style={[globalStyles.card, { backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain, marginBottom: 15 }]}>
+          <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 15, marginBottom: 6 }]}>
+            {riesgoCritico.activo ? '💛 Un momento para ti' : '💛 Apoyo profesional a tu alcance'}
+          </Text>
+          <Text style={[globalStyles.bodyText, { fontSize: 14, marginBottom: 12 }]}>
+            {riesgoCritico.activo 
+              ? `${riesgoCritico.razon} Sabemos que cuidar a alguien puede ser agotador. ¿Te gustaría hablar con alguien que puede ayudarte?`
+              : 'Queremos acompañarte en cada paso. Si en algún momento sientes sobrecarga o necesitas conversar, ponemos a tu disposición profesionales especializados en apoyo a cuidadores.'
+            }
+          </Text>
+          <TouchableOpacity
+            style={[globalStyles.button, { backgroundColor: theme.colors.secondaryPastel, height: 44 }]}
+            onPress={() => setMostrarProfesionales(v => !v)}
+          >
+            <Text style={[globalStyles.buttonText, { fontSize: 14 }]}>
+              {mostrarProfesionales ? 'Ocultar profesionales' : 'Ver profesionales disponibles'}
             </Text>
-            <Text style={[globalStyles.bodyText, { fontSize: 14, marginBottom: 12 }]}>
-              {riesgoCritico.razon} Sabemos que cuidar a alguien puede ser agotador. ¿Te gustaría hablar con alguien que puede ayudarte?
-            </Text>
-            <TouchableOpacity
-              style={[globalStyles.button, { backgroundColor: theme.colors.secondaryPastel, height: 44 }]}
-              onPress={() => setMostrarProfesionales(v => !v)}
-            >
-              <Text style={[globalStyles.buttonText, { fontSize: 14 }]}>
-                {mostrarProfesionales ? 'Ocultar profesionales' : 'Ver profesionales disponibles'}
-              </Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
 
-            {mostrarProfesionales && (
-              <View style={{ marginTop: 12 }}>
-                {PROFESIONALES.map((p, i) => (
-                  <TouchableOpacity
-                    key={i}
-                    style={styles.profesionalCard}
-                    onPress={() => Linking.openURL(`https://wa.me/${p.telefono}?text=Hola%20${encodeURIComponent(p.nombre)}%2C%20me%20gustar%C3%ADa%20recibir%20apoyo%20como%20cuidador%2Fa.`)}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 14 }]}>{p.nombre}</Text>
-                      <Text style={[globalStyles.bodyText, { fontSize: 12, color: theme.colors.textSecondary }]}>{p.especialidad}</Text>
-                    </View>
-                    <Text style={{ fontSize: 22 }}>💬</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-          </View>
-        )}
-
-        {/* Banner de bienvenida y profesionales para usuarios nuevos (sin historial aún) */}
-        {historialFiltrado.length === 0 && (
-          <View style={[globalStyles.card, { backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain, marginBottom: 15 }]}>
-            <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 15, marginBottom: 6 }]}>
-              💛 Apoyo profesional a tu alcance
-            </Text>
-            <Text style={[globalStyles.bodyText, { fontSize: 14, marginBottom: 12 }]}>
-              Queremos acompañarte en cada paso. Si en algún momento sientes sobrecarga o necesitas conversar, ponemos a tu disposición profesionales especializados en apoyo a cuidadores.
-            </Text>
-            <TouchableOpacity
-              style={[globalStyles.button, { backgroundColor: theme.colors.secondaryPastel, height: 44 }]}
-              onPress={() => setMostrarProfesionales(v => !v)}
-            >
-              <Text style={[globalStyles.buttonText, { fontSize: 14 }]}>
-                {mostrarProfesionales ? 'Ocultar profesionales' : 'Ver profesionales disponibles'}
-              </Text>
-            </TouchableOpacity>
-
-            {mostrarProfesionales && (
-              <View style={{ marginTop: 12 }}>
-                {PROFESIONALES.map((p, i) => (
-                  <TouchableOpacity
-                    key={i}
-                    style={styles.profesionalCard}
-                    onPress={() => Linking.openURL(`https://wa.me/${p.telefono}?text=Hola%20${encodeURIComponent(p.nombre)}%2C%20me%20gustar%C3%ADa%20recibir%20apoyo%20como%20cuidador%2Fa.`)}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 14 }]}>{p.nombre}</Text>
-                      <Text style={[globalStyles.bodyText, { fontSize: 12, color: theme.colors.textSecondary }]}>{p.especialidad}</Text>
-                    </View>
-                    <Text style={{ fontSize: 22 }}>💬</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-          </View>
-        )}
+          {mostrarProfesionales && (
+            <View style={{ marginTop: 12 }}>
+              {PROFESIONALES.map((p, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={styles.profesionalCard}
+                  onPress={() => Linking.openURL(`https://wa.me/${p.telefono}?text=Hola%20${encodeURIComponent(p.nombre)}%2C%20me%20gustar%C3%ADa%20recibir%20apoyo%20como%20cuidador%2Fa.`)}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 14 }]}>{p.nombre}</Text>
+                    <Text style={[globalStyles.bodyText, { fontSize: 12, color: theme.colors.textSecondary }]}>{p.especialidad}</Text>
+                  </View>
+                  <Text style={{ fontSize: 22 }}>💬</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
 
         {/* Pie chart de emociones */}
         {pieData.length > 0 && (
@@ -612,12 +549,9 @@ export default function App() {
         <SafeAreaView style={styles.mainSafeArea}>
           {/* Cabecera de Usuario Autenticado */}
           <View style={styles.userHeader}>
-            <TouchableOpacity onPress={fetchHistorial} activeOpacity={0.75}>
-              <Text style={styles.userHeaderText}>
-                Hola, <Text style={styles.userNameText}>{nombreUsuario}</Text> 💛
-                {'  '}<Text style={styles.historialHintText}>▶ Mi historial</Text>
-              </Text>
-            </TouchableOpacity>
+            <Text style={styles.userHeaderText}>
+              Hola, <Text style={styles.userNameText}>{nombreUsuario}</Text> 💛
+            </Text>
             <TouchableOpacity onPress={cerrarSesion} style={styles.logoutBtn}>
               <Text style={styles.logoutBtnText}>Cerrar sesión 🚪</Text>
             </TouchableOpacity>
