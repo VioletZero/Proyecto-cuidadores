@@ -668,33 +668,7 @@ export default function App() {
         <Text style={globalStyles.buttonText}>Enviar respuestas</Text>
       </TouchableOpacity>
 
-      {/* Botón de Prueba para Desarrolladores */}
-      <TouchableOpacity
-        style={[globalStyles.button, { backgroundColor: '#F1F2F6', marginTop: 10, borderStyle: 'dashed', borderWidth: 1, borderColor: '#A4B0BE' }]}
-        onPress={() => {
-          const ids = ['eje1', 'eje2', 'eje3', 'eje4'];
-          const currentId = ids[testCycleIndex];
-          const nextIndex = (testCycleIndex + 1) % ids.length;
-          setTestCycleIndex(nextIndex);
 
-          const msg = mensajesSoporte.find(m => m.id === currentId);
-          if (msg) {
-            notifee.displayNotification({
-              title: `Notificación: ${msg.notificationTitle} 💛`,
-              body: msg.notificationPreview,
-              data: { id: currentId },
-              android: {
-                channelId: 'default',
-                pressAction: { id: 'default' }
-              }
-            });
-          }
-        }}
-      >
-        <Text style={[globalStyles.buttonText, { fontSize: 13, color: '#57606F' }]}>
-          🔔 Simular notificación (EJE {(testCycleIndex + 1)}/4)
-        </Text>
-      </TouchableOpacity>
 
       <View style={{ height: 100 }} />
     </ScrollView>
@@ -965,14 +939,15 @@ const styles = StyleSheet.create({
   taskbarContainer: {
     position: 'absolute',
     bottom: 20,
-    left: 20,
-    right: 20,
+    alignSelf: 'center',
+    width: '92%',
+    maxWidth: 400,
     borderRadius: 30,
     flexDirection: 'row',
     backgroundColor: theme.colors.secondaryMain,
     borderTopWidth: 0,
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     justifyContent: 'space-between',
     elevation: 10,
     shadowColor: '#000',
@@ -987,11 +962,12 @@ const styles = StyleSheet.create({
   },
   taskbarText: {
     fontFamily: 'Nunito-Bold',
-    fontSize: 13,
+    fontSize: 12,
     color: 'rgba(255, 255, 255, 0.6)',
+    textAlign: 'center',
   },
   taskbarTextActive: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 13,
   },
 });
