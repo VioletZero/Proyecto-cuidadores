@@ -2,14 +2,24 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, StyleSheet, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PieChart } from './src/components/PieChart';
+import { LineChart, LineChartDataPoint } from './src/components/LineChart';
 import { globalStyles, theme } from './src/styles/theme';
 import { RegistroScreen } from './src/components/RegistroScreen';
 import mensajesSoporte from './src/data/mensajesSoporte.json';
 import { NotificacionModal } from './src/components/NotificacionModal';
+import Sound from 'react-native-sound';
+import notifee, { EventType } from '@notifee/react-native';
+
+// Manejo de eventos de notificaciones en segundo plano (Requisito de Notifee)
+notifee.onBackgroundEvent(async ({ type, detail }) => {
+  // Las aperturas en frío se manejarán con getInitialNotification en App
+});
+
+// Habilitar categoría de reproducción para que suene incluso en silencio en algunos dispositivos
+Sound.setCategory('Playback');
 
 interface EvaluacionResult {
-  riesgo: string;
+  estado_bienestar: string;
   puntaje_total: number;
   es_alerta_clinica: boolean;
   mensaje_ia?: string;
@@ -17,7 +27,6 @@ interface EvaluacionResult {
     Física: string;
     Psicológica: string;
     Emocional: string;
-    Espiritual: string;
   };
   guia_respiracion?: {
     titulo: string;
@@ -47,10 +56,10 @@ export default function App() {
   const [cargando, setCargando] = useState(true);
   const [usuarioRegistrado, setUsuarioRegistrado] = useState(false);
   const [tipoEvaluacion, setTipoEvaluacion] = useState<'diario' | 'baseline'>('diario');
-  const [vistaActual, setVistaActual] = useState<'evaluacion' | 'historial'>('evaluacion');
+  const [vistaActual, setVistaActual] = useState<'evaluacion' | 'historial' | 'profesionales'>('evaluacion');
   const [historialData, setHistorialData] = useState<any[]>([]);
   const [riesgoCritico, setRiesgoCritico] = useState<{ activo: boolean; razon: string | null }>({ activo: false, razon: null });
-  const [mostrarProfesionales, setMostrarProfesionales] = useState(false);
+  const [diasDesdeUltimoTest, setDiasDesdeUltimoTest] = useState<number>(0);
 
   // Profesionales de apoyo (placeholders editables)
   const PROFESIONALES = [
@@ -79,6 +88,88 @@ export default function App() {
   const [mensajeNotificacionActivo, setMensajeNotificacionActivo] = useState<any | null>(null);
   const [modalNotificacionVisible, setModalNotificacionVisible] = useState(false);
   const [testCycleIndex, setTestCycleIndex] = useState(0);
+  const [loginCount, setLoginCount] = useState(1);
+  const [sound, setSound] = useState<Sound | null>(null);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [audioProgress, setAudioProgress] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const [audioBarWidth, setAudioBarWidth] = useState(0);
+
+  // Limpieza del audio al desmontar o cambiar de audio
+  useEffect(() => {
+    return () => {
+      if (sound) {
+        sound.release();
+      }
+    };
+  }, [sound]);
+
+  useEffect(() => {
+    let interval: any;
+    if (sound && isPlayingAudio) {
+      interval = setInterval(() => {
+        sound.getCurrentTime((seconds) => {
+          if (audioDuration > 0) {
+            setAudioProgress(seconds / audioDuration);
+          }
+        });
+      }, 500);
+    }
+    return () => clearInterval(interval);
+  }, [sound, isPlayingAudio, audioDuration]);
+
+  const renderSemaforoBar = (texto: string) => {
+    let color = '#10B981'; // Verde - Alto Bienestar
+    let width = '100%';
+    const lower = texto.toLowerCase();
+    
+    if (lower.includes('agotamiento') || lower.includes('elevados') || lower.includes('culpa') || lower.includes('irritabilidad')) {
+      color = '#EF4444'; // Rojo - Bajo Bienestar
+      width = '33%';
+    } else if (lower.includes('moderado') || lower.includes('regular') || lower.includes('parcial')) {
+      color = '#F59E0B'; // Amarillo - Bienestar Moderado
+      width = '66%';
+    }
+
+    return (
+      <View style={{ height: 6, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 3, marginTop: 4, marginBottom: 12, overflow: 'hidden' }}>
+        <View style={{ height: '100%', width: width as any, backgroundColor: color, borderRadius: 3 }} />
+      </View>
+    );
+  };
+
+  const reproducirAudio = () => {
+    try {
+      if (sound) {
+        if (isPlayingAudio) {
+          sound.pause();
+          setIsPlayingAudio(false);
+        } else {
+          sound.play((success) => {
+            setIsPlayingAudio(false);
+            if (success) setAudioProgress(1);
+          });
+          setIsPlayingAudio(true);
+        }
+        return;
+      }
+      const newSound = new Sound('respiracion.mp3', Sound.MAIN_BUNDLE, (error) => {
+        if (error) {
+          console.warn("No se pudo cargar el audio de respiración:", error);
+          return;
+        }
+        setSound(newSound);
+        setAudioDuration(newSound.getDuration());
+        newSound.play((success) => {
+          setIsPlayingAudio(false);
+          if (success) setAudioProgress(1);
+        });
+        setIsPlayingAudio(true);
+      });
+    } catch (e) {
+      console.warn("Error síncrono al instanciar Sound:", e);
+    }
+  };
 
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -99,6 +190,25 @@ export default function App() {
             if (resultadoStr) {
               setResultadoEval(JSON.parse(resultadoStr));
             }
+          }
+          const countStr = await AsyncStorage.getItem('@login_count');
+          if (countStr) setLoginCount(parseInt(countStr));
+
+          // Calcular días desde último test completo
+          const ultimaFechaStr = await AsyncStorage.getItem('@ultimo_test_completo_fecha');
+          let dias = 7; // por defecto obligar si no hay registro
+          if (ultimaFechaStr) {
+             const ultimaFecha = new Date(ultimaFechaStr);
+             const hoy = new Date();
+             const diffTime = Math.abs(hoy.getTime() - ultimaFecha.getTime());
+             dias = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          }
+          setDiasDesdeUltimoTest(dias);
+          
+          if (dias >= 7 || !countStr) {
+             setTipoEvaluacion('baseline');
+          } else {
+             setTipoEvaluacion('diario');
           }
         }
       } catch (e) {
@@ -132,6 +242,17 @@ export default function App() {
         const nombreGuardado = await AsyncStorage.getItem('@nombre_usuario') ?? nombre;
         await AsyncStorage.setItem('@usuario_registrado', 'true');
         await AsyncStorage.setItem('@nombre_usuario', nombreGuardado);
+        
+        const currentCountStr = await AsyncStorage.getItem('@login_count');
+        const currentCount = currentCountStr ? parseInt(currentCountStr) : 1;
+        const newCount = currentCount + 1;
+        await AsyncStorage.setItem('@login_count', newCount.toString());
+        setLoginCount(newCount);
+        setTipoEvaluacion('diario');
+        
+        await AsyncStorage.removeItem('@notificacion_diaria_index');
+        await AsyncStorage.removeItem('@notificacion_ultima_fecha');
+
         setNombreUsuario(nombreGuardado);
         setUsuarioRegistrado(true);
         return;
@@ -139,9 +260,16 @@ export default function App() {
       // Registro nuevo: guardar todo
       await AsyncStorage.setItem('@usuario_registrado', 'true');
       await AsyncStorage.setItem('@nombre_usuario', nombre);
+      await AsyncStorage.setItem('@login_count', '1');
       if (emailParam) { await AsyncStorage.setItem('@email_usuario', emailParam.trim().toLowerCase()); }
       if (passwordParam) { await AsyncStorage.setItem('@pass_usuario', passwordParam); }
       setNombreUsuario(nombre);
+      setLoginCount(1);
+      
+      await AsyncStorage.removeItem('@notificacion_diaria_index');
+      await AsyncStorage.removeItem('@notificacion_ultima_fecha');
+
+      setTipoEvaluacion('baseline');
       setUsuarioRegistrado(true);
     } catch (e) {
       Alert.alert('Error', 'No se pudieron guardar los datos de registro localmente.');
@@ -168,7 +296,7 @@ export default function App() {
         const response = await fetch('https://cuidaml.luzserver.org/preguntas_diarias', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({})
+          body: JSON.stringify({ login_count: loginCount })
         });
         const data = await response.json();
         if (data.preguntas && data.preguntas.length > 0) {
@@ -178,8 +306,10 @@ export default function App() {
         console.warn("No se pudo cargar EMA, usando fallback.");
       }
     };
-    fetchPreguntas();
-  }, []);
+    if (usuarioRegistrado) {
+      fetchPreguntas();
+    }
+  }, [usuarioRegistrado, loginCount]);
 
   const processDeepLink = (url: string) => {
     if (!url) return;
@@ -195,6 +325,16 @@ export default function App() {
   };
 
   useEffect(() => {
+    async function setupNotifications() {
+      await notifee.requestPermission();
+      await notifee.createChannel({
+        id: 'default',
+        name: 'Canal por Defecto',
+        importance: 4,
+      });
+    }
+    setupNotifications();
+
     const handleUrl = (event: { url: string }) => {
       processDeepLink(event.url);
     };
@@ -206,31 +346,53 @@ export default function App() {
       }
     });
 
-    const interval = setInterval(() => {
+    const unsubscribeNotifee = notifee.onForegroundEvent(({ type, detail }) => {
+      if (type === EventType.PRESS && detail.notification?.data?.id) {
+        processDeepLink(`cuida_ml://notification-popup?id=${detail.notification.data.id}`);
+      }
+    });
+
+    notifee.getInitialNotification().then(initialNotification => {
+      if (initialNotification && initialNotification.notification?.data?.id) {
+        processDeepLink(`cuida_ml://notification-popup?id=${initialNotification.notification.data.id}`);
+      }
+    });
+
+    const interval = setInterval(async () => {
       const now = new Date();
-      if (now.getHours() === 13 && now.getMinutes() === 0) {
-        Alert.alert(
-          "CuidaML - Apoyo Diario 💛",
-          "Tienes un nuevo mensaje de apoyo disponible: \"¿Estoy cansado o sobrecargado?\"",
-          [
-            {
-              text: "Ver ahora",
-              onPress: () => {
-                processDeepLink("cuida_ml://notification-popup?id=eje1");
+      if (now.getHours() === 14 && now.getMinutes() === 0) {
+        try {
+          const ultimaFecha = await AsyncStorage.getItem('@notificacion_ultima_fecha');
+          if (ultimaFecha === now.toDateString()) return;
+
+          const indexStr = await AsyncStorage.getItem('@notificacion_diaria_index');
+          const index = indexStr ? parseInt(indexStr) : 0;
+
+          if (index < mensajesSoporte.length) {
+            const msg = mensajesSoporte[index];
+            notifee.displayNotification({
+              id: 'apoyo-diario',
+              title: `CuidaML - Apoyo Diario 💛`,
+              body: `${msg.notificationTitle}: ${msg.notificationPreview}`,
+              data: { id: msg.id },
+              android: {
+                channelId: 'default',
+                pressAction: { id: 'default' }
               }
-            },
-            {
-              text: "Más tarde",
-              style: "cancel"
-            }
-          ]
-        );
+            });
+            await AsyncStorage.setItem('@notificacion_ultima_fecha', now.toDateString());
+            await AsyncStorage.setItem('@notificacion_diaria_index', (index + 1).toString());
+          }
+        } catch (e) {
+          console.warn("Error enviando notificacion", e);
+        }
       }
     }, 60000);
 
     return () => {
       subscription.remove();
       clearInterval(interval);
+      unsubscribeNotifee();
     };
   }, []);
 
@@ -244,48 +406,63 @@ export default function App() {
       return;
     }
 
+    const enviarDatos = async () => {
+      const payload = {
+        respuestas: Object.keys(respuestas).map(id => ({
+          item_id: parseInt(id),
+          score: respuestas[parseInt(id)]
+        })),
+        comentarios_generales: comentarios,
+        nombre_usuario: nombreUsuario.trim() || 'Cuidador',
+        tipo_evaluacion: tipoEvaluacion
+      };
+
+      try {
+        const response = await fetch('https://cuidaml.luzserver.org/evaluacion_mental', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (data.error) {
+          Alert.alert("Error", data.error);
+        } else {
+          setResultadoEval(data as EvaluacionResult);
+          await AsyncStorage.setItem('@ultimo_resultado', JSON.stringify(data));
+          await AsyncStorage.setItem('@ultimo_resultado_fecha', new Date().toDateString());
+          if (tipoEvaluacion === 'baseline') {
+             await AsyncStorage.setItem('@ultimo_test_completo_fecha', new Date().toISOString());
+             setDiasDesdeUltimoTest(0);
+          }
+          setRespuestas({});
+          setComentarios('');
+
+          // Esperar a que el layout se actualice con la tarjeta de resultado antes de hacer scroll
+          setTimeout(() => {
+            scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+          }, 350);
+
+          Alert.alert("¡Gracias!", "Tu registro ha sido guardado correctamente.");
+        }
+      } catch (e) {
+        Alert.alert("Error de Conexión", "No se pudo conectar con el servidor Flask.");
+      }
+    };
+
     if (!comentarios.trim()) {
-      Alert.alert("Espacio de desahogo", "Por favor tómate un momento para escribir cómo te sientes en la caja de texto al final. Este espacio es para ti.");
+      Alert.alert(
+        "Espacio personal vacío",
+        "¿Estás seguro de que quieres enviar el registro sin hablar sobre ti o tu día en el espacio personal?",
+        [
+          { text: "No, escribiré algo", style: "cancel" },
+          { text: "Sí, enviar vacío", onPress: () => enviarDatos() }
+        ]
+      );
       return;
     }
 
-    const payload = {
-      respuestas: Object.keys(respuestas).map(id => ({
-        item_id: parseInt(id),
-        score: respuestas[parseInt(id)]
-      })),
-      comentarios_generales: comentarios,
-      nombre_usuario: nombreUsuario.trim() || 'Cuidador',
-      tipo_evaluacion: tipoEvaluacion
-    };
-
-    try {
-      const response = await fetch('https://cuidaml.luzserver.org/evaluacion_mental', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await response.json();
-      if (data.error) {
-        Alert.alert("Error", data.error);
-      } else {
-        setResultadoEval(data as EvaluacionResult);
-        await AsyncStorage.setItem('@ultimo_resultado', JSON.stringify(data));
-        await AsyncStorage.setItem('@ultimo_resultado_fecha', new Date().toDateString());
-        setRespuestas({});
-        setComentarios('');
-
-        // Esperar a que el layout se actualice con la tarjeta de resultado antes de hacer scroll
-        setTimeout(() => {
-          scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-        }, 350);
-
-        Alert.alert("¡Gracias!", "Tu registro ha sido guardado correctamente.");
-      }
-    } catch (e) {
-      Alert.alert("Error de Conexión", "No se pudo conectar con el servidor Flask.");
-    }
+    enviarDatos();
   };
 
   const fetchHistorial = async () => {
@@ -309,19 +486,20 @@ export default function App() {
     }
   };
 
-  // Calcular distribución de emociones para el pie chart
-  const calcularDistribucionEmociones = (filtered: any[]) => {
-    const conteo: Record<string, number> = {};
-    filtered.forEach(item => {
-      const emocion = item.emocion_detectada || 'No detectada';
-      conteo[emocion] = (conteo[emocion] || 0) + 1;
+  // Calcular datos para LineChart
+  const prepararDatosLineChart = (filtered: any[]): LineChartDataPoint[] => {
+    // Tomar los últimos 10
+    const ordenados = [...filtered].reverse().slice(-10);
+    return ordenados.map((item, index) => {
+      const estado = item.predictive_target || 'Bienestar Moderado';
+      let value = 2;
+      let color = theme.colors.warning;
+      if (estado === 'Bienestar Alto') { value = 3; color = theme.colors.success; }
+      else if (estado === 'Bienestar Bajo') { value = 1; color = theme.colors.error; }
+      
+      const label = new Date(item.user_metadata?.fecha).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit' });
+      return { label, value, color };
     });
-    return Object.entries(conteo).map(([emocion, cantidad]) => ({
-      x: emocion,
-      y: cantidad,
-      label: `${Math.round((cantidad / Math.max(1, filtered.length)) * 100)}%`,
-      color: EMOTION_COLORS[emocion] || theme.colors.textSecondary,
-    }));
   };
 
   const preguntasAMostrar = tipoEvaluacion === 'baseline' ? PREGUNTAS : preguntasActivas;
@@ -331,26 +509,26 @@ export default function App() {
       ref={scrollViewRef}
       contentContainerStyle={globalStyles.container}
     >
-      <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20, marginTop: 10 }}>
-        <TouchableOpacity 
-          style={[styles.tabBtn, tipoEvaluacion === 'diario' && styles.tabBtnActive]}
-          onPress={() => { setTipoEvaluacion('diario'); setRespuestas({}); setResultadoEval(null); }}
-        >
-          <Text style={[styles.tabText, tipoEvaluacion === 'diario' && styles.tabTextActive]}>Check-in Diario</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.tabBtn, tipoEvaluacion === 'baseline' && styles.tabBtnActive]}
-          onPress={() => { setTipoEvaluacion('baseline'); setRespuestas({}); setResultadoEval(null); }}
-        >
-          <Text style={[styles.tabText, tipoEvaluacion === 'baseline' && styles.tabTextActive]}>Test Completo</Text>
-        </TouchableOpacity>
-      </View>
+      {diasDesdeUltimoTest < 7 && (
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20, marginTop: 10 }}>
+          <TouchableOpacity 
+            style={[styles.tabBtn, tipoEvaluacion === 'diario' && styles.tabBtnActive]}
+            onPress={() => { setTipoEvaluacion('diario'); setRespuestas({}); setResultadoEval(null); }}
+          >
+            <Text style={[styles.tabText, tipoEvaluacion === 'diario' && styles.tabTextActive]}>Check-in diario</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.tabBtn, tipoEvaluacion === 'baseline' && styles.tabBtnActive]}
+            onPress={() => { setTipoEvaluacion('baseline'); setRespuestas({}); setResultadoEval(null); }}
+          >
+            <Text style={[styles.tabText, tipoEvaluacion === 'baseline' && styles.tabTextActive]}>Test completo</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <Text style={[globalStyles.headerTitle, { textAlign: 'center', marginBottom: 20 }]}>
-        {tipoEvaluacion === 'diario' ? 'Hoy queremos saber cómo estás 💛 (30 segundos)' : 'Evaluación Completa de Bienestar'}
+        {tipoEvaluacion === 'diario' ? 'Hoy quiero saber cómo estás 💛 (30 segundos)' : 'Háblame un poco de ti'}
       </Text>
-
-
 
       <View style={[globalStyles.card, { padding: 15, marginBottom: 15 }]}>
         <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', textAlign: 'center', marginBottom: 5 }]}>
@@ -365,16 +543,41 @@ export default function App() {
       </View>
 
       {resultadoEval && (
-        <View style={[globalStyles.card, {
-          backgroundColor:
-            resultadoEval.riesgo === 'Alta' ? (theme.colors.alertIntense || '#1D4ED8') :
-              resultadoEval.riesgo === 'Moderada' ? '#3B82F6' :
-                resultadoEval.riesgo === 'Leve' ? '#93C5FD' :
-                  (theme.colors.primaryPastel || '#DBEAFE')
-        }]}>
+        <View style={[globalStyles.card, { backgroundColor: '#3B82F6' }]}>
           <Text style={[globalStyles.headerTitle, { fontSize: 18, color: '#FFF' }]}>
-            Nivel de Riesgo: {resultadoEval.riesgo}
+            Estado de bienestar: {resultadoEval.estado_bienestar}
           </Text>
+
+          {(resultadoEval.estado_bienestar !== 'Bienestar Alto' || resultadoEval.es_alerta_clinica) && (
+             <View style={{ marginTop: 10, padding: 15, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 8 }}>
+               <TouchableOpacity style={{ alignItems: 'center', marginBottom: 10 }} onPress={reproducirAudio}>
+                 <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold' }}>
+                   {isPlayingAudio ? '⏸ Pausar ejercicio' : '▶ Reproducir ejercicio'}
+                 </Text>
+               </TouchableOpacity>
+               
+               {(sound || audioProgress > 0) && (
+                 <TouchableOpacity 
+                   activeOpacity={0.8}
+                   style={{ height: 20, justifyContent: 'center', marginVertical: 5 }} 
+                   onLayout={(e) => setAudioBarWidth(e.nativeEvent.layout.width)}
+                   onPress={(e) => {
+                     if (sound && audioBarWidth > 0 && audioDuration > 0) {
+                       const locX = e.nativeEvent.locationX;
+                       const pct = Math.min(1, Math.max(0, locX / audioBarWidth));
+                       const newTime = pct * audioDuration;
+                       sound.setCurrentTime(newTime);
+                       setAudioProgress(pct);
+                     }
+                   }}
+                 >
+                   <View style={{ height: 6, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 3, overflow: 'hidden' }}>
+                     <View style={{ height: '100%', width: `${Math.min(100, Math.max(0, audioProgress * 100))}%`, backgroundColor: theme.colors.success, borderRadius: 3 }} />
+                   </View>
+                 </TouchableOpacity>
+               )}
+             </View>
+          )}
 
           {resultadoEval.mensaje_ia && (
             <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', fontSize: 15, marginTop: 10, textAlign: 'center' }}>
@@ -400,11 +603,16 @@ export default function App() {
 
           {resultadoEval.resumen_dimensiones && (
             <View style={{ marginTop: 15, paddingTop: 15, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.3)' }}>
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', marginBottom: 5 }}>Resumen de Bienestar:</Text>
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13, marginBottom: 3 }}>• Física: {resultadoEval.resumen_dimensiones["Física"]}</Text>
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13, marginBottom: 3 }}>• Psicológica: {resultadoEval.resumen_dimensiones["Psicológica"]}</Text>
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13, marginBottom: 3 }}>• Emocional: {resultadoEval.resumen_dimensiones["Emocional"]}</Text>
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13, marginBottom: 3 }}>• Espiritual: {resultadoEval.resumen_dimensiones["Espiritual"]}</Text>
+              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', marginBottom: 8 }}>Resumen de bienestar:</Text>
+              
+              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Física: {resultadoEval.resumen_dimensiones["Física"]}</Text>
+              {renderSemaforoBar(resultadoEval.resumen_dimensiones["Física"])}
+              
+              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Psicológica: {resultadoEval.resumen_dimensiones["Psicológica"]}</Text>
+              {renderSemaforoBar(resultadoEval.resumen_dimensiones["Psicológica"])}
+              
+              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Emocional: {resultadoEval.resumen_dimensiones["Emocional"]}</Text>
+              {renderSemaforoBar(resultadoEval.resumen_dimensiones["Emocional"])}
             </View>
           )}
 
@@ -444,7 +652,7 @@ export default function App() {
           Tu espacio personal
         </Text>
         <Text style={{ fontSize: 12, color: '#666', marginBottom: 10, fontFamily: 'Nunito-Regular' }}>
-          Este espacio es libre. Desahógate, cuéntanos cómo estuvo tu día o qué te preocupa. Escribir ayuda a liberar la carga.
+          {tipoEvaluacion === 'diario' ? 'Háblame sobre tu día. Escribir ayuda a liberar la carga.' : 'Háblame un poco de ti. Escribir ayuda a liberar la carga.'}
         </Text>
         <TextInput
           placeholder="Escribe aquí todo lo que necesites"
@@ -457,16 +665,7 @@ export default function App() {
       </View>
 
       <TouchableOpacity style={globalStyles.button} onPress={enviarEvaluacion}>
-        <Text style={globalStyles.buttonText}>ENVIAR Y VER RESULTADO</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[globalStyles.button, { backgroundColor: theme.colors.primaryLight, marginTop: 15 }]}
-        onPress={fetchHistorial}
-      >
-        <Text style={[globalStyles.buttonText, { fontSize: 15 }]}>
-          Historial y Profesionales Disponibles
-        </Text>
+        <Text style={globalStyles.buttonText}>Enviar respuestas</Text>
       </TouchableOpacity>
 
       {/* Botón de Prueba para Desarrolladores */}
@@ -480,31 +679,24 @@ export default function App() {
 
           const msg = mensajesSoporte.find(m => m.id === currentId);
           if (msg) {
-            Alert.alert(
-              `Notificación: ${msg.notificationTitle} 💛`,
-              msg.notificationPreview,
-              [
-                {
-                  text: "Ver ahora",
-                  onPress: () => {
-                    processDeepLink(`cuida_ml://notification-popup?id=${currentId}`);
-                  }
-                },
-                {
-                  text: "Más tarde",
-                  style: "cancel"
-                }
-              ]
-            );
+            notifee.displayNotification({
+              title: `Notificación: ${msg.notificationTitle} 💛`,
+              body: msg.notificationPreview,
+              data: { id: currentId },
+              android: {
+                channelId: 'default',
+                pressAction: { id: 'default' }
+              }
+            });
           }
         }}
       >
         <Text style={[globalStyles.buttonText, { fontSize: 13, color: '#57606F' }]}>
-          🔔 SIMULAR NOTIFICACIÓN (EJE {(testCycleIndex + 1)}/4)
+          🔔 Simular notificación (EJE {(testCycleIndex + 1)}/4)
         </Text>
       </TouchableOpacity>
 
-      <View style={{ height: 40 }} />
+      <View style={{ height: 100 }} />
     </ScrollView>
   );
 
@@ -512,72 +704,22 @@ export default function App() {
     const historialFiltrado = historialData.filter(
       item => item.user_metadata?.nombre === nombreUsuario
     );
-    const pieData = calcularDistribucionEmociones(historialFiltrado);
+    const lineData = prepararDatosLineChart(historialFiltrado);
 
     return (
       <ScrollView contentContainerStyle={globalStyles.container}>
 
         {/* Header */}
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 10 }}>
-          <TouchableOpacity onPress={() => { setVistaActual('evaluacion'); setMostrarProfesionales(false); }} style={{ padding: 10 }}>
-            <Text style={styles.backBtnText}>◀ Volver</Text>
-          </TouchableOpacity>
-          <Text style={[globalStyles.headerTitle, { marginBottom: 0, marginLeft: 10 }]}>Histórico</Text>
+          <Text style={[globalStyles.headerTitle, { marginBottom: 0, marginLeft: 10 }]}>Tu historial de bienestar</Text>
         </View>
 
-        {/* Sección Unificada de Profesionales de Apoyo */}
-        <View style={[globalStyles.card, { backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain, marginBottom: 15 }]}>
-          <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 15, marginBottom: 6 }]}>
-            {riesgoCritico.activo ? '💛 Un momento para ti' : '💛 Apoyo profesional a tu alcance'}
-          </Text>
-          <Text style={[globalStyles.bodyText, { fontSize: 14, marginBottom: 12 }]}>
-            {riesgoCritico.activo 
-              ? `${riesgoCritico.razon} Sabemos que cuidar a alguien puede ser agotador. ¿Te gustaría hablar con alguien que puede ayudarte?`
-              : 'Queremos acompañarte en cada paso. Si en algún momento sientes sobrecarga o necesitas conversar, ponemos a tu disposición profesionales especializados en apoyo a cuidadores.'
-            }
-          </Text>
-          <TouchableOpacity
-            style={[globalStyles.button, { backgroundColor: theme.colors.secondaryPastel, height: 44 }]}
-            onPress={() => setMostrarProfesionales(v => !v)}
-          >
-            <Text style={[globalStyles.buttonText, { fontSize: 14 }]}>
-              {mostrarProfesionales ? 'Ocultar profesionales' : 'Ver profesionales disponibles'}
-            </Text>
-          </TouchableOpacity>
 
-          {mostrarProfesionales && (
-            <View style={{ marginTop: 12 }}>
-              {PROFESIONALES.map((p, i) => (
-                <TouchableOpacity
-                  key={i}
-                  style={styles.profesionalCard}
-                  onPress={() => Linking.openURL(`https://wa.me/${p.telefono}?text=Hola%20${encodeURIComponent(p.nombre)}%2C%20me%20gustar%C3%ADa%20recibir%20apoyo%20como%20cuidador%2Fa.`)}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 14 }]}>{p.nombre}</Text>
-                    <Text style={[globalStyles.bodyText, { fontSize: 12, color: theme.colors.textSecondary }]}>{p.especialidad}</Text>
-                  </View>
-                  <Text style={{ fontSize: 22 }}>💬</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </View>
-
-        {/* Pie chart de emociones */}
-        {pieData.length > 0 && (
+        {/* Line chart de evolución */}
+        {lineData.length > 0 && (
           <View style={[globalStyles.card, { alignItems: 'center', paddingBottom: 10 }]}>
-            <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 10 }]}>Distribución de Emociones</Text>
-            <PieChart data={pieData} size={220} />
-            {/* Leyenda */}
-            <View style={{ width: '100%', marginTop: 12 }}>
-              {pieData.map((d, i) => (
-                <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                  <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: d.color, marginRight: 8 }} />
-                  <Text style={[globalStyles.bodyText, { fontSize: 13 }]}>{d.x} — {d.y} evaluación{d.y !== 1 ? 'es' : ''} ({d.label})</Text>
-                </View>
-              ))}
-            </View>
+            <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 10 }]}>Evolución del Bienestar</Text>
+            <LineChart data={lineData} />
           </View>
         )}
 
@@ -599,7 +741,7 @@ export default function App() {
                 {/* Fila superior: fecha + badge tipo */}
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                   <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 13, color: theme.colors.textSecondary }]}>
-                    {fecha} · {hora}{nombre && nombre !== 'Cuidador' ? `  —  ${nombre}` : ''}
+                    {fecha} · {hora}
                   </Text>
                   <View style={[styles.badge, { backgroundColor: tipoBg }]}>
                     <Text style={styles.badgeText}>{tipo}</Text>
@@ -607,8 +749,8 @@ export default function App() {
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
-                  <Text style={[globalStyles.bodyText, { fontSize: 14, fontFamily: 'Nunito-Bold' }]}>Riesgo (Zarit):</Text>
-                  <Text style={[globalStyles.bodyText, { fontSize: 14, color: riesgo === 'Alta' || riesgo === 'Moderada' ? theme.colors.error : theme.colors.success }]}>{riesgo}</Text>
+                  <Text style={[globalStyles.bodyText, { fontSize: 14, fontFamily: 'Nunito-Bold' }]}>Estado de Bienestar:</Text>
+                  <Text style={[globalStyles.bodyText, { fontSize: 14, color: riesgo === 'Bienestar Bajo' || riesgo === 'Bienestar Moderado' ? theme.colors.error : theme.colors.success }]}>{riesgo}</Text>
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
@@ -619,7 +761,46 @@ export default function App() {
             );
           })
         )}
-        <View style={{ height: 40 }} />
+        <View style={{ height: 100 }} />
+      </ScrollView>
+    );
+  };
+
+  const renderProfesionales = () => {
+    return (
+      <ScrollView contentContainerStyle={globalStyles.container}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 10 }}>
+          <Text style={[globalStyles.headerTitle, { marginBottom: 0, marginLeft: 10 }]}>Profesionales de apoyo</Text>
+        </View>
+
+        <View style={[globalStyles.card, { backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain, marginBottom: 15 }]}>
+          <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 15, marginBottom: 6 }]}>
+            {riesgoCritico.activo ? '💛 Un momento para ti' : '💛 Apoyo profesional a tu alcance'}
+          </Text>
+          <Text style={[globalStyles.bodyText, { fontSize: 14, marginBottom: 12 }]}>
+            {riesgoCritico.activo 
+              ? `${riesgoCritico.razon} Sé que cuidar a alguien puede ser agotador. ¿Te gustaría hablar con alguien que pueda ayudarte?`
+              : 'Quiero acompañarte en cada paso. Si en algún momento sientes sobrecarga o necesitas conversar, pongo a tu disposición profesionales especializados en apoyo a cuidadores.'
+            }
+          </Text>
+        </View>
+
+        <View style={{ marginTop: 12 }}>
+          {PROFESIONALES.map((p, i) => (
+            <TouchableOpacity
+              key={i}
+              style={styles.profesionalCard}
+              onPress={() => Linking.openURL(`https://wa.me/${p.telefono}?text=Hola%20${encodeURIComponent(p.nombre)}%2C%20me%20gustar%C3%ADa%20recibir%20apoyo%20como%20cuidador%2Fa.`)}
+            >
+              <View style={{ flex: 1 }}>
+                <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 14 }]}>{p.nombre}</Text>
+                <Text style={[globalStyles.bodyText, { fontSize: 12, color: theme.colors.textSecondary }]}>{p.especialidad}</Text>
+              </View>
+              <Text style={{ fontSize: 22 }}>💬</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={{ height: 100 }} />
       </ScrollView>
     );
   };
@@ -651,7 +832,20 @@ export default function App() {
               <Text style={styles.logoutBtnText}>Cerrar sesión 🚪</Text>
             </TouchableOpacity>
           </View>
-          {vistaActual === 'evaluacion' ? renderEvaluacion() : renderHistorial()}
+          {vistaActual === 'evaluacion' ? renderEvaluacion() : vistaActual === 'historial' ? renderHistorial() : renderProfesionales()}
+
+          {/* Taskbar flotante */}
+          <View style={styles.taskbarContainer}>
+            <TouchableOpacity style={styles.taskbarBtn} onPress={() => { setVistaActual('historial'); fetchHistorial(); }}>
+              <Text style={[styles.taskbarText, vistaActual === 'historial' && styles.taskbarTextActive]}>📊 Historial</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.taskbarBtn} onPress={() => setVistaActual('evaluacion')}>
+              <Text style={[styles.taskbarText, vistaActual === 'evaluacion' && styles.taskbarTextActive]}>📝 Test</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.taskbarBtn} onPress={() => setVistaActual('profesionales')}>
+              <Text style={[styles.taskbarText, vistaActual === 'profesionales' && styles.taskbarTextActive]}>💬 Profesionales</Text>
+            </TouchableOpacity>
+          </View>
         </SafeAreaView>
       )}
 
@@ -767,5 +961,37 @@ const styles = StyleSheet.create({
   },
   mainSafeArea: {
     flex: 1,
+  },
+  taskbarContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    borderRadius: 30,
+    flexDirection: 'row',
+    backgroundColor: theme.colors.secondaryMain,
+    borderTopWidth: 0,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+  },
+  taskbarBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  taskbarText: {
+    fontFamily: 'Nunito-Bold',
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.6)',
+  },
+  taskbarTextActive: {
+    color: '#FFFFFF',
+    fontSize: 14,
   },
 });

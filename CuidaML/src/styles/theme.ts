@@ -90,6 +90,5 @@ export const globalStyles = StyleSheet.create({
     fontFamily: 'Nunito-Bold',
     fontSize: 18,
     color: theme.colors.textMain,
-    textTransform: 'uppercase',
   }
 });

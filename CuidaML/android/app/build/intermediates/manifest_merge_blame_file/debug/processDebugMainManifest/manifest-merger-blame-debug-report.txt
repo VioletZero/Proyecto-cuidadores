@@ -1,0 +1,514 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.cuidaml"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="36" />
+10
+11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+11-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/debug/AndroidManifest.xml:4:5-77
+11-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/debug/AndroidManifest.xml:4:22-75
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:3:5-67
+12-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:3:22-64
+13    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+13-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:4:5-77
+13-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:4:22-74
+14    <uses-permission android:name="android.permission.WAKE_LOCK" />
+14-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:23:5-68
+14-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:23:22-65
+15    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+15-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:24:5-79
+15-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:24:22-76
+16    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+16-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:25:5-81
+16-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:25:22-78
+17    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+17-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:26:5-77
+17-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:26:22-74
+18
+19    <permission
+19-->[androidx.core:core:1.13.1] /home/violetzero/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+20        android:name="com.cuidaml.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+20-->[androidx.core:core:1.13.1] /home/violetzero/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+21        android:protectionLevel="signature" />
+21-->[androidx.core:core:1.13.1] /home/violetzero/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+22
+23    <uses-permission android:name="com.cuidaml.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+23-->[androidx.core:core:1.13.1] /home/violetzero/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+23-->[androidx.core:core:1.13.1] /home/violetzero/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+24    <uses-permission android:name="android.permission.VIBRATE" />
+24-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:13:5-66
+24-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:13:22-63
+25    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+25-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:16:5-79
+25-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:16:22-76
+26    <uses-permission
+26-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:17:5-19:38
+27        android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"
+27-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:18:9-73
+28        android:maxSdkVersion="30" /> <!-- For Xiaomi devices to enable heads-up notifications as default (https://github.com/invertase/notifee/issues/296) -->
+28-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:19:9-35
+29    <uses-permission
+29-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:21:5-23:38
+30        android:name="android.permission.ACCESS_NOTIFICATION_POLICY"
+30-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:22:9-69
+31        android:minSdkVersion="23" />
+31-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:23:9-35
+32
+33    <application
+34        android:name="com.cuidaml.MainApplication"
+34-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:7:7-38
+35        android:allowBackup="false"
+35-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:11:7-34
+36        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+36-->[androidx.core:core:1.13.1] /home/violetzero/.gradle/caches/9.0.0/transforms/9a1bb3f563d0991b417c6cb567237184/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+37        android:debuggable="true"
+38        android:extractNativeLibs="false"
+39        android:icon="@mipmap/ic_launcher"
+39-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:9:7-41
+40        android:label="@string/app_name"
+40-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:8:7-39
+41        android:roundIcon="@mipmap/ic_launcher_round"
+41-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:10:7-52
+42        android:supportsRtl="true"
+42-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:14:7-33
+43        android:theme="@style/AppTheme"
+43-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:12:7-38
+44        android:usesCleartextTraffic="true" >
+44-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/debug/AndroidManifest.xml:6:18-53
+45        <activity
+45-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:15:7-32:18
+46            android:name="com.cuidaml.MainActivity"
+46-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:16:9-37
+47            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+47-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:18:9-118
+48            android:exported="true"
+48-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:21:9-32
+49            android:label="@string/app_name"
+49-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:17:9-41
+50            android:launchMode="singleTask"
+50-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:19:9-40
+51            android:windowSoftInputMode="adjustResize" >
+51-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:20:9-51
+52            <intent-filter>
+52-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:22:9-25:25
+53                <action android:name="android.intent.action.MAIN" />
+53-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:23:13-65
+53-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:23:21-62
+54
+55                <category android:name="android.intent.category.LAUNCHER" />
+55-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:24:13-73
+55-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:24:23-70
+56            </intent-filter>
+57            <intent-filter android:label="filter_view_cuida_ml" >
+57-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:26:9-31:25
+57-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:26:24-60
+58                <action android:name="android.intent.action.VIEW" />
+58-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:27:13-65
+58-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:27:21-62
+59
+60                <category android:name="android.intent.category.DEFAULT" />
+60-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:28:13-72
+60-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:28:23-69
+61                <category android:name="android.intent.category.BROWSABLE" />
+61-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:29:13-74
+61-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:29:23-71
+62
+63                <data android:scheme="cuida_ml" />
+63-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:30:13-47
+63-->/home/violetzero/proyectoCuidadores/CuidaML/android/app/src/main/AndroidManifest.xml:30:19-44
+64            </intent-filter>
+65        </activity>
+66
+67        <provider
+67-->[:notifee_react-native] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/@notifee/react-native/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:9-12:40
+68            android:name="io.invertase.notifee.NotifeeInitProvider"
+68-->[:notifee_react-native] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/@notifee/react-native/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:13-68
+69            android:authorities="com.cuidaml.notifee-init-provider"
+69-->[:notifee_react-native] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/@notifee/react-native/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-73
+70            android:exported="false"
+70-->[:notifee_react-native] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/@notifee/react-native/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-37
+71            android:initOrder="-100" />
+71-->[:notifee_react-native] /home/violetzero/proyectoCuidadores/CuidaML/node_modules/@notifee/react-native/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:13-37
+72
+73        <activity
+73-->[com.facebook.react:react-android:0.84.1] /home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/AndroidManifest.xml:19:9-21:40
+74            android:name="com.facebook.react.devsupport.DevSettingsActivity"
+74-->[com.facebook.react:react-android:0.84.1] /home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/AndroidManifest.xml:20:13-77
+75            android:exported="false" />
+75-->[com.facebook.react:react-android:0.84.1] /home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/AndroidManifest.xml:21:13-37
+76
+77        <provider
+77-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:29:9-37:20
+78            android:name="androidx.startup.InitializationProvider"
+78-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:30:13-67
+79            android:authorities="com.cuidaml.androidx-startup"
+79-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:31:13-68
+80            android:exported="false" >
+80-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:32:13-37
+81            <meta-data
+81-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:34:13-36:52
+82                android:name="androidx.work.WorkManagerInitializer"
+82-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:35:17-68
+83                android:value="androidx.startup" />
+83-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:36:17-49
+84            <meta-data
+84-->[androidx.emoji2:emoji2:1.3.0] /home/violetzero/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+85                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+85-->[androidx.emoji2:emoji2:1.3.0] /home/violetzero/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+86                android:value="androidx.startup" />
+86-->[androidx.emoji2:emoji2:1.3.0] /home/violetzero/.gradle/caches/9.0.0/transforms/1bb6911876c3295b98172de2e4114b34/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+87            <meta-data
+87-->[androidx.lifecycle:lifecycle-process:2.6.2] /home/violetzero/.gradle/caches/9.0.0/transforms/cc0613c863f47b1d0ed9c86ba3c340af/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:29:13-31:52
+88                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+88-->[androidx.lifecycle:lifecycle-process:2.6.2] /home/violetzero/.gradle/caches/9.0.0/transforms/cc0613c863f47b1d0ed9c86ba3c340af/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:30:17-78
+89                android:value="androidx.startup" />
+89-->[androidx.lifecycle:lifecycle-process:2.6.2] /home/violetzero/.gradle/caches/9.0.0/transforms/cc0613c863f47b1d0ed9c86ba3c340af/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:31:17-49
+90            <meta-data
+90-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+91                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+91-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+92                android:value="androidx.startup" />
+92-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+93        </provider>
+94
+95        <service
+95-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:39:9-45:35
+96            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
+96-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:40:13-88
+97            android:directBootAware="false"
+97-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:41:13-44
+98            android:enabled="@bool/enable_system_alarm_service_default"
+98-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:42:13-72
+99            android:exported="false" />
+99-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:43:13-37
+100        <service
+100-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:46:9-52:35
+101            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+101-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:47:13-84
+102            android:directBootAware="false"
+102-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:48:13-44
+103            android:enabled="@bool/enable_system_job_service_default"
+103-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:49:13-70
+104            android:exported="true"
+104-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:50:13-36
+105            android:permission="android.permission.BIND_JOB_SERVICE" />
+105-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:51:13-69
+106        <service
+106-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:53:9-59:35
+107            android:name="androidx.work.impl.foreground.SystemForegroundService"
+107-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:54:13-81
+108            android:directBootAware="false"
+108-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:55:13-44
+109            android:enabled="@bool/enable_system_foreground_service_default"
+109-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:56:13-77
+110            android:exported="false" />
+110-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:57:13-37
+111
+112        <receiver
+112-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:61:9-66:35
+113            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
+113-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:62:13-88
+114            android:directBootAware="false"
+114-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:63:13-44
+115            android:enabled="true"
+115-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:64:13-35
+116            android:exported="false" />
+116-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:65:13-37
+117        <receiver
+117-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:67:9-77:20
+118            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
+118-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:68:13-106
+119            android:directBootAware="false"
+119-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:69:13-44
+120            android:enabled="false"
+120-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:70:13-36
+121            android:exported="false" >
+121-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:71:13-37
+122            <intent-filter>
+122-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:73:13-76:29
+123                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+123-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:74:17-87
+123-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:74:25-84
+124                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+124-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:75:17-90
+124-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:75:25-87
+125            </intent-filter>
+126        </receiver>
+127        <receiver
+127-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:78:9-88:20
+128            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
+128-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:79:13-104
+129            android:directBootAware="false"
+129-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:80:13-44
+130            android:enabled="false"
+130-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:81:13-36
+131            android:exported="false" >
+131-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:82:13-37
+132            <intent-filter>
+132-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:84:13-87:29
+133                <action android:name="android.intent.action.BATTERY_OKAY" />
+133-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:85:17-77
+133-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:85:25-74
+134                <action android:name="android.intent.action.BATTERY_LOW" />
+134-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:86:17-76
+134-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:86:25-73
+135            </intent-filter>
+136        </receiver>
+137        <receiver
+137-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:89:9-99:20
+138            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
+138-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:90:13-104
+139            android:directBootAware="false"
+139-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:91:13-44
+140            android:enabled="false"
+140-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:92:13-36
+141            android:exported="false" >
+141-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:93:13-37
+142            <intent-filter>
+142-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:95:13-98:29
+143                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+143-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:96:17-83
+143-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:96:25-80
+144                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
+144-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:97:17-82
+144-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:97:25-79
+145            </intent-filter>
+146        </receiver>
+147        <receiver
+147-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:100:9-109:20
+148            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
+148-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:101:13-103
+149            android:directBootAware="false"
+149-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:102:13-44
+150            android:enabled="false"
+150-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:103:13-36
+151            android:exported="false" >
+151-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:104:13-37
+152            <intent-filter>
+152-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:106:13-108:29
+153                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+153-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:107:17-79
+153-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:107:25-76
+154            </intent-filter>
+155        </receiver>
+156        <receiver
+156-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:110:9-121:20
+157            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+157-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:111:13-88
+158            android:directBootAware="false"
+158-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:112:13-44
+159            android:enabled="false"
+159-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:113:13-36
+160            android:exported="false" >
+160-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:114:13-37
+161            <intent-filter>
+161-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:116:13-120:29
+162                <action android:name="android.intent.action.BOOT_COMPLETED" />
+162-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:117:17-79
+162-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:117:25-76
+163                <action android:name="android.intent.action.TIME_SET" />
+163-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:118:17-73
+163-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:118:25-70
+164                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+164-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:119:17-81
+164-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:119:25-78
+165            </intent-filter>
+166        </receiver>
+167        <receiver
+167-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:122:9-131:20
+168            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
+168-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:123:13-99
+169            android:directBootAware="false"
+169-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:124:13-44
+170            android:enabled="@bool/enable_system_alarm_service_default"
+170-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:125:13-72
+171            android:exported="false" >
+171-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:126:13-37
+172            <intent-filter>
+172-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:128:13-130:29
+173                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
+173-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:129:17-98
+173-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:129:25-95
+174            </intent-filter>
+175        </receiver>
+176        <receiver
+176-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:132:9-142:20
+177            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
+177-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:133:13-78
+178            android:directBootAware="false"
+178-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:134:13-44
+179            android:enabled="true"
+179-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:135:13-35
+180            android:exported="true"
+180-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:136:13-36
+181            android:permission="android.permission.DUMP" >
+181-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:137:13-57
+182            <intent-filter>
+182-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:139:13-141:29
+183                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
+183-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:140:17-88
+183-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:140:25-85
+184            </intent-filter>
+185        </receiver>
+186
+187        <service
+187-->[androidx.room:room-runtime-android:2.8.4] /home/violetzero/.gradle/caches/9.0.0/transforms/ce32908d94a896ec37f4dded20cab3ca/transformed/room-runtime/AndroidManifest.xml:24:9-28:63
+188            android:name="androidx.room.MultiInstanceInvalidationService"
+188-->[androidx.room:room-runtime-android:2.8.4] /home/violetzero/.gradle/caches/9.0.0/transforms/ce32908d94a896ec37f4dded20cab3ca/transformed/room-runtime/AndroidManifest.xml:25:13-74
+189            android:directBootAware="true"
+189-->[androidx.room:room-runtime-android:2.8.4] /home/violetzero/.gradle/caches/9.0.0/transforms/ce32908d94a896ec37f4dded20cab3ca/transformed/room-runtime/AndroidManifest.xml:26:13-43
+190            android:exported="false" />
+190-->[androidx.room:room-runtime-android:2.8.4] /home/violetzero/.gradle/caches/9.0.0/transforms/ce32908d94a896ec37f4dded20cab3ca/transformed/room-runtime/AndroidManifest.xml:27:13-37
+191
+192        <receiver
+192-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+193            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+193-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+194            android:directBootAware="false"
+194-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+195            android:enabled="true"
+195-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+196            android:exported="true"
+196-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+197            android:permission="android.permission.DUMP" >
+197-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+198            <intent-filter>
+198-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+199                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+199-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+199-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+200            </intent-filter>
+201            <intent-filter>
+201-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+202                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+202-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+202-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+203            </intent-filter>
+204            <intent-filter>
+204-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+205                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+205-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+205-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+206            </intent-filter>
+207            <intent-filter>
+207-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+208                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+208-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+208-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/violetzero/.gradle/caches/9.0.0/transforms/bb4e8df64137e89aff5e1386fa4043e2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+209            </intent-filter>
+210        </receiver> <!-- Receiver Service -->
+211        <service
+211-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:28:9-30:40
+212            android:name="app.notifee.core.ReceiverService"
+212-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:29:13-60
+213            android:exported="false" />
+213-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:30:13-37
+214
+215        <activity
+215-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:32:9-38:75
+216            android:name="app.notifee.core.NotificationReceiverActivity"
+216-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:33:13-73
+217            android:excludeFromRecents="true"
+217-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:34:13-46
+218            android:exported="true"
+218-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:35:13-36
+219            android:noHistory="true"
+219-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:36:13-37
+220            android:taskAffinity=""
+220-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:37:13-36
+221            android:theme="@android:style/Theme.Translucent.NoTitleBar" /> <!-- Foreground Service -->
+221-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:38:13-72
+222        <service
+222-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:41:9-44:60
+223            android:name="app.notifee.core.ForegroundService"
+223-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:42:13-62
+224            android:exported="false"
+224-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:43:13-37
+225            android:foregroundServiceType="shortService" />
+225-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:44:13-57
+226
+227        <receiver
+227-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:46:9-54:20
+228            android:name="app.notifee.core.RebootBroadcastReceiver"
+228-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:47:13-68
+229            android:exported="false" >
+229-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:48:13-37
+230            <intent-filter>
+230-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:49:13-53:29
+231                <action android:name="android.intent.action.BOOT_COMPLETED" />
+231-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:117:17-79
+231-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:117:25-76
+232                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+232-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:51:17-82
+232-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:51:25-79
+233                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+233-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:52:17-82
+233-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:52:25-79
+234            </intent-filter>
+235        </receiver>
+236        <receiver
+236-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:55:9-61:20
+237            android:name="app.notifee.core.AlarmPermissionBroadcastReceiver"
+237-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:56:13-77
+238            android:exported="true" >
+238-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:57:13-36
+239            <intent-filter>
+239-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:58:13-60:29
+240                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+240-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:59:17-107
+240-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:59:25-104
+241            </intent-filter>
+242        </receiver>
+243        <receiver
+243-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:62:9-70:20
+244            android:name="app.notifee.core.NotificationAlarmReceiver"
+244-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:63:13-70
+245            android:exported="false" >
+245-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:64:13-37
+246            <intent-filter>
+246-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:49:13-53:29
+247                <action android:name="android.intent.action.BOOT_COMPLETED" />
+247-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:117:17-79
+247-->[androidx.work:work-runtime:2.8.0] /home/violetzero/.gradle/caches/9.0.0/transforms/796defbd64fd1a9aa27b5c7e454ea096/transformed/work-runtime-2.8.0/AndroidManifest.xml:117:25-76
+248                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+248-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:51:17-82
+248-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:51:25-79
+249                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+249-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:52:17-82
+249-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:52:25-79
+250            </intent-filter>
+251        </receiver> <!-- Broadcast Receiver -->
+252        <receiver
+252-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:73:9-81:20
+253            android:name="app.notifee.core.BlockStateBroadcastReceiver"
+253-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:74:13-72
+254            android:exported="false" >
+254-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:75:13-37
+255            <intent-filter>
+255-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:76:13-80:29
+256                <action android:name="android.app.action.APP_BLOCK_STATE_CHANGED" />
+256-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:77:17-85
+256-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:77:25-82
+257                <action android:name="android.app.action.NOTIFICATION_CHANNEL_BLOCK_STATE_CHANGED" />
+257-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:78:17-102
+257-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:78:25-99
+258                <action android:name="android.app.action.NOTIFICATION_CHANNEL_GROUP_BLOCK_STATE_CHANGED" />
+258-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:79:17-108
+258-->[app.notifee:core:202108261754] /home/violetzero/.gradle/caches/9.0.0/transforms/48069f57433d57fff4a76d4e89da5010/transformed/core-202108261754/AndroidManifest.xml:79:25-105
+259            </intent-filter>
+260        </receiver>
+261
+262        <meta-data
+262-->[com.facebook.soloader:soloader:0.12.1] /home/violetzero/.gradle/caches/9.0.0/transforms/1cb5cf641f9f2cbd10c0ed7226292756/transformed/soloader-0.12.1/AndroidManifest.xml:12:9-14:37
+263            android:name="com.facebook.soloader.enabled"
+263-->[com.facebook.soloader:soloader:0.12.1] /home/violetzero/.gradle/caches/9.0.0/transforms/1cb5cf641f9f2cbd10c0ed7226292756/transformed/soloader-0.12.1/AndroidManifest.xml:13:13-57
+264            android:value="false" />
+264-->[com.facebook.soloader:soloader:0.12.1] /home/violetzero/.gradle/caches/9.0.0/transforms/1cb5cf641f9f2cbd10c0ed7226292756/transformed/soloader-0.12.1/AndroidManifest.xml:14:13-34
+265    </application>
+266
+267</manifest>

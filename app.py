@@ -172,8 +172,8 @@ def preguntas_diarias():
     try:
         data = request.json or {}
         inferencia_reciente = data.get('ultima_inferencia', 'No detectada')
-        # Usamos el día del año como rotador automático si no nos pasan un valor
-        dia_rotacion = data.get('dia_rotacion', datetime.now(timezone.utc).timetuple().tm_yday)
+        # Usamos el login_count para rotar preguntas
+        dia_rotacion = data.get('login_count', datetime.now(timezone.utc).timetuple().tm_yday)
         
         preguntas = sampler_ema.obtener_preguntas_diarias(inferencia_reciente, dia_rotacion)
         
@@ -279,44 +279,41 @@ def evaluacion_mental():
                 except Exception as e:
                     print(f"Error leyendo historial para promedio móvil: {str(e)}")
 
-        # Clasificación de riesgo (Escala Zarit 0-60)
-        if puntaje_evaluar <= 16:
-            riesgo = "Sin sobrecarga"
-        elif puntaje_evaluar <= 32:
-            riesgo = "Leve"
+        # Clasificación de estado de bienestar (Escala Zarit 0-60)
+        if puntaje_evaluar <= 32:
+            estado_bienestar = "Bienestar Alto"
         elif puntaje_evaluar <= 46:
-            riesgo = "Moderada"
+            estado_bienestar = "Bienestar Moderado"
         else:
-            riesgo = "Alta"
+            estado_bienestar = "Bienestar Bajo"
 
-        # Trigger Alerta Clínica
+        # Trigger Alerta
         es_alerta_clinica = False
-        if riesgo in ["Moderada", "Alta"] or clase_detectada in ["Sobrecarga", "Depresión"]:
+        if estado_bienestar in ["Bienestar Moderado", "Bienestar Bajo"] or clase_detectada in ["Sobrecarga", "Depresión"]:
             es_alerta_clinica = True
 
         # Generación de mensaje personalizado
-        if "Resiliencia" in clase_detectada or (clase_detectada == "No detectada" and riesgo in ["Sin sobrecarga", "Leve"]):
-            mensaje_ia = f"Hola {nombre_usuario}, nos alegra ver que tus niveles de carga están controlados. Sigue cuidándote."
+        if "Resiliencia" in clase_detectada or (clase_detectada == "No detectada" and estado_bienestar == "Bienestar Alto"):
+            mensaje_ia = f"Hola {nombre_usuario}, nos alegra ver que te encuentras en un buen estado. Sigue cuidándote."
         elif "Depresión" in clase_detectada:
-            mensaje_ia = f"Hola {nombre_usuario}, hemos detectado señales de tristeza profunda en tu evaluación. Cuentas con nuestro apoyo."
-        elif riesgo in ["Moderada", "Alta"] or clase_detectada == "Sobrecarga":
-            mensaje_ia = f"Hola {nombre_usuario}, parece que hoy ha sido un día pesado. Se percibe un nivel de riesgo '{riesgo}'. Tu bienestar es prioridad."
+            mensaje_ia = f"Hola {nombre_usuario}, hemos notado señales de decaimiento en tu registro. Cuentas con nuestro apoyo."
+        elif estado_bienestar in ["Bienestar Moderado", "Bienestar Bajo"] or clase_detectada == "Sobrecarga":
+            mensaje_ia = f"Hola {nombre_usuario}, parece que hoy ha sido un día pesado. Tienes un estado de {estado_bienestar}. Tu bienestar es prioridad."
         else:
-            mensaje_ia = f"Hola {nombre_usuario}, gracias por completar tu evaluación diaria."
+            mensaje_ia = f"Hola {nombre_usuario}, gracias por completar tu registro diario."
 
-        # Evaluación Multidimensional
+        # Resumen Multidimensional
         resumen_dimensiones = {
             "Física": "Se detecta agotamiento físico." if puntajes_por_dimension["Física"] > 4 else "Estado físico reportado estable.",
             "Psicológica": "Niveles elevados de estrés y preocupación." if puntajes_por_dimension["Psicológica"] > 6 else "Carga psicológica en rangos manejables.",
-            "Emocional": "Presencia de culpa o irritabilidad frecuente." if puntajes_por_dimension["Emocional"] > 4 else "Equilibrio emocional relativo.",
-            "Espiritual": "Aislamiento social y pérdida de tiempo propio." if (puntajes_por_dimension["Social"] + puntajes_por_dimension["Tiempo/Carga"]) > 10 else "Mantiene cierto grado de interacción y tiempo personal."
+            "Emocional": "Presencia de culpa o irritabilidad frecuente." if puntajes_por_dimension["Emocional"] > 4 else "Equilibrio emocional relativo."
         }
 
-        # Protocolo de Intervención (Nivel de Riesgo Moderada/Alta)
+        # Protocolo de Intervención (Bienestar Moderado/Bajo)
         guia_respiracion = None
-        if riesgo in ["Moderada", "Alta"]:
+        if estado_bienestar in ["Bienestar Moderado", "Bienestar Bajo"]:
             guia_respiracion = {
-                "titulo": "Guía de Respiración de Emergencia (Técnica 4-7-8)",
+                "titulo": "Respiración (Técnica 4-7-8)",
                 "instrucciones": [
                     "1. Inhala profundamente por la nariz durante 4 segundos.",
                     "2. Mantén la respiración durante 7 segundos.",
@@ -336,7 +333,7 @@ def evaluacion_mental():
             "puntaje_proporcional": puntaje_proporcional,
             "tipo_evaluacion": tipo_evaluacion,
             "nlp_corpus": comentarios_generales,
-            "predictive_target": riesgo,
+            "predictive_target": estado_bienestar,
             "emocion_detectada": clase_detectada,
             "dimensiones_evaluadas": resumen_dimensiones,
             "intervencion": guia_respiracion
@@ -363,11 +360,11 @@ def evaluacion_mental():
         return jsonify({
             "status": "success",
             "puntaje_total": puntaje_total,
-            "riesgo": riesgo,
+            "estado_bienestar": estado_bienestar,
             "es_alerta_clinica": es_alerta_clinica,
             "resumen_dimensiones": resumen_dimensiones,
             "guia_respiracion": guia_respiracion,
-            "mensaje": "Evaluación procesada y guardada correctamente.",
+            "mensaje": "Registro procesado y guardado correctamente.",
             "mensaje_ia": mensaje_ia
         }), 200
 
@@ -404,7 +401,7 @@ def historial_evaluaciones():
 
 @app.route('/nivel_riesgo_acumulado', methods=['GET'])
 def nivel_riesgo_acumulado():
-    """Analiza las últimas evaluaciones y determina si el riesgo acumulado es crítico."""
+    """Analiza los últimos registros y determina si el estado acumulado requiere atención."""
     try:
         path_evaluaciones = os.path.join('data', 'evaluaciones.json')
         if not os.path.exists(path_evaluaciones):
@@ -422,7 +419,7 @@ def nivel_riesgo_acumulado():
 
         niveles_altos = sum(
             1 for ev in recientes
-            if ev.get('predictive_target') in ['Alta', 'Moderada']
+            if ev.get('predictive_target') in ['Bienestar Bajo', 'Bienestar Moderado']
         )
         emociones_criticas = sum(
             1 for ev in recientes
@@ -433,9 +430,9 @@ def nivel_riesgo_acumulado():
         razon = None
         if riesgo_critico:
             if emociones_criticas >= 2:
-                razon = "Se han detectado señales de agotamiento emocional en tus evaluaciones recientes."
+                razon = "Se han detectado señales de agotamiento emocional en tus registros recientes."
             else:
-                razon = "Tus niveles de carga han sido altos en los últimas evaluaciones registradas."
+                razon = "Tu estado de bienestar ha sido bajo o moderado en los últimos registros."
 
         return jsonify({
             "riesgo_critico": riesgo_critico,

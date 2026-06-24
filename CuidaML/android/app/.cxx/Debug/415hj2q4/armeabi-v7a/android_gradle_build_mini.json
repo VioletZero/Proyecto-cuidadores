@@ -1,0 +1,61 @@
+{
+  "buildFiles": [
+    "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+    "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
+    "/home/violetzero/proyectoCuidadores/CuidaML/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/violetzero/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/violetzero/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "react_codegen_safeareacontext::@7984cd80db47aa7b952a": {
+      "artifactName": "react_codegen_safeareacontext",
+      "abi": "armeabi-v7a",
+      "output": "/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/intermediates/cxx/Debug/415hj2q4/obj/armeabi-v7a/libreact_codegen_safeareacontext.so",
+      "runtimeFiles": [
+        "/home/violetzero/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so",
+        "/home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so",
+        "/home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so"
+      ]
+    },
+    "appmodules::@6890427a1f51a3e7e1df": {
+      "artifactName": "appmodules",
+      "abi": "armeabi-v7a",
+      "output": "/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/intermediates/cxx/Debug/415hj2q4/obj/armeabi-v7a/libappmodules.so",
+      "runtimeFiles": [
+        "/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/intermediates/cxx/Debug/415hj2q4/obj/armeabi-v7a/libreact_codegen_safeareacontext.so",
+        "/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/intermediates/cxx/Debug/415hj2q4/obj/armeabi-v7a/libreact_codegen_rnsvg.so",
+        "/home/violetzero/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so",
+        "/home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so",
+        "/home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so"
+      ]
+    },
+    "react_codegen_rnsvg::@4f40eb209d0c0b4a3b65": {
+      "artifactName": "react_codegen_rnsvg",
+      "abi": "armeabi-v7a",
+      "output": "/home/violetzero/proyectoCuidadores/CuidaML/android/app/build/intermediates/cxx/Debug/415hj2q4/obj/armeabi-v7a/libreact_codegen_rnsvg.so",
+      "runtimeFiles": [
+        "/home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so",
+        "/home/violetzero/.gradle/caches/9.0.0/transforms/df62f4a3c6818dc3cc09553936c6f2fd/transformed/react-android-0.84.1-debug/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so",
+        "/home/violetzero/.gradle/caches/9.0.0/transforms/6cb94eb4240b26bae55579cb79d8f81a/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so"
+      ]
+    },
+    "react_codegen_AsyncStorageSpec::@15af80695a6281ecf900": {
+      "artifactName": "react_codegen_AsyncStorageSpec",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    }
+  }
+}

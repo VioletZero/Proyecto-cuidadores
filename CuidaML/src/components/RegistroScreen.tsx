@@ -20,11 +20,11 @@ const { width } = Dimensions.get('window');
 // Textos Legales Extensos Exactos (Capa 3)
 const TEXTO_CONSENTIMIENTO_COMPLETO = `La presente aplicación móvil utiliza tecnologías de Inteligencia Artificial, Machine Learning y Procesamiento de Lenguaje Natural (NLP) con fines exclusivamente académicos, investigativos y de apoyo emocional general.
 
-La aplicación no constituye un servicio médico, psicológico, psiquiátrico, terapéutico ni de emergencia, y no reemplaza la evaluación, diagnóstico, tratamiento o intervención realizada por profesionales de la salud.
+La aplicación no constituye un servicio médico, psicológico, psiquiátrico, terapéutico ni de emergencia, y no reemplaza el acompañamiento u orientación realizada por profesionales de la salud.
 
 El usuario reconoce y acepta que:
 * Las respuestas y análisis emocionales son generados parcialmente mediante sistemas automatizados de Inteligencia Artificial y pueden contener errores, imprecisiones o interpretaciones incorrectas.
-* Los resultados obtenidos no deben interpretarse como diagnósticos clínicos ni utilizarse como única base para decisiones médicas, psicológicas o personales.
+* La información obtenida no debe interpretarse como indicaciones concluyentes ni utilizarse como única base para decisiones médicas, psicológicas o personales.
 * En situaciones de crisis emocional, riesgo de autolesión, ideación suicida o emergencia psicológica, deberá acudir inmediatamente a servicios profesionales especializados o líneas oficiales de atención.
 
 El usuario declara que utiliza la aplicación de manera libre y voluntaria, bajo su propia responsabilidad, comprendiendo plenamente las limitaciones tecnológicas del sistema.
@@ -33,7 +33,7 @@ Asimismo, autoriza el tratamiento de la información suministrada para fines de 
 
 Al seleccionar la opción “Acepto”, el usuario declara que: Ha leído y comprendido el presente consentimiento informado; Entiende los alcances y limitaciones de la aplicación; Autoriza el tratamiento de sus datos conforme a las finalidades descritas; Acepta voluntariamente utilizar la plataforma bajo su propio criterio y responsabilidad.`;
 
-const TEXTO_PRIVACIDAD_COMPLETO = `La aplicación podrá recopilar información relacionada con interacciones textuales, estados emocionales, resultados de evaluaciones y datos técnicos necesarios para el funcionamiento del sistema.
+const TEXTO_PRIVACIDAD_COMPLETO = `La aplicación podrá recopilar información relacionada con interacciones textuales, estados emocionales, registros de bienestar y datos técnicos necesarios para el funcionamiento del sistema.
 
 El tratamiento de los datos se realizará conforme a principios internacionales de: legalidad, transparencia, finalidad legítima, minimización de datos, confidencialidad, seguridad digital, responsabilidad tecnológica y protección de la dignidad humana.
 
@@ -83,8 +83,8 @@ export const RegistroScreen: React.FC<RegistroScreenProps> = ({ onRegistroExitos
   const [emailTocado, setEmailTocado] = useState(false);
   const [passwordTocado, setPasswordTocado] = useState(false);
 
-  // Validaciones locales rápidas
-  const emailValido = email.trim().length > 0 && email.includes('@');
+  // Validaciones locales robustas
+  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const passwordValida = password.length >= 6;
   const nombreValido = nombre.trim().length > 0;
 
@@ -139,9 +139,9 @@ export const RegistroScreen: React.FC<RegistroScreenProps> = ({ onRegistroExitos
           titulo: 'Consentimiento Informado',
           resumen: [
             'La aplicación móvil utiliza Inteligencia Artificial (IA) con fines estrictamente académicos e investigativos de apoyo emocional.',
-            'No sustituye consultas psicológicas, médicas, psiquiátricas ni tratamientos clínicos profesionales de salud.',
+            'No sustituye consultas psicológicas, médicas, psiquiátricas ni orientaciones profesionales de salud.',
             'En caso de crisis grave o riesgo de autolesión, debes recurrir a servicios de emergencia o profesionales de salud calificados.',
-            'Autorizas el tratamiento confidencial y anonimizado de tus datos para el estudio y optimización académica de los algoritmos.'
+            'Autorizas el manejo confidencial y anonimizado de tus datos para el estudio y optimización académica de los algoritmos.'
           ],
           completo: TEXTO_CONSENTIMIENTO_COMPLETO,
         };
@@ -350,7 +350,7 @@ export const RegistroScreen: React.FC<RegistroScreenProps> = ({ onRegistroExitos
             activeOpacity={0.85}
           >
             <Text style={styles.btnRegistroText}>
-              {esLogin ? 'INICIAR SESIÓN' : 'CREAR CUENTA CUIDAML'}
+              {esLogin ? 'Iniciar sesión' : 'Crear cuenta'}
             </Text>
           </TouchableOpacity>
 
@@ -444,14 +444,10 @@ export const RegistroScreen: React.FC<RegistroScreenProps> = ({ onRegistroExitos
               <TouchableOpacity
                 style={styles.modalAcceptBtn}
                 onPress={() => {
-                  // Si lee y cierra, le ayudamos marcando que acepta o solo cerramos.
-                  // Para consentimiento informado explícito estricto, dejamos la decisión
-                  // de marcar la casilla en la pantalla principal, para que sea un consentimiento
-                  // de checkbox voluntario y consciente.
                   setModalActivo(null);
                 }}
               >
-                <Text style={styles.modalAcceptBtnText}>ENTENDIDO Y CERRAR</Text>
+                <Text style={styles.modalAcceptBtnText}>Entendido y cerrar</Text>
               </TouchableOpacity>
             </View>
           </View>
