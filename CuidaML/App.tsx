@@ -165,7 +165,7 @@ export default function App() {
   useEffect(() => {
     const fetchPreguntas = async () => {
       try {
-        const response = await fetch('http://localhost:5000/preguntas_diarias', {
+        const response = await fetch('https://cuidaml.luzserver.org/preguntas_diarias', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({})
@@ -260,7 +260,7 @@ export default function App() {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/evaluacion_mental', {
+      const response = await fetch('https://cuidaml.luzserver.org/evaluacion_mental', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -291,8 +291,8 @@ export default function App() {
   const fetchHistorial = async () => {
     try {
       const [resHist, resRiesgo] = await Promise.all([
-        fetch('http://localhost:5000/historial_evaluaciones'),
-        fetch('http://localhost:5000/nivel_riesgo_acumulado'),
+        fetch('https://cuidaml.luzserver.org/historial_evaluaciones'),
+        fetch('https://cuidaml.luzserver.org/nivel_riesgo_acumulado'),
       ]);
       const dataHist = await resHist.json();
       const dataRiesgo = await resRiesgo.json();

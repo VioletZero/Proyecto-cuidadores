@@ -1,6 +1,0 @@
-/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/x86_64/AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/AsyncStorageSpec-generated.cpp.o
-/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/x86_64/AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/ComponentDescriptors.cpp.o
-/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/x86_64/AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/EventEmitters.cpp.o
-/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/x86_64/AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/Props.cpp.o
-/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/x86_64/AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/ShadowNodes.cpp.o
-/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/x86_64/AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/States.cpp.o

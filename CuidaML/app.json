@@ -1,4 +1,15 @@
 {
   "name": "CuidaML",
-  "displayName": "CuidaML"
+  "displayName": "CuidaML",
+  "android": {
+    "package": "com.anonymous.cuidaml"
+  },
+  "ios": {
+    "bundleIdentifier": "com.anonymous.cuidaml"
+  },
+  "extra": {
+    "eas": {
+      "projectId": "65d167db-ebf2-4751-b8fe-f6d4240cfd1c"
+    }
+  }
 }

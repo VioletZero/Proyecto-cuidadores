@@ -1,3 +1,0 @@
-ninja: Entering directory `/home/violetzero/proyectoCuidadores/CuidaML/android/app/.cxx/Debug/415hj2q4/x86'
-[0/2] Re-checking globbed directories...
-ninja: no work to do.
