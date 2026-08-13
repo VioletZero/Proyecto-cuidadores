@@ -8,12 +8,13 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package && node -e \"const fs = require('fs'); const f = 'node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI/Coding/JavaScriptCodable+Date.swift'; if(fs.existsSync(f)) { fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace('guard milliseconds.isFinite, abs(milliseconds) <= maxJavaScriptDateMilliseconds else {', 'guard milliseconds.isFinite else {\\n    throw InvalidDateException()\\n  }\\n  guard Swift.abs(milliseconds) <= maxJavaScriptDateMilliseconds else {')); }\""
   },
   "dependencies": {
     "@notifee/react-native": "^9.1.8",
     "@react-native-async-storage/async-storage": "^3.1.1",
     "@react-native/new-app-screen": "0.84.1",
+    "expo": "^57.0.9",
     "react": "19.2.3",
     "react-native": "0.84.1",
     "react-native-safe-area-context": "^5.5.2",
