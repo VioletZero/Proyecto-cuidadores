@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, StyleSheet, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, StyleSheet, Linking, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LineChart, LineChartDataPoint } from './src/components/LineChart';
@@ -7,6 +7,7 @@ import { globalStyles, theme } from './src/styles/theme';
 import { RegistroScreen } from './src/components/RegistroScreen';
 import mensajesSoporte from './src/data/mensajesSoporte.json';
 import { NotificacionModal } from './src/components/NotificacionModal';
+import { CustomAlertModal } from './src/components/CustomAlertModal';
 import Sound from 'react-native-sound';
 import notifee, { EventType } from '@notifee/react-native';
 
@@ -56,10 +57,31 @@ export default function App() {
   const [cargando, setCargando] = useState(true);
   const [usuarioRegistrado, setUsuarioRegistrado] = useState(false);
   const [tipoEvaluacion, setTipoEvaluacion] = useState<'diario' | 'baseline'>('diario');
-  const [vistaActual, setVistaActual] = useState<'evaluacion' | 'historial' | 'profesionales'>('evaluacion');
+  const [vistaActual, setVistaActual] = useState<'evaluacion' | 'historial' | 'profesionales' | 'foro'>('evaluacion');
   const [historialData, setHistorialData] = useState<any[]>([]);
   const [riesgoCritico, setRiesgoCritico] = useState<{ activo: boolean; razon: string | null }>({ activo: false, razon: null });
   const [diasDesdeUltimoTest, setDiasDesdeUltimoTest] = useState<number>(0);
+  const [rachaDias, setRachaDias] = useState<number>(0);
+  const [mensajesForo, setMensajesForo] = useState<any[]>([]);
+  const [nuevoMensajeForo, setNuevoMensajeForo] = useState('');
+  const [cargandoForo, setCargandoForo] = useState(false);
+  const [mensajeAResponder, setMensajeAResponder] = useState<any | null>(null);
+  const [mensajeAEditar, setMensajeAEditar] = useState<any | null>(null);
+
+  const [alertConfig, setAlertConfig] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+    buttons?: any[];
+  }>({ visible: false, title: '', message: '' });
+
+  const showAlert = (title: string, message: string, buttons?: any[]) => {
+    setAlertConfig({ visible: true, title, message, buttons });
+  };
+
+  const hideAlert = () => {
+    setAlertConfig(prev => ({ ...prev, visible: false }));
+  };
 
   // Profesionales de apoyo (placeholders editables)
   const PROFESIONALES = [
@@ -194,6 +216,9 @@ export default function App() {
           const countStr = await AsyncStorage.getItem('@login_count');
           if (countStr) setLoginCount(parseInt(countStr));
 
+          const rachaStr = await AsyncStorage.getItem('@racha_dias');
+          if (rachaStr) setRachaDias(parseInt(rachaStr));
+
           // Calcular días desde último test completo
           const ultimaFechaStr = await AsyncStorage.getItem('@ultimo_test_completo_fecha');
           let dias = 7; // por defecto obligar si no hay registro
@@ -231,7 +256,7 @@ export default function App() {
         const emailGuardado = await AsyncStorage.getItem('@email_usuario');
         const passGuardado  = await AsyncStorage.getItem('@pass_usuario');
         if (emailParam.trim().toLowerCase() !== emailGuardado || passwordParam !== passGuardado) {
-          Alert.alert(
+          showAlert(
             'Credenciales incorrectas',
             'El correo o la contraseña no coinciden con una cuenta registrada. '
             + 'Si eres nuevo, elige Regístrate.'
@@ -272,7 +297,7 @@ export default function App() {
       setTipoEvaluacion('baseline');
       setUsuarioRegistrado(true);
     } catch (e) {
-      Alert.alert('Error', 'No se pudieron guardar los datos de registro localmente.');
+      showAlert('Error', 'No se pudieron guardar los datos de registro localmente.');
     }
   };
 
@@ -286,7 +311,7 @@ export default function App() {
       setResultadoEval(null);
       setVistaActual('evaluacion');
     } catch (e) {
-      Alert.alert('Error', 'No se pudo cerrar la sesión.');
+      showAlert('Error', 'No se pudo cerrar la sesión.');
     }
   };
 
@@ -402,7 +427,7 @@ export default function App() {
 
   const enviarEvaluacion = async () => {
     if (Object.keys(respuestas).length < preguntasActivas.length) {
-      Alert.alert("Faltan preguntas", `Por favor responde las ${preguntasActivas.length} preguntas antes de enviar.`);
+      showAlert("Faltan preguntas", `Por favor responde las ${preguntasActivas.length} preguntas antes de enviar.`);
       return;
     }
 
@@ -426,7 +451,7 @@ export default function App() {
 
         const data = await response.json();
         if (data.error) {
-          Alert.alert("Error", data.error);
+          showAlert("Error", data.error);
         } else {
           setResultadoEval(data as EvaluacionResult);
           await AsyncStorage.setItem('@ultimo_resultado', JSON.stringify(data));
@@ -438,20 +463,58 @@ export default function App() {
           setRespuestas({});
           setComentarios('');
 
+          // --- LOGICA DE RACHA ---
+          const hoyStr = new Date().toDateString();
+          const ultimaRachaFecha = await AsyncStorage.getItem('@ultima_fecha_racha');
+          
+          let nuevaRacha = rachaDias;
+          if (ultimaRachaFecha !== hoyStr) {
+             const ayer = new Date();
+             ayer.setDate(ayer.getDate() - 1);
+             
+             if (ultimaRachaFecha === ayer.toDateString()) {
+                nuevaRacha += 1;
+             } else {
+                nuevaRacha = 1; // Reseteo o inicio de racha
+             }
+             
+             setRachaDias(nuevaRacha);
+             await AsyncStorage.setItem('@racha_dias', nuevaRacha.toString());
+             await AsyncStorage.setItem('@ultima_fecha_racha', hoyStr);
+             
+             // Notificaciones de Hitos
+             if (nuevaRacha === 3) {
+                 notifee.displayNotification({
+                     id: 'racha-3',
+                     title: '¡Qué bien! 🔥',
+                     body: 'Llevas 3 días cuidando de ti. Sigue así.',
+                     android: { channelId: 'default' }
+                 });
+             } else if (nuevaRacha === 7) {
+                 notifee.displayNotification({
+                     id: 'racha-7',
+                     title: '¡Felicidades! 🎉',
+                     body: 'Llevas una semana completa registrando tu diario. ¡Eres increíble!',
+                     android: { channelId: 'default' }
+                 });
+             }
+          }
+          // -----------------------------
+
           // Esperar a que el layout se actualice con la tarjeta de resultado antes de hacer scroll
           setTimeout(() => {
             scrollViewRef.current?.scrollTo({ y: 0, animated: true });
           }, 350);
 
-          Alert.alert("¡Gracias!", "Tu registro ha sido guardado correctamente.");
+          showAlert("¡Gracias!", "Tu registro ha sido guardado correctamente.");
         }
       } catch (e) {
-        Alert.alert("Error de Conexión", "No se pudo conectar con el servidor Flask.");
+        showAlert("Error de Conexión", "Parece que no hay internet, revisa tu conexión.");
       }
     };
 
     if (!comentarios.trim()) {
-      Alert.alert(
+      showAlert(
         "Espacio personal vacío",
         "¿Estás seguro de que quieres enviar el registro sin hablar sobre ti o tu día en el espacio personal?",
         [
@@ -482,8 +545,78 @@ export default function App() {
       }
       setVistaActual('historial');
     } catch (e) {
-      Alert.alert("Error", "No se pudo cargar el historial");
+      showAlert("Error", "No se pudo cargar el historial");
     }
+  };
+
+  const fetchForoMensajes = async () => {
+    setCargandoForo(true);
+    try {
+      const response = await fetch('https://cuidaml.luzserver.org/foro/mensajes');
+      const data = await response.json();
+      if (data.status === 'success') {
+        setMensajesForo(data.mensajes || []);
+      }
+    } catch (e) {
+      console.warn("Error cargando foro", e);
+    } finally {
+      setCargandoForo(false);
+    }
+  };
+
+  const enviarMensajeForo = async () => {
+    if (!nuevoMensajeForo.trim()) return;
+    try {
+      let url = 'https://cuidaml.luzserver.org/foro/mensajes';
+      let method = 'POST';
+      let body: any = {
+        autor: nombreUsuario || 'Cuidador',
+        texto: nuevoMensajeForo.trim()
+      };
+
+      if (mensajeAEditar) {
+        url = `https://cuidaml.luzserver.org/foro/mensajes/${mensajeAEditar.id}`;
+        method = 'PUT';
+      } else if (mensajeAResponder) {
+        body.parent_id = mensajeAResponder.id;
+      }
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        setNuevoMensajeForo('');
+        setMensajeAResponder(null);
+        setMensajeAEditar(null);
+        fetchForoMensajes();
+        showAlert("¡Listo!", mensajeAEditar ? "Mensaje editado correctamente." : "Mensaje compartido con la comunidad.");
+      }
+    } catch (e) {
+      showAlert("Error", "No se pudo realizar la acción en este momento.");
+    }
+  };
+
+  const eliminarMensajeForo = (id: string) => {
+    showAlert("Borrar Mensaje", "¿Estás seguro de que quieres eliminar este mensaje?", [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Borrar", style: "destructive", onPress: async () => {
+        try {
+          const response = await fetch(`https://cuidaml.luzserver.org/foro/mensajes/${id}`, {
+            method: 'DELETE'
+          });
+          const data = await response.json();
+          if (data.status === 'success') {
+            fetchForoMensajes();
+            showAlert("Eliminado", "El mensaje fue borrado.");
+          }
+        } catch (e) {
+          showAlert("Error", "No se pudo borrar el mensaje.");
+        }
+      }}
+    ]);
   };
 
   // Calcular datos para LineChart
@@ -513,13 +646,13 @@ export default function App() {
         <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20, marginTop: 10 }}>
           <TouchableOpacity 
             style={[styles.tabBtn, tipoEvaluacion === 'diario' && styles.tabBtnActive]}
-            onPress={() => { setTipoEvaluacion('diario'); setRespuestas({}); setResultadoEval(null); }}
+            onPress={() => { setTipoEvaluacion('diario'); setResultadoEval(null); }}
           >
             <Text style={[styles.tabText, tipoEvaluacion === 'diario' && styles.tabTextActive]}>Check-in diario</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={[styles.tabBtn, tipoEvaluacion === 'baseline' && styles.tabBtnActive]}
-            onPress={() => { setTipoEvaluacion('baseline'); setRespuestas({}); setResultadoEval(null); }}
+            onPress={() => { setTipoEvaluacion('baseline'); setResultadoEval(null); }}
           >
             <Text style={[styles.tabText, tipoEvaluacion === 'baseline' && styles.tabTextActive]}>Test completo</Text>
           </TouchableOpacity>
@@ -779,6 +912,97 @@ export default function App() {
     );
   };
 
+  const renderMensajeForo = (m: any, isRespuesta: boolean = false) => {
+    const esMio = m.autor === nombreUsuario;
+    return (
+      <View key={m.id} style={[globalStyles.card, { 
+        padding: 15, 
+        marginBottom: 15, 
+        backgroundColor: '#FFF', 
+        marginLeft: isRespuesta ? 30 : 0,
+        borderWidth: 1,
+        borderColor: '#EAEAEA',
+        borderLeftWidth: isRespuesta ? 4 : 1,
+        borderLeftColor: isRespuesta ? theme.colors.primaryPastel : '#EAEAEA'
+      }]}>
+        <Text style={{ fontFamily: 'Nunito-Regular', fontSize: 14, color: '#333' }}>
+          {m.texto} {m.editado && <Text style={{ fontSize: 10, color: '#999' }}>(editado)</Text>}
+        </Text>
+        <Text style={{ fontFamily: 'Nunito-Bold', fontSize: 12, color: theme.colors.primaryMain, marginTop: 8 }}>
+          - {m.autor}
+        </Text>
+        
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10 }}>
+          {!isRespuesta && (
+            <TouchableOpacity onPress={() => { setMensajeAResponder(m); setMensajeAEditar(null); setNuevoMensajeForo(''); }} style={{ marginRight: 15 }}>
+              <Text style={{ color: theme.colors.primaryDark, fontSize: 13, fontFamily: 'Nunito-Bold' }}>Responder</Text>
+            </TouchableOpacity>
+          )}
+          {esMio && (
+            <>
+              <TouchableOpacity onPress={() => { setMensajeAEditar(m); setMensajeAResponder(null); setNuevoMensajeForo(m.texto); }} style={{ marginRight: 15 }}>
+                <Text style={{ color: theme.colors.warning, fontSize: 13, fontFamily: 'Nunito-Bold' }}>Editar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => eliminarMensajeForo(m.id)}>
+                <Text style={{ color: theme.colors.error, fontSize: 13, fontFamily: 'Nunito-Bold' }}>Eliminar</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+
+        {m.respuestas && m.respuestas.length > 0 && (
+          <View style={{ marginTop: 10, borderLeftWidth: 2, borderLeftColor: '#EEE', paddingLeft: 10 }}>
+            {m.respuestas.map((r: any) => renderMensajeForo(r, true))}
+          </View>
+        )}
+      </View>
+    );
+  };
+
+  const renderForo = () => (
+    <View style={{ flex: 1 }}>
+      <View style={{ padding: 15, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#EEE' }}>
+        <Text style={[globalStyles.headerTitle, { fontSize: 18, marginBottom: 8 }]}>Muro de Apoyo 💛</Text>
+        <Text style={[globalStyles.bodyText, { fontSize: 12, color: '#666', marginBottom: 12 }]}>Un espacio seguro para compartir y leer mensajes de ánimo de otros cuidadores.</Text>
+        
+        {(mensajeAResponder || mensajeAEditar) && (
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5, backgroundColor: '#FFF3CD', padding: 8, borderRadius: 5 }}>
+            <Text style={{ fontSize: 12, color: '#856404', fontFamily: 'Nunito-Bold' }}>
+              {mensajeAResponder ? `Respondiendo a: ${mensajeAResponder.autor}` : 'Editando tu mensaje'}
+            </Text>
+            <TouchableOpacity onPress={() => { setMensajeAResponder(null); setMensajeAEditar(null); setNuevoMensajeForo(''); }}>
+              <Text style={{ fontSize: 12, color: '#856404', fontFamily: 'Nunito-Bold' }}>Cancelar ✕</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <TextInput
+          style={{ backgroundColor: '#F8F9FA', borderWidth: 1, borderColor: '#EAEAEA', borderRadius: 8, padding: 12, fontFamily: 'Nunito-Regular', minHeight: 60, color: '#333' }}
+          placeholder={mensajeAResponder ? "Escribe tu respuesta..." : "Escribe un mensaje de apoyo..."}
+          placeholderTextColor="#888"
+          multiline
+          value={nuevoMensajeForo}
+          onChangeText={setNuevoMensajeForo}
+        />
+        <TouchableOpacity 
+          style={{ backgroundColor: theme.colors.primaryMain, padding: 10, borderRadius: 8, marginTop: 10, alignItems: 'center' }}
+          onPress={enviarMensajeForo}
+        >
+          <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold' }}>{mensajeAEditar ? 'Guardar Cambios' : 'Publicar Mensaje'}</Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView contentContainerStyle={{ padding: 15, paddingBottom: 100 }}>
+        {cargandoForo ? (
+          <Text style={{ textAlign: 'center', marginTop: 20, fontFamily: 'Nunito-Regular' }}>Cargando mensajes...</Text>
+        ) : mensajesForo.length === 0 ? (
+          <Text style={{ textAlign: 'center', marginTop: 20, fontFamily: 'Nunito-Regular', color: '#666' }}>Aún no hay mensajes. ¡Sé el primero en escribir!</Text>
+        ) : (
+          mensajesForo.map((m) => renderMensajeForo(m, false))
+        )}
+      </ScrollView>
+    </View>
+  );
+
   if (cargando) {
     return (
       <View style={styles.splashContainer}>
@@ -793,6 +1017,7 @@ export default function App() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <StatusBar backgroundColor="#000000" barStyle="light-content" />
       {!usuarioRegistrado ? (
         <RegistroScreen onRegistroExitoso={(nombre, emailP, passP, login) => handleRegistroExitoso(nombre, emailP, passP, login)} />
       ) : (
@@ -801,12 +1026,13 @@ export default function App() {
           <View style={styles.userHeader}>
             <Text style={styles.userHeaderText}>
               Hola, <Text style={styles.userNameText}>{nombreUsuario}</Text> 💛
+              {rachaDias > 0 && <Text style={{ color: '#FF7F50', fontFamily: 'Nunito-Bold' }}> | 🔥 Racha: {rachaDias} {rachaDias === 1 ? 'día' : 'días'}</Text>}
             </Text>
             <TouchableOpacity onPress={cerrarSesion} style={styles.logoutBtn}>
               <Text style={styles.logoutBtnText}>Cerrar sesión 🚪</Text>
             </TouchableOpacity>
           </View>
-          {vistaActual === 'evaluacion' ? renderEvaluacion() : vistaActual === 'historial' ? renderHistorial() : renderProfesionales()}
+          {vistaActual === 'evaluacion' ? renderEvaluacion() : vistaActual === 'historial' ? renderHistorial() : vistaActual === 'foro' ? renderForo() : renderProfesionales()}
 
           {/* Taskbar flotante */}
           <View style={styles.taskbarContainer}>
@@ -816,8 +1042,11 @@ export default function App() {
             <TouchableOpacity style={styles.taskbarBtn} onPress={() => setVistaActual('evaluacion')}>
               <Text style={[styles.taskbarText, vistaActual === 'evaluacion' && styles.taskbarTextActive]}>📝 Test</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.taskbarBtn} onPress={() => { setVistaActual('foro'); fetchForoMensajes(); }}>
+              <Text style={[styles.taskbarText, vistaActual === 'foro' && styles.taskbarTextActive]}>💛 Comunidad</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.taskbarBtn} onPress={() => setVistaActual('profesionales')}>
-              <Text style={[styles.taskbarText, vistaActual === 'profesionales' && styles.taskbarTextActive]}>💬 Profesionales</Text>
+              <Text style={[styles.taskbarText, vistaActual === 'profesionales' && styles.taskbarTextActive]}>💬 Ayuda</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -831,6 +1060,14 @@ export default function App() {
           console.log("Modal cerrado vía acción:", actionType);
         }}
         data={mensajeNotificacionActivo}
+      />
+
+      <CustomAlertModal
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onClose={hideAlert}
       />
     </View>
   );

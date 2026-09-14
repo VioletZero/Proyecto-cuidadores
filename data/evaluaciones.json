@@ -2482,5 +2482,372 @@
         "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
       ]
     }
+  },
+  {
+    "user_metadata": {
+      "id": "2e0cc908-33bf-479a-96b3-d4bd01dd38c0",
+      "nombre": "Luz",
+      "fecha": "2026-08-13T18:57:07.563745Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 5,
+        "label": "¿Sientes que tu vida social se ha visto afectada por el cuidado?",
+        "score": 4,
+        "dimension": "Social"
+      },
+      {
+        "item_id": 9,
+        "label": "¿Te has sentido tenso/a o irritable con frecuencia?",
+        "score": 4,
+        "dimension": "Emocional"
+      },
+      {
+        "item_id": 13,
+        "label": "¿Sientes que la relación con la persona que cuidas se ha vuelto difícil?",
+        "score": 4,
+        "dimension": "Relacional"
+      }
+    ],
+    "puntaje_proporcional": 60.0,
+    "tipo_evaluacion": "diario",
+    "nlp_corpus": "Mi esposo tiene Alzheimer, diagnosticado hace seis años.\nA pesar que está en tratamiento con Neurólogo y Psicológo, cada día es un nuevo reto.\nComo familia tiene nuestro amor y paciencia.\nPero estamos agotados emocional y físicamente.\n\n\n\n\n",
+    "predictive_target": "Bienestar Bajo",
+    "emocion_detectada": "Depresión",
+    "dimensiones_evaluadas": {
+      "Física": "Estado físico reportado estable.",
+      "Psicológica": "Carga psicológica en rangos manejables.",
+      "Emocional": "Equilibrio emocional relativo."
+    },
+    "intervencion": {
+      "titulo": "Respiración (Técnica 4-7-8)",
+      "instrucciones": [
+        "1. Inhala profundamente por la nariz durante 4 segundos.",
+        "2. Mantén la respiración durante 7 segundos.",
+        "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
+      ]
+    }
+  },
+  {
+    "user_metadata": {
+      "id": "b6e810c4-75ed-4556-802d-170e2d91f7c5",
+      "nombre": "Nathaly",
+      "fecha": "2026-08-13T19:13:25.417889Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 5,
+        "label": "¿Sientes que tu vida social se ha visto afectada por el cuidado?",
+        "score": 0,
+        "dimension": "Social"
+      },
+      {
+        "item_id": 9,
+        "label": "¿Te has sentido tenso/a o irritable con frecuencia?",
+        "score": 2,
+        "dimension": "Emocional"
+      },
+      {
+        "item_id": 13,
+        "label": "¿Sientes que la relación con la persona que cuidas se ha vuelto difícil?",
+        "score": 2,
+        "dimension": "Relacional"
+      }
+    ],
+    "puntaje_proporcional": 20.0,
+    "tipo_evaluacion": "diario",
+    "nlp_corpus": "Mi día estuvo bien",
+    "predictive_target": "Bienestar Alto",
+    "emocion_detectada": "Depresión",
+    "dimensiones_evaluadas": {
+      "Física": "Estado físico reportado estable.",
+      "Psicológica": "Carga psicológica en rangos manejables.",
+      "Emocional": "Equilibrio emocional relativo."
+    },
+    "intervencion": null
+  },
+  {
+    "user_metadata": {
+      "id": "d3429968-a374-479a-bdb6-c50884ec695b",
+      "nombre": "Nathaly",
+      "fecha": "2026-08-13T19:15:35.588808Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 1,
+        "label": "¿Sientes que cuidar a esta persona ocupa gran parte de tu tiempo?",
+        "score": 3,
+        "dimension": "Tiempo/Carga"
+      },
+      {
+        "item_id": 2,
+        "label": "¿Te sientes estresado/a al intentar equilibrar el cuidado con otras responsabilidades?",
+        "score": 3,
+        "dimension": "Psicológica"
+      },
+      {
+        "item_id": 3,
+        "label": "¿Sientes que no tienes suficiente tiempo para ti?",
+        "score": 3,
+        "dimension": "Tiempo/Carga"
+      },
+      {
+        "item_id": 4,
+        "label": "¿Te has sentido agotado/a física o emocionalmente por cuidar?",
+        "score": 3,
+        "dimension": "Física"
+      },
+      {
+        "item_id": 5,
+        "label": "¿Sientes que tu vida social se ha visto afectada por el cuidado?",
+        "score": 2,
+        "dimension": "Social"
+      },
+      {
+        "item_id": 6,
+        "label": "¿Te sientes incómodo/a al invitar personas a casa por la situación de cuidado?",
+        "score": 4,
+        "dimension": "Social"
+      },
+      {
+        "item_id": 7,
+        "label": "¿Sientes que la persona que cuidas depende demasiado de ti?",
+        "score": 4,
+        "dimension": "Relacional"
+      },
+      {
+        "item_id": 8,
+        "label": "¿Te preocupa no estar haciendo lo suficiente o hacerlo mal?",
+        "score": 4,
+        "dimension": "Psicológica"
+      },
+      {
+        "item_id": 9,
+        "label": "¿Te has sentido tenso/a o irritable con frecuencia?",
+        "score": 2,
+        "dimension": "Emocional"
+      },
+      {
+        "item_id": 10,
+        "label": "¿Sientes que tu salud se ha visto afectada por el cuidado?",
+        "score": 2,
+        "dimension": "Física"
+      },
+      {
+        "item_id": 11,
+        "label": "¿Sientes que has perdido control sobre tu vida desde que cuidas?",
+        "score": 2,
+        "dimension": "Psicológica"
+      },
+      {
+        "item_id": 12,
+        "label": "¿Te gustaría poder delegar el cuidado a alguien más?",
+        "score": 4,
+        "dimension": "Tiempo/Carga"
+      },
+      {
+        "item_id": 13,
+        "label": "¿Sientes que la relación con la persona que cuidas se ha vuelto difícil?",
+        "score": 2,
+        "dimension": "Relacional"
+      },
+      {
+        "item_id": 14,
+        "label": "¿Sientes culpa por cómo manejas el cuidado?",
+        "score": 2,
+        "dimension": "Emocional"
+      },
+      {
+        "item_id": 15,
+        "label": "¿Sientes que cuidar es una carga pesada para ti?",
+        "score": 3,
+        "dimension": "Tiempo/Carga"
+      }
+    ],
+    "puntaje_proporcional": 43.0,
+    "tipo_evaluacion": "baseline",
+    "nlp_corpus": "El día estuvo bien",
+    "predictive_target": "Bienestar Moderado",
+    "emocion_detectada": "Depresión",
+    "dimensiones_evaluadas": {
+      "Física": "Se detecta agotamiento físico.",
+      "Psicológica": "Niveles elevados de estrés y preocupación.",
+      "Emocional": "Equilibrio emocional relativo."
+    },
+    "intervencion": {
+      "titulo": "Respiración (Técnica 4-7-8)",
+      "instrucciones": [
+        "1. Inhala profundamente por la nariz durante 4 segundos.",
+        "2. Mantén la respiración durante 7 segundos.",
+        "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
+      ]
+    }
+  },
+  {
+    "user_metadata": {
+      "id": "b3698ebb-8f1e-4b04-be21-09f227ef0f39",
+      "nombre": "MariaFabiola",
+      "fecha": "2026-08-13T21:38:44.717944Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 6,
+        "label": "¿Te sientes incómodo/a al invitar personas a casa por la situación de cuidado?",
+        "score": 3,
+        "dimension": "Social"
+      },
+      {
+        "item_id": 9,
+        "label": "¿Te has sentido tenso/a o irritable con frecuencia?",
+        "score": 3,
+        "dimension": "Emocional"
+      },
+      {
+        "item_id": 13,
+        "label": "¿Sientes que la relación con la persona que cuidas se ha vuelto difícil?",
+        "score": 3,
+        "dimension": "Relacional"
+      }
+    ],
+    "puntaje_proporcional": 45.0,
+    "tipo_evaluacion": "diario",
+    "nlp_corpus": "Lidiar con el trabajo y mi vida personal ",
+    "predictive_target": "Bienestar Moderado",
+    "emocion_detectada": "Depresión",
+    "dimensiones_evaluadas": {
+      "Física": "Estado físico reportado estable.",
+      "Psicológica": "Carga psicológica en rangos manejables.",
+      "Emocional": "Equilibrio emocional relativo."
+    },
+    "intervencion": {
+      "titulo": "Respiración (Técnica 4-7-8)",
+      "instrucciones": [
+        "1. Inhala profundamente por la nariz durante 4 segundos.",
+        "2. Mantén la respiración durante 7 segundos.",
+        "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
+      ]
+    }
+  },
+  {
+    "user_metadata": {
+      "id": "2b1569dc-5a37-4363-b0d8-44d477373930",
+      "nombre": "MariaFabiola",
+      "fecha": "2026-08-13T21:40:11.040242Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": 1,
+        "label": "¿Sientes que cuidar a esta persona ocupa gran parte de tu tiempo?",
+        "score": 2,
+        "dimension": "Tiempo/Carga"
+      },
+      {
+        "item_id": 2,
+        "label": "¿Te sientes estresado/a al intentar equilibrar el cuidado con otras responsabilidades?",
+        "score": 2,
+        "dimension": "Psicológica"
+      },
+      {
+        "item_id": 3,
+        "label": "¿Sientes que no tienes suficiente tiempo para ti?",
+        "score": 3,
+        "dimension": "Tiempo/Carga"
+      },
+      {
+        "item_id": 4,
+        "label": "¿Te has sentido agotado/a física o emocionalmente por cuidar?",
+        "score": 2,
+        "dimension": "Física"
+      },
+      {
+        "item_id": 5,
+        "label": "¿Sientes que tu vida social se ha visto afectada por el cuidado?",
+        "score": 3,
+        "dimension": "Social"
+      },
+      {
+        "item_id": 6,
+        "label": "¿Te sientes incómodo/a al invitar personas a casa por la situación de cuidado?",
+        "score": 2,
+        "dimension": "Social"
+      },
+      {
+        "item_id": 7,
+        "label": "¿Sientes que la persona que cuidas depende demasiado de ti?",
+        "score": 3,
+        "dimension": "Relacional"
+      },
+      {
+        "item_id": 8,
+        "label": "¿Te preocupa no estar haciendo lo suficiente o hacerlo mal?",
+        "score": 3,
+        "dimension": "Psicológica"
+      },
+      {
+        "item_id": 9,
+        "label": "¿Te has sentido tenso/a o irritable con frecuencia?",
+        "score": 3,
+        "dimension": "Emocional"
+      },
+      {
+        "item_id": 10,
+        "label": "¿Sientes que tu salud se ha visto afectada por el cuidado?",
+        "score": 2,
+        "dimension": "Física"
+      },
+      {
+        "item_id": 11,
+        "label": "¿Sientes que has perdido control sobre tu vida desde que cuidas?",
+        "score": 3,
+        "dimension": "Psicológica"
+      },
+      {
+        "item_id": 12,
+        "label": "¿Te gustaría poder delegar el cuidado a alguien más?",
+        "score": 3,
+        "dimension": "Tiempo/Carga"
+      },
+      {
+        "item_id": 13,
+        "label": "¿Sientes que la relación con la persona que cuidas se ha vuelto difícil?",
+        "score": 3,
+        "dimension": "Relacional"
+      },
+      {
+        "item_id": 14,
+        "label": "¿Sientes culpa por cómo manejas el cuidado?",
+        "score": 3,
+        "dimension": "Emocional"
+      },
+      {
+        "item_id": 15,
+        "label": "¿Sientes que cuidar es una carga pesada para ti?",
+        "score": 3,
+        "dimension": "Tiempo/Carga"
+      }
+    ],
+    "puntaje_proporcional": 40.0,
+    "tipo_evaluacion": "baseline",
+    "nlp_corpus": "Lidear con el trabajo y mi vida personal",
+    "predictive_target": "Bienestar Moderado",
+    "emocion_detectada": "Depresión",
+    "dimensiones_evaluadas": {
+      "Física": "Estado físico reportado estable.",
+      "Psicológica": "Niveles elevados de estrés y preocupación.",
+      "Emocional": "Presencia de culpa o irritabilidad frecuente."
+    },
+    "intervencion": {
+      "titulo": "Respiración (Técnica 4-7-8)",
+      "instrucciones": [
+        "1. Inhala profundamente por la nariz durante 4 segundos.",
+        "2. Mantén la respiración durante 7 segundos.",
+        "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
+      ]
+    }
   }
 ]

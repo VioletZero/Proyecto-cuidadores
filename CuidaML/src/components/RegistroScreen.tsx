@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../styles/theme';
+import { CustomAlertModal, AlertButton } from './CustomAlertModal';
 
 const { width } = Dimensions.get('window');
 
@@ -68,6 +69,7 @@ export const RegistroScreen: React.FC<RegistroScreenProps> = ({ onRegistroExitos
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
 
   // Modo login vs registro
   const [esLogin, setEsLogin] = useState(false);
@@ -83,10 +85,26 @@ export const RegistroScreen: React.FC<RegistroScreenProps> = ({ onRegistroExitos
   const [emailTocado, setEmailTocado] = useState(false);
   const [passwordTocado, setPasswordTocado] = useState(false);
 
+  // Estado para CustomAlert
+  const [alertConfig, setAlertConfig] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+    buttons?: AlertButton[];
+  }>({ visible: false, title: '', message: '' });
+
+  const showAlert = (title: string, message: string, buttons?: AlertButton[]) => {
+    setAlertConfig({ visible: true, title, message, buttons });
+  };
+
+  const hideAlert = () => {
+    setAlertConfig(prev => ({ ...prev, visible: false }));
+  };
+
   // Validaciones locales robustas
   const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const passwordValida = password.length >= 6;
-  const nombreValido = nombre.trim().length > 0;
+  const nombreValido = nombre.trim().length > 0 && apellido.trim().length > 0;
 
   const mensajeEmail = emailTocado && !emailValido && email.trim().length > 0
     ? 'Por favor ingresa un correo válido (ej. nombre@dominio.com).'
@@ -108,7 +126,7 @@ export const RegistroScreen: React.FC<RegistroScreenProps> = ({ onRegistroExitos
   const handleAccionPrincipal = () => {
     if (esLogin) {
       if (!emailValido || !passwordValida) {
-        Alert.alert('Datos Incompletos', 'Por favor, completa los campos correctamente.');
+        showAlert('Datos Incompletos', 'Por favor, completa los campos correctamente.');
         return;
       }
       // Pasar credenciales al padre para verificación real
@@ -116,13 +134,13 @@ export const RegistroScreen: React.FC<RegistroScreenProps> = ({ onRegistroExitos
     } else {
       if (!formularioListo) {
         if (!checkboxActivo) {
-          Alert.alert('Consentimiento Requerido', 'Debes leer y aceptar el Consentimiento Informado, la Política de Privacidad y los Términos de Uso antes de continuar.');
+          showAlert('Consentimiento Requerido', 'Debes leer y aceptar el Consentimiento Informado, la Política de Privacidad y los Términos de Uso antes de continuar.');
         } else {
-          Alert.alert('Datos Incompletos', 'Por favor, completa correctamente todos los campos:\n• El nombre es obligatorio\n• El correo debe ser válido\n• La contraseña debe tener al menos 6 caracteres');
+          showAlert('Datos Incompletos', 'Por favor, completa correctamente todos los campos:\n• El nombre y apellido son obligatorios\n• El correo debe ser válido\n• La contraseña debe tener al menos 6 caracteres');
         }
         return;
       }
-      onRegistroExitoso(nombre.trim(), email, password, false);
+      onRegistroExitoso(`${nombre.trim()} ${apellido.trim()}`, email, password, false);
     }
   };
 
@@ -196,17 +214,30 @@ export const RegistroScreen: React.FC<RegistroScreenProps> = ({ onRegistroExitos
             <Text style={styles.cardTitle}>{esLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}</Text>
 
             {!esLogin && (
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputLabel}>Nombre o Pseudónimo</Text>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Ej. María"
-                  placeholderTextColor="#A4B0BE"
-                  value={nombre}
-                  onChangeText={setNombre}
-                  autoCapitalize="words"
-                />
-              </View>
+              <>
+                <View style={styles.inputWrapper}>
+                  <Text style={styles.inputLabel}>Nombre</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Ej. María"
+                    placeholderTextColor="#A4B0BE"
+                    value={nombre}
+                    onChangeText={setNombre}
+                    autoCapitalize="words"
+                  />
+                </View>
+                <View style={styles.inputWrapper}>
+                  <Text style={styles.inputLabel}>Apellido</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Ej. Pérez"
+                    placeholderTextColor="#A4B0BE"
+                    value={apellido}
+                    onChangeText={setApellido}
+                    autoCapitalize="words"
+                  />
+                </View>
+              </>
             )}
 
             <View style={styles.inputWrapper}>
@@ -363,6 +394,14 @@ export const RegistroScreen: React.FC<RegistroScreenProps> = ({ onRegistroExitos
 
 
           <View style={styles.spacer} />
+          {/* Custom Alert */}
+          <CustomAlertModal
+            visible={alertConfig.visible}
+            title={alertConfig.title}
+            message={alertConfig.message}
+            buttons={alertConfig.buttons}
+            onClose={hideAlert}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
 

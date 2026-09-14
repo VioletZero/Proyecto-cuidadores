@@ -444,6 +444,150 @@ def nivel_riesgo_acumulado():
         return jsonify({"error": "Error interno."}), 500
 
 
+# ==========================================
+# Rutas del Foro / Muro de Apoyo
+# ==========================================
+
+PATH_FORO = os.path.join('data', 'foro.json')
+
+@app.route('/foro/mensajes', methods=['GET'])
+def obtener_mensajes_foro():
+    try:
+        if not os.path.exists(PATH_FORO):
+            return jsonify({"status": "success", "mensajes": []}), 200
+        with open(PATH_FORO, 'r', encoding='utf-8') as f:
+            mensajes = json.load(f)
+        return jsonify({"status": "success", "mensajes": mensajes}), 200
+    except Exception as e:
+        print(f"Error obteniendo foro: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+@app.route('/foro/mensajes', methods=['POST'])
+def publicar_mensaje_foro():
+    try:
+        data = request.get_json()
+        if not data or not data.get('autor') or not data.get('texto'):
+            return jsonify({"error": "Faltan datos (autor y texto requeridos)"}), 400
+        
+        nuevo_mensaje = {
+            "id": str(uuid.uuid4()),
+            "autor": data['autor'],
+            "texto": data['texto'],
+            "fecha": datetime.now(timezone.utc).isoformat(),
+            "respuestas": []
+        }
+
+        if not os.path.exists('data'):
+            os.makedirs('data')
+            
+        mensajes = []
+        if os.path.exists(PATH_FORO):
+            with open(PATH_FORO, 'r', encoding='utf-8') as f:
+                mensajes = json.load(f)
+                
+        parent_id = data.get('parent_id')
+        if parent_id:
+            encontrado = False
+            for m in mensajes:
+                if m.get('id') == parent_id:
+                    if 'respuestas' not in m:
+                        m['respuestas'] = []
+                    m['respuestas'].append(nuevo_mensaje)
+                    encontrado = True
+                    break
+            if not encontrado:
+                return jsonify({"error": "Mensaje principal no encontrado"}), 404
+        else:
+            mensajes.insert(0, nuevo_mensaje) # Más recientes arriba
+        
+        with open(PATH_FORO, 'w', encoding='utf-8') as f:
+            json.dump(mensajes, f, ensure_ascii=False, indent=4)
+            
+        return jsonify({"status": "success", "mensaje": nuevo_mensaje}), 201
+    except Exception as e:
+        print(f"Error publicando en foro: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+@app.route('/foro/mensajes/<mensaje_id>', methods=['DELETE'])
+def eliminar_mensaje_foro(mensaje_id):
+    try:
+        if not os.path.exists(PATH_FORO):
+            return jsonify({"error": "No hay mensajes"}), 404
+            
+        with open(PATH_FORO, 'r', encoding='utf-8') as f:
+            mensajes = json.load(f)
+            
+        nuevo_mensajes = []
+        eliminado = False
+        
+        for m in mensajes:
+            if m.get('id') == mensaje_id:
+                eliminado = True
+                continue 
+                
+            if 'respuestas' in m:
+                res_len = len(m['respuestas'])
+                m['respuestas'] = [r for r in m['respuestas'] if r.get('id') != mensaje_id]
+                if len(m['respuestas']) < res_len:
+                    eliminado = True
+            
+            nuevo_mensajes.append(m)
+            
+        if not eliminado:
+            return jsonify({"error": "Mensaje no encontrado"}), 404
+            
+        with open(PATH_FORO, 'w', encoding='utf-8') as f:
+            json.dump(nuevo_mensajes, f, ensure_ascii=False, indent=4)
+            
+        return jsonify({"status": "success", "mensaje": "Eliminado correctamente"}), 200
+    except Exception as e:
+        print(f"Error eliminando en foro: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+@app.route('/foro/mensajes/<mensaje_id>', methods=['PUT'])
+def editar_mensaje_foro(mensaje_id):
+    try:
+        data = request.get_json()
+        if not data or not data.get('texto'):
+            return jsonify({"error": "Faltan datos (texto requerido)"}), 400
+            
+        if not os.path.exists(PATH_FORO):
+            return jsonify({"error": "No hay mensajes"}), 404
+            
+        with open(PATH_FORO, 'r', encoding='utf-8') as f:
+            mensajes = json.load(f)
+            
+        editado = False
+        
+        for m in mensajes:
+            if m.get('id') == mensaje_id:
+                m['texto'] = data['texto']
+                m['editado'] = True
+                editado = True
+                break
+                
+            if 'respuestas' in m:
+                for r in m['respuestas']:
+                    if r.get('id') == mensaje_id:
+                        r['texto'] = data['texto']
+                        r['editado'] = True
+                        editado = True
+                        break
+                if editado:
+                    break
+            
+        if not editado:
+            return jsonify({"error": "Mensaje no encontrado"}), 404
+            
+        with open(PATH_FORO, 'w', encoding='utf-8') as f:
+            json.dump(mensajes, f, ensure_ascii=False, indent=4)
+            
+        return jsonify({"status": "success", "mensaje": "Editado correctamente"}), 200
+    except Exception as e:
+        print(f"Error editando en foro: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+
 if __name__ == '__main__':
     # host='0.0.0.0' permite la conexión del teléfono a la IP de la PC [Chat History]
     app.run(debug=True, host='0.0.0.0', port=5000)

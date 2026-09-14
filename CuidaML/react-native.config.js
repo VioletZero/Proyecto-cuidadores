@@ -4,4 +4,12 @@ module.exports = {
     android: {},
   },
   assets: ['./assets/fonts'],
+  dependencies: {
+    expo: {
+      platforms: {
+        android: null,
+        ios: null,
+      },
+    },
+  },
 };

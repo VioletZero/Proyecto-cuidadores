@@ -389,7 +389,7 @@
     <string description="an option in a set of choices contained by a menu or menubar" name="menuitem_description">Menu Item</string>
     <string description="displays the progress status for tasks that take a long time" name="progressbar_description">Progress Bar</string>
     <string description="a group of radio buttons" name="radiogroup_description">Radio Group</string>
-    <string name="react_native_dev_server_ip" translatable="false">10.220.165.131</string>
+    <string name="react_native_dev_server_ip" translatable="false">192.168.123.42</string>
     <string description="an interactive element inside a tablist" name="rn_tab_description">Tab</string>
     <string description="controls the scrolling of content within a viewing area" name="scrollbar_description">Scroll Bar</string>
     <string name="search_menu_title">Search</string>
