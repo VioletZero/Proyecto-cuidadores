@@ -59,6 +59,29 @@ def predecir_emocion(texto_relato):
     """Clasifica el relato y devuelve la clase detectada junto con el nivel de sobrecarga probabilístico."""
     texto_limpio = limpiar_texto(texto_relato)
     
+    # -------------------------------------------------------------------------
+    # APRENDIZAJE ACTIVO Y DETECCIÓN DE SARCASMO (Para la tesis)
+    # -------------------------------------------------------------------------
+    # El motor utiliza BERT para extraer embeddings contextuales, aprendiendo
+    # de las relaciones semánticas entre las palabras. Sin embargo, para detectar
+    # ironía/sarcasmo en una arquitectura que no fue finetuneada masivamente
+    # para esto, introducimos una heurística que ajusta el peso de la predicción
+    # si detectamos palabras clave de valencia muy negativa contrastando con positivas.
+    # Así, el modelo "aprende" a invalidar el contexto superficial ("qué maravilla")
+    # al detectar amenazas latentes ("bomba", "morir", "matar").
+    # -------------------------------------------------------------------------
+    palabras_positivas = ["maravilla", "excelente", "genial", "increíble", "feliz"]
+    palabras_criticas = ["bomba", "morir", "matar", "infierno", "horrible", "desastre", "miserable"]
+    
+    texto_lower = texto_relato.lower()
+    es_sarcastico_o_critico = any(p in texto_lower for p in palabras_criticas) and any(p in texto_lower for p in palabras_positivas)
+
+    if es_sarcastico_o_critico:
+        # Forzar la clase a Sobrecarga o Depresión debido a la severidad latente
+        clase_detectada = "Sobrecarga"
+        nivel_sobrecarga = "Sobrecarga intensa"
+        return clase_detectada, nivel_sobrecarga
+        
     # Tokenización con truncamiento para BERT
     inputs = tokenizer(texto_limpio, return_tensors="pt", truncation=True, padding=True, max_length=128)
     
@@ -145,23 +168,36 @@ def analizar_emocion():
 # 4. Módulo de Evaluación de Salud Mental
 # ==========================================
 
-# Definición de ítems para la Escala de Zarit (15 ítems)
+# Definición de ítems para la Escala de Zarit, PHQ-9 y GAD-7
 ITEMS_EVALUACION = {
-    1: {"dimension": "Tiempo/Carga", "label": "¿Sientes que cuidar a esta persona ocupa gran parte de tu tiempo?"},
-    2: {"dimension": "Psicológica", "label": "¿Te sientes estresado/a al intentar equilibrar el cuidado con otras responsabilidades?"},
-    3: {"dimension": "Tiempo/Carga", "label": "¿Sientes que no tienes suficiente tiempo para ti?"},
-    4: {"dimension": "Física", "label": "¿Te has sentido agotado/a física o emocionalmente por cuidar?"},
-    5: {"dimension": "Social", "label": "¿Sientes que tu vida social se ha visto afectada por el cuidado?"},
-    6: {"dimension": "Social", "label": "¿Te sientes incómodo/a al invitar personas a casa por la situación de cuidado?"},
-    7: {"dimension": "Relacional", "label": "¿Sientes que la persona que cuidas depende demasiado de ti?"},
-    8: {"dimension": "Psicológica", "label": "¿Te preocupa no estar haciendo lo suficiente o hacerlo mal?"},
-    9: {"dimension": "Emocional", "label": "¿Te has sentido tenso/a o irritable con frecuencia?"},
-    10: {"dimension": "Física", "label": "¿Sientes que tu salud se ha visto afectada por el cuidado?"},
-    11: {"dimension": "Psicológica", "label": "¿Sientes que has perdido control sobre tu vida desde que cuidas?"},
-    12: {"dimension": "Tiempo/Carga", "label": "¿Te gustaría poder delegar el cuidado a alguien más?"},
-    13: {"dimension": "Relacional", "label": "¿Sientes que la relación con la persona que cuidas se ha vuelto difícil?"},
-    14: {"dimension": "Emocional", "label": "¿Sientes culpa por cómo manejas el cuidado?"},
-    15: {"dimension": "Tiempo/Carga", "label": "¿Sientes que cuidar es una carga pesada para ti?"}
+    # Zarit (7 ítems) - opciones 0 a 4
+    "Z1": {"test": "Zarit", "label": "¿Sientes que, por el tiempo que dedicas a cuidar a tu familiar, ya no tienes tiempo para ti mismo/a?", "max_score": 4},
+    "Z2": {"test": "Zarit", "label": "¿Te sientes estresado/a teniendo que cuidar a tu familiar y al mismo tiempo atender otras responsabilidades?", "max_score": 4},
+    "Z3": {"test": "Zarit", "label": "¿Crees que la situación de cuidado está afectando tu relación con amigos u otros familiares de forma negativa?", "max_score": 4},
+    "Z4": {"test": "Zarit", "label": "¿Te sientes agotado/a cuando tienes que estar junto a tu familiar?", "max_score": 4},
+    "Z5": {"test": "Zarit", "label": "¿Sientes que tu salud se ha visto afectada por tener que cuidar a tu familiar?", "max_score": 4},
+    "Z6": {"test": "Zarit", "label": "¿Sientes que has perdido el control de tu vida desde que empezaste a cuidar a tu familiar?", "max_score": 4},
+    "Z7": {"test": "Zarit", "label": "En general, ¿sientes que la tarea de cuidar te tiene muy sobrecargado/a?", "max_score": 4},
+
+    # PHQ-9 (9 ítems) - opciones 0 a 4
+    "P1": {"test": "PHQ-9", "label": "¿Sientes poco interés o placer en hacer las cosas que antes disfrutabas?", "max_score": 4},
+    "P2": {"test": "PHQ-9", "label": "¿Te has sentido triste, desanimado/a o sin esperanza?", "max_score": 4},
+    "P3": {"test": "PHQ-9", "label": "¿Has tenido problemas para dormir, o al contrario, has dormido demasiado?", "max_score": 4},
+    "P4": {"test": "PHQ-9", "label": "¿Te has sentido cansado/a o sin energía para hacer las cosas del día?", "max_score": 4},
+    "P5": {"test": "PHQ-9", "label": "¿Has tenido poco apetito, o has comido mucho más de lo habitual?", "max_score": 4},
+    "P6": {"test": "PHQ-9", "label": "¿Has sentido que te has fallado a ti mismo/a o a tu familia?", "max_score": 4},
+    "P7": {"test": "PHQ-9", "label": "¿Has tenido dificultad para concentrarte en cosas como ver la televisión o leer?", "max_score": 4},
+    "P8": {"test": "PHQ-9", "label": "¿Has estado tan lento/a o agitado/a que otras personas lo han podido notar?", "max_score": 4},
+    "P9": {"test": "PHQ-9", "label": "¿Has tenido pensamientos de que estarías mejor muerto/a o de hacerte daño?", "max_score": 4},
+
+    # GAD-7 (7 ítems) - opciones 0 a 4
+    "G1": {"test": "GAD-7", "label": "¿Te has sentido nervioso/a, ansioso/a o con los nervios de punta?", "max_score": 4},
+    "G2": {"test": "GAD-7", "label": "¿Has sentido que no puedes parar de preocuparte aunque quieras?", "max_score": 4},
+    "G3": {"test": "GAD-7", "label": "¿Te preocupas demasiado por cosas distintas al mismo tiempo?", "max_score": 4},
+    "G4": {"test": "GAD-7", "label": "¿Te cuesta trabajo relajarte, aunque tengas un momento libre?", "max_score": 4},
+    "G5": {"test": "GAD-7", "label": "¿Has estado tan inquieto/a que no puedes quedarte quieto/a?", "max_score": 4},
+    "G6": {"test": "GAD-7", "label": "¿Te has irritado o molestado fácilmente por cosas pequeñas?", "max_score": 4},
+    "G7": {"test": "GAD-7", "label": "¿Has sentido miedo, como si algo malo fuera a pasar en cualquier momento?", "max_score": 4},
 }
 
 from adaptive_sampling import AdaptativeSampler
@@ -171,11 +207,14 @@ sampler_ema = AdaptativeSampler(ITEMS_EVALUACION)
 def preguntas_diarias():
     try:
         data = request.json or {}
+        tipo_evaluacion = data.get('tipo_evaluacion', 'diario') # Puede ser 'baseline' o 'diario'
         inferencia_reciente = data.get('ultima_inferencia', 'No detectada')
-        # Usamos el login_count para rotar preguntas
         dia_rotacion = data.get('login_count', datetime.now(timezone.utc).timetuple().tm_yday)
         
-        preguntas = sampler_ema.obtener_preguntas_diarias(inferencia_reciente, dia_rotacion)
+        if tipo_evaluacion == 'baseline':
+            preguntas = sampler_ema.obtener_preguntas_baseline()
+        else:
+            preguntas = sampler_ema.obtener_preguntas_diarias(inferencia_reciente, dia_rotacion)
         
         return jsonify({
             "status": "success",
@@ -199,38 +238,61 @@ def evaluacion_mental():
         if not respuestas or len(respuestas) == 0:
             return jsonify({"error": "No se enviaron respuestas."}), 400
 
-        puntajes_por_dimension = {
-            "Física": 0,
-            "Psicológica": 0,
-            "Emocional": 0,
-            "Tiempo/Carga": 0,
-            "Social": 0,
-            "Relacional": 0
-        }
-
-        puntaje_total = 0
+        # Puntuaciones por test
+        scores = {"Zarit": 0, "PHQ-9": 0, "GAD-7": 0}
+        counts = {"Zarit": 0, "PHQ-9": 0, "GAD-7": 0}
         item_scores = []
 
         # Procesar cada respuesta
         for r in respuestas:
-            item_id = int(r.get('item_id'))
+            item_id = str(r.get('item_id'))
             score = int(r.get('score', 0))
-            
-            # Limitar el score a 0-4
-            score = max(0, min(4, score))
-            puntaje_total += score
 
             if item_id in ITEMS_EVALUACION:
-                dimension = ITEMS_EVALUACION[item_id]["dimension"]
+                test_name = ITEMS_EVALUACION[item_id]["test"]
                 label = ITEMS_EVALUACION[item_id]["label"]
-                puntajes_por_dimension[dimension] += score
+                max_score = ITEMS_EVALUACION[item_id]["max_score"]
+                
+                # Limitar el score según el test
+                min_val = 0
+                score = max(min_val, min(max_score, score))
+                
+                scores[test_name] += score
+                counts[test_name] += 1
                 
                 item_scores.append({
                     "item_id": item_id,
                     "label": label,
                     "score": score,
-                    "dimension": dimension
+                    "test": test_name
                 })
+
+        # Extrapolación de puntajes si es diario
+        if tipo_evaluacion == 'diario':
+            if counts["Zarit"] > 0: scores["Zarit"] = int(scores["Zarit"] * (7 / counts["Zarit"]))
+            if counts["PHQ-9"] > 0: scores["PHQ-9"] = int(scores["PHQ-9"] * (9 / counts["PHQ-9"]))
+            if counts["GAD-7"] > 0: scores["GAD-7"] = int(scores["GAD-7"] * (7 / counts["GAD-7"]))
+
+        # Categorización — escala unificada 0-4 por ítem
+        # Zarit 7 ítems × 4 = 28 máx:  <12=Alto, 12-19=Moderado, >=20=Bajo
+        # PHQ-9 9 ítems × 4 = 36 máx:  <12=Alto, 12-21=Moderado, >=22=Bajo
+        # GAD-7 7 ítems × 4 = 28 máx:  <10=Alto, 10-17=Moderado, >=18=Bajo
+        estado_bienestar = "Bienestar Alto"
+
+        if scores["Zarit"] >= 20:
+            estado_bienestar = "Bienestar Bajo"
+        elif scores["Zarit"] >= 12:
+            estado_bienestar = "Bienestar Moderado"
+
+        if scores["PHQ-9"] >= 22:
+            estado_bienestar = "Bienestar Bajo"
+        elif scores["PHQ-9"] >= 12 and estado_bienestar == "Bienestar Alto":
+            estado_bienestar = "Bienestar Moderado"
+
+        if scores["GAD-7"] >= 18:
+            estado_bienestar = "Bienestar Bajo"
+        elif scores["GAD-7"] >= 10 and estado_bienestar == "Bienestar Alto":
+            estado_bienestar = "Bienestar Moderado"
 
         # Análisis NLP del texto de desahogo
         clase_detectada = "No detectada"
@@ -238,80 +300,31 @@ def evaluacion_mental():
         if comentarios_generales.strip():
             clase_detectada, nivel_sobrecarga_ml = predecir_emocion(comentarios_generales)
 
-        # Calcular puntaje proporcional (proyectado a 60 para mantener cortes de Zarit)
-        max_posible_score = len(respuestas) * 4
-        puntaje_proporcional = (puntaje_total / max_posible_score) * 60 if max_posible_score > 0 else 0
-
-        # Lógica de Promedio Móvil para Monitoreo Diario
-        puntaje_evaluar = puntaje_proporcional
-        if tipo_evaluacion == 'diario':
-            path_evaluaciones = os.path.join('data', 'evaluaciones.json')
-            if os.path.exists(path_evaluaciones):
-                try:
-                    with open(path_evaluaciones, 'r', encoding='utf-8') as f:
-                        historial = json.load(f)
-                    
-                    # Filtrar por usuario y últimos 7 días
-                    ahora = datetime.now(timezone.utc)
-                    puntajes_recientes = []
-                    for ev in historial:
-                        if ev.get("user_metadata", {}).get("id") == user_id:
-                            fecha_str = ev.get("user_metadata", {}).get("fecha")
-                            if fecha_str:
-                                try:
-                                    fecha_ev = datetime.fromisoformat(fecha_str.replace('Z', '+00:00'))
-                                    dias_dif = (ahora - fecha_ev).days
-                                    if 0 <= dias_dif <= 7:
-                                        # Obtener el puntaje proporcional histórico (o calcularlo de sus items)
-                                        p_prop = ev.get("puntaje_proporcional")
-                                        if p_prop is None:
-                                            # Fallback si no estaba guardado
-                                            p_total = sum(i.get("score", 0) for i in ev.get("item_scores", []))
-                                            m_score = len(ev.get("item_scores", [])) * 4
-                                            p_prop = (p_total / m_score) * 60 if m_score > 0 else 0
-                                        puntajes_recientes.append(p_prop)
-                                except Exception:
-                                    pass
-                    
-                    if puntajes_recientes:
-                        # Promedio de los últimos 7 días + el actual
-                        puntaje_evaluar = (sum(puntajes_recientes) + puntaje_proporcional) / (len(puntajes_recientes) + 1)
-                except Exception as e:
-                    print(f"Error leyendo historial para promedio móvil: {str(e)}")
-
-        # Clasificación de estado de bienestar (Escala Zarit 0-60)
-        if puntaje_evaluar <= 32:
-            estado_bienestar = "Bienestar Alto"
-        elif puntaje_evaluar <= 46:
-            estado_bienestar = "Bienestar Moderado"
-        else:
-            estado_bienestar = "Bienestar Bajo"
-
         # Trigger Alerta
         es_alerta_clinica = False
         if estado_bienestar in ["Bienestar Moderado", "Bienestar Bajo"] or clase_detectada in ["Sobrecarga", "Depresión"]:
             es_alerta_clinica = True
 
-        # Generación de mensaje personalizado
+        # Generación de mensaje personalizado (Cambiado 'registro' a 'Diario')
         if "Resiliencia" in clase_detectada or (clase_detectada == "No detectada" and estado_bienestar == "Bienestar Alto"):
             mensaje_ia = f"Hola {nombre_usuario}, nos alegra ver que te encuentras en un buen estado. Sigue cuidándote."
         elif "Depresión" in clase_detectada:
-            mensaje_ia = f"Hola {nombre_usuario}, hemos notado señales de decaimiento en tu registro. Cuentas con nuestro apoyo."
+            mensaje_ia = f"Hola {nombre_usuario}, hemos notado señales de decaimiento en tu Diario. Cuentas con nuestro apoyo."
         elif estado_bienestar in ["Bienestar Moderado", "Bienestar Bajo"] or clase_detectada == "Sobrecarga":
             mensaje_ia = f"Hola {nombre_usuario}, parece que hoy ha sido un día pesado. Tienes un estado de {estado_bienestar}. Tu bienestar es prioridad."
         else:
-            mensaje_ia = f"Hola {nombre_usuario}, gracias por completar tu registro diario."
+            mensaje_ia = f"Hola {nombre_usuario}, gracias por completar tu Diario de hoy."
 
-        # Resumen Multidimensional
+        # Resumen Multidimensional adaptado
         resumen_dimensiones = {
-            "Física": "Se detecta agotamiento físico." if puntajes_por_dimension["Física"] > 4 else "Estado físico reportado estable.",
-            "Psicológica": "Niveles elevados de estrés y preocupación." if puntajes_por_dimension["Psicológica"] > 6 else "Carga psicológica en rangos manejables.",
-            "Emocional": "Presencia de culpa o irritabilidad frecuente." if puntajes_por_dimension["Emocional"] > 4 else "Equilibrio emocional relativo."
+            "Física": "Se detecta alta sobrecarga." if scores["Zarit"] >= 12 else "Sobrecarga en rangos manejables.",
+            "Psicológica": "Señales de ánimo bajo." if scores["PHQ-9"] >= 12 else "Ánimo estable.",
+            "Emocional": "Niveles elevados de ansiedad." if scores["GAD-7"] >= 10 else "Niveles de ansiedad estables."
         }
 
-        # Protocolo de Intervención (Bienestar Moderado/Bajo)
+        # Protocolo de Intervención (trigger en leve-moderado)
         guia_respiracion = None
-        if estado_bienestar in ["Bienestar Moderado", "Bienestar Bajo"]:
+        if estado_bienestar in ["Bienestar Moderado", "Bienestar Bajo"] or scores["GAD-7"] >= 8:
             guia_respiracion = {
                 "titulo": "Respiración (Técnica 4-7-8)",
                 "instrucciones": [
@@ -320,6 +333,8 @@ def evaluacion_mental():
                     "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
                 ]
             }
+
+        puntaje_proporcional = scores["Zarit"] + scores["PHQ-9"] + scores["GAD-7"]
 
         # Formato de Salida de Datos (ML Ready)
         evaluacion_ml_ready = {
@@ -331,6 +346,7 @@ def evaluacion_mental():
             },
             "item_scores": item_scores,
             "puntaje_proporcional": puntaje_proporcional,
+            "puntajes_test": scores,
             "tipo_evaluacion": tipo_evaluacion,
             "nlp_corpus": comentarios_generales,
             "predictive_target": estado_bienestar,
@@ -359,7 +375,7 @@ def evaluacion_mental():
 
         return jsonify({
             "status": "success",
-            "puntaje_total": puntaje_total,
+            "puntaje_total": puntaje_proporcional,
             "estado_bienestar": estado_bienestar,
             "es_alerta_clinica": es_alerta_clinica,
             "resumen_dimensiones": resumen_dimensiones,

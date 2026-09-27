@@ -35,23 +35,7 @@ interface EvaluacionResult {
   };
 }
 
-const PREGUNTAS = [
-  { id: 1, text: "¿Sientes que cuidar a esta persona ocupa gran parte de tu tiempo?" },
-  { id: 2, text: "¿Te sientes estresado/a al intentar equilibrar el cuidado con otras responsabilidades?" },
-  { id: 3, text: "¿Sientes que no tienes suficiente tiempo para ti?" },
-  { id: 4, text: "¿Te has sentido agotado/a física o emocionalmente por cuidar?" },
-  { id: 5, text: "¿Sientes que tu vida social se ha visto afectada por el cuidado?" },
-  { id: 6, text: "¿Te sientes incómodo/a al invitar personas a casa por la situación de cuidado?" },
-  { id: 7, text: "¿Sientes que la persona que cuidas depende demasiado de ti?" },
-  { id: 8, text: "¿Te preocupa no estar haciendo lo suficiente o hacerlo mal?" },
-  { id: 9, text: "¿Te has sentido tenso/a o irritable con frecuencia?" },
-  { id: 10, text: "¿Sientes que tu salud se ha visto afectada por el cuidado?" },
-  { id: 11, text: "¿Sientes que has perdido control sobre tu vida desde que cuidas?" },
-  { id: 12, text: "¿Te gustaría poder delegar el cuidado a alguien más?" },
-  { id: 13, text: "¿Sientes que la relación con la persona que cuidas se ha vuelto difícil?" },
-  { id: 14, text: "¿Sientes culpa por cómo manejas el cuidado?" },
-  { id: 15, text: "¿Sientes que cuidar es una carga pesada para ti?" }
-];
+
 
 export default function App() {
   const [cargando, setCargando] = useState(true);
@@ -92,19 +76,19 @@ export default function App() {
 
   // Colores para el gráfico de torta
   const EMOTION_COLORS: Record<string, string> = {
-    'Resiliencia':     theme.colors.secondaryMain,
-    'Sobrecarga':      theme.colors.error,
-    'Depresión':       theme.colors.primaryDark,
-    'Ansiedad':        theme.colors.warning,
-    'No detectada':    theme.colors.borderLight,
+    'Resiliencia': theme.colors.secondaryMain,
+    'Sobrecarga': theme.colors.error,
+    'Depresión': theme.colors.primaryDark,
+    'Ansiedad': theme.colors.warning,
+    'No detectada': theme.colors.borderLight,
   };
 
   // Estado para la evaluación de salud mental
-  const [respuestas, setRespuestas] = useState<Record<number, number>>({});
+  const [respuestas, setRespuestas] = useState<Record<string, number>>({});
   const [comentarios, setComentarios] = useState<string>('');
   const [nombreUsuario, setNombreUsuario] = useState<string>('');
   const [resultadoEval, setResultadoEval] = useState<EvaluacionResult | null>(null);
-  const [preguntasActivas, setPreguntasActivas] = useState(PREGUNTAS);
+  const [preguntasActivas, setPreguntasActivas] = useState<any[]>([]);
 
   // Estado para la notificación psicoeducativa
   const [mensajeNotificacionActivo, setMensajeNotificacionActivo] = useState<any | null>(null);
@@ -144,7 +128,7 @@ export default function App() {
     let color = '#10B981'; // Verde - Alto Bienestar
     let width = '100%';
     const lower = texto.toLowerCase();
-    
+
     if (lower.includes('agotamiento') || lower.includes('elevados') || lower.includes('culpa') || lower.includes('irritabilidad')) {
       color = '#EF4444'; // Rojo - Bajo Bienestar
       width = '33%';
@@ -223,17 +207,17 @@ export default function App() {
           const ultimaFechaStr = await AsyncStorage.getItem('@ultimo_test_completo_fecha');
           let dias = 7; // por defecto obligar si no hay registro
           if (ultimaFechaStr) {
-             const ultimaFecha = new Date(ultimaFechaStr);
-             const hoy = new Date();
-             const diffTime = Math.abs(hoy.getTime() - ultimaFecha.getTime());
-             dias = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const ultimaFecha = new Date(ultimaFechaStr);
+            const hoy = new Date();
+            const diffTime = Math.abs(hoy.getTime() - ultimaFecha.getTime());
+            dias = Math.floor(diffTime / (1000 * 60 * 60 * 24));
           }
           setDiasDesdeUltimoTest(dias);
-          
+
           if (dias >= 7 || !countStr) {
-             setTipoEvaluacion('baseline');
+            setTipoEvaluacion('baseline');
           } else {
-             setTipoEvaluacion('diario');
+            setTipoEvaluacion('diario');
           }
         }
       } catch (e) {
@@ -254,7 +238,7 @@ export default function App() {
       if (modoLogin && emailParam && passwordParam) {
         // Verificar credenciales guardadas
         const emailGuardado = await AsyncStorage.getItem('@email_usuario');
-        const passGuardado  = await AsyncStorage.getItem('@pass_usuario');
+        const passGuardado = await AsyncStorage.getItem('@pass_usuario');
         if (emailParam.trim().toLowerCase() !== emailGuardado || passwordParam !== passGuardado) {
           showAlert(
             'Credenciales incorrectas',
@@ -267,14 +251,14 @@ export default function App() {
         const nombreGuardado = await AsyncStorage.getItem('@nombre_usuario') ?? nombre;
         await AsyncStorage.setItem('@usuario_registrado', 'true');
         await AsyncStorage.setItem('@nombre_usuario', nombreGuardado);
-        
+
         const currentCountStr = await AsyncStorage.getItem('@login_count');
         const currentCount = currentCountStr ? parseInt(currentCountStr) : 1;
         const newCount = currentCount + 1;
         await AsyncStorage.setItem('@login_count', newCount.toString());
         setLoginCount(newCount);
         setTipoEvaluacion('diario');
-        
+
         await AsyncStorage.removeItem('@notificacion_diaria_index');
         await AsyncStorage.removeItem('@notificacion_ultima_fecha');
 
@@ -290,7 +274,7 @@ export default function App() {
       if (passwordParam) { await AsyncStorage.setItem('@pass_usuario', passwordParam); }
       setNombreUsuario(nombre);
       setLoginCount(1);
-      
+
       await AsyncStorage.removeItem('@notificacion_diaria_index');
       await AsyncStorage.removeItem('@notificacion_ultima_fecha');
 
@@ -321,7 +305,7 @@ export default function App() {
         const response = await fetch('https://cuidaml.luzserver.org/preguntas_diarias', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ login_count: loginCount })
+          body: JSON.stringify({ login_count: loginCount, tipo_evaluacion: tipoEvaluacion })
         });
         const data = await response.json();
         if (data.preguntas && data.preguntas.length > 0) {
@@ -334,7 +318,7 @@ export default function App() {
     if (usuarioRegistrado) {
       fetchPreguntas();
     }
-  }, [usuarioRegistrado, loginCount]);
+  }, [usuarioRegistrado, loginCount, tipoEvaluacion]);
 
   const processDeepLink = (url: string) => {
     if (!url) return;
@@ -421,7 +405,7 @@ export default function App() {
     };
   }, []);
 
-  const handleSeleccion = (preguntaId: number, valor: number) => {
+  const handleSeleccion = (preguntaId: string, valor: number) => {
     setRespuestas(prev => ({ ...prev, [preguntaId]: valor }));
   };
 
@@ -434,8 +418,8 @@ export default function App() {
     const enviarDatos = async () => {
       const payload = {
         respuestas: Object.keys(respuestas).map(id => ({
-          item_id: parseInt(id),
-          score: respuestas[parseInt(id)]
+          item_id: id,
+          score: respuestas[id]
         })),
         comentarios_generales: comentarios,
         nombre_usuario: nombreUsuario.trim() || 'Cuidador',
@@ -457,8 +441,8 @@ export default function App() {
           await AsyncStorage.setItem('@ultimo_resultado', JSON.stringify(data));
           await AsyncStorage.setItem('@ultimo_resultado_fecha', new Date().toDateString());
           if (tipoEvaluacion === 'baseline') {
-             await AsyncStorage.setItem('@ultimo_test_completo_fecha', new Date().toISOString());
-             setDiasDesdeUltimoTest(0);
+            await AsyncStorage.setItem('@ultimo_test_completo_fecha', new Date().toISOString());
+            setDiasDesdeUltimoTest(0);
           }
           setRespuestas({});
           setComentarios('');
@@ -466,38 +450,40 @@ export default function App() {
           // --- LOGICA DE RACHA ---
           const hoyStr = new Date().toDateString();
           const ultimaRachaFecha = await AsyncStorage.getItem('@ultima_fecha_racha');
-          
+
           let nuevaRacha = rachaDias;
+          if (!ultimaRachaFecha) {
+            nuevaRacha = 1;
+          } else if (ultimaRachaFecha !== hoyStr) {
+            const ayer = new Date();
+            ayer.setDate(ayer.getDate() - 1);
+            if (ultimaRachaFecha === ayer.toDateString()) {
+              nuevaRacha += 1;
+            } else {
+              nuevaRacha = 1; // Reseteo o inicio de racha
+            }
+          }
           if (ultimaRachaFecha !== hoyStr) {
-             const ayer = new Date();
-             ayer.setDate(ayer.getDate() - 1);
-             
-             if (ultimaRachaFecha === ayer.toDateString()) {
-                nuevaRacha += 1;
-             } else {
-                nuevaRacha = 1; // Reseteo o inicio de racha
-             }
-             
-             setRachaDias(nuevaRacha);
-             await AsyncStorage.setItem('@racha_dias', nuevaRacha.toString());
-             await AsyncStorage.setItem('@ultima_fecha_racha', hoyStr);
-             
-             // Notificaciones de Hitos
-             if (nuevaRacha === 3) {
-                 notifee.displayNotification({
-                     id: 'racha-3',
-                     title: '¡Qué bien! 🔥',
-                     body: 'Llevas 3 días cuidando de ti. Sigue así.',
-                     android: { channelId: 'default' }
-                 });
-             } else if (nuevaRacha === 7) {
-                 notifee.displayNotification({
-                     id: 'racha-7',
-                     title: '¡Felicidades! 🎉',
-                     body: 'Llevas una semana completa registrando tu diario. ¡Eres increíble!',
-                     android: { channelId: 'default' }
-                 });
-             }
+            setRachaDias(nuevaRacha);
+            await AsyncStorage.setItem('@racha_dias', nuevaRacha.toString());
+            await AsyncStorage.setItem('@ultima_fecha_racha', hoyStr);
+
+            // Notificaciones de Hitos
+            if (nuevaRacha === 3) {
+              notifee.displayNotification({
+                id: 'racha-3',
+                title: '¡Qué bien! 🔥',
+                body: 'Llevas 3 días cuidando de ti. Sigue así.',
+                android: { channelId: 'default' }
+              });
+            } else if (nuevaRacha === 7) {
+              notifee.displayNotification({
+                id: 'racha-7',
+                title: '¡Felicidades! 🎉',
+                body: 'Llevas una semana completa registrando tu diario. ¡Eres increíble!',
+                android: { channelId: 'default' }
+              });
+            }
           }
           // -----------------------------
 
@@ -506,7 +492,7 @@ export default function App() {
             scrollViewRef.current?.scrollTo({ y: 0, animated: true });
           }, 350);
 
-          showAlert("¡Gracias!", "Tu registro ha sido guardado correctamente.");
+          showAlert("¡Gracias!", "Tu Diario ha sido guardado correctamente.");
         }
       } catch (e) {
         showAlert("Error de Conexión", "Parece que no hay internet, revisa tu conexión.");
@@ -516,7 +502,7 @@ export default function App() {
     if (!comentarios.trim()) {
       showAlert(
         "Espacio personal vacío",
-        "¿Estás seguro de que quieres enviar el registro sin hablar sobre ti o tu día en el espacio personal?",
+        "¿Estás seguro de que quieres enviar el Diario sin hablar sobre ti o tu día en el espacio personal?",
         [
           { text: "No, escribiré algo", style: "cancel" },
           { text: "Sí, enviar vacío", onPress: () => enviarDatos() }
@@ -602,20 +588,22 @@ export default function App() {
   const eliminarMensajeForo = (id: string) => {
     showAlert("Borrar Mensaje", "¿Estás seguro de que quieres eliminar este mensaje?", [
       { text: "Cancelar", style: "cancel" },
-      { text: "Borrar", style: "destructive", onPress: async () => {
-        try {
-          const response = await fetch(`https://cuidaml.luzserver.org/foro/mensajes/${id}`, {
-            method: 'DELETE'
-          });
-          const data = await response.json();
-          if (data.status === 'success') {
-            fetchForoMensajes();
-            showAlert("Eliminado", "El mensaje fue borrado.");
+      {
+        text: "Borrar", style: "destructive", onPress: async () => {
+          try {
+            const response = await fetch(`https://cuidaml.luzserver.org/foro/mensajes/${id}`, {
+              method: 'DELETE'
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+              fetchForoMensajes();
+              showAlert("Eliminado", "El mensaje fue borrado.");
+            }
+          } catch (e) {
+            showAlert("Error", "No se pudo borrar el mensaje.");
           }
-        } catch (e) {
-          showAlert("Error", "No se pudo borrar el mensaje.");
         }
-      }}
+      }
     ]);
   };
 
@@ -629,13 +617,13 @@ export default function App() {
       let color = theme.colors.warning;
       if (estado === 'Bienestar Alto') { value = 3; color = theme.colors.success; }
       else if (estado === 'Bienestar Bajo') { value = 1; color = theme.colors.error; }
-      
+
       const label = new Date(item.user_metadata?.fecha).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit' });
       return { label, value, color };
     });
   };
 
-  const preguntasAMostrar = tipoEvaluacion === 'baseline' ? PREGUNTAS : preguntasActivas;
+  const preguntasAMostrar = preguntasActivas;
 
   const renderEvaluacion = () => (
     <ScrollView
@@ -644,13 +632,13 @@ export default function App() {
     >
       {diasDesdeUltimoTest < 7 && (
         <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20, marginTop: 10 }}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.tabBtn, tipoEvaluacion === 'diario' && styles.tabBtnActive]}
             onPress={() => { setTipoEvaluacion('diario'); setResultadoEval(null); }}
           >
             <Text style={[styles.tabText, tipoEvaluacion === 'diario' && styles.tabTextActive]}>Check-in diario</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.tabBtn, tipoEvaluacion === 'baseline' && styles.tabBtnActive]}
             onPress={() => { setTipoEvaluacion('baseline'); setResultadoEval(null); }}
           >
@@ -682,34 +670,34 @@ export default function App() {
           </Text>
 
           {(resultadoEval.estado_bienestar !== 'Bienestar Alto' || resultadoEval.es_alerta_clinica) && (
-             <View style={{ marginTop: 10, padding: 15, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 8 }}>
-               <TouchableOpacity style={{ alignItems: 'center', marginBottom: 10 }} onPress={reproducirAudio}>
-                 <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold' }}>
-                   {isPlayingAudio ? '⏸ Pausar ejercicio' : '▶ Reproducir ejercicio'}
-                 </Text>
-               </TouchableOpacity>
-               
-               {(sound || audioProgress > 0) && (
-                 <TouchableOpacity 
-                   activeOpacity={0.8}
-                   style={{ height: 20, justifyContent: 'center', marginVertical: 5 }} 
-                   onLayout={(e) => setAudioBarWidth(e.nativeEvent.layout.width)}
-                   onPress={(e) => {
-                     if (sound && audioBarWidth > 0 && audioDuration > 0) {
-                       const locX = e.nativeEvent.locationX;
-                       const pct = Math.min(1, Math.max(0, locX / audioBarWidth));
-                       const newTime = pct * audioDuration;
-                       sound.setCurrentTime(newTime);
-                       setAudioProgress(pct);
-                     }
-                   }}
-                 >
-                   <View style={{ height: 6, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 3, overflow: 'hidden' }}>
-                     <View style={{ height: '100%', width: `${Math.min(100, Math.max(0, audioProgress * 100))}%`, backgroundColor: theme.colors.success, borderRadius: 3 }} />
-                   </View>
-                 </TouchableOpacity>
-               )}
-             </View>
+            <View style={{ marginTop: 10, padding: 15, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 8 }}>
+              <TouchableOpacity style={{ alignItems: 'center', marginBottom: 10 }} onPress={reproducirAudio}>
+                <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold' }}>
+                  {isPlayingAudio ? '⏸ Pausar ejercicio' : '▶ Reproducir ejercicio'}
+                </Text>
+              </TouchableOpacity>
+
+              {(sound || audioProgress > 0) && (
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={{ height: 20, justifyContent: 'center', marginVertical: 5 }}
+                  onLayout={(e) => setAudioBarWidth(e.nativeEvent.layout.width)}
+                  onPress={(e) => {
+                    if (sound && audioBarWidth > 0 && audioDuration > 0) {
+                      const locX = e.nativeEvent.locationX;
+                      const pct = Math.min(1, Math.max(0, locX / audioBarWidth));
+                      const newTime = pct * audioDuration;
+                      sound.setCurrentTime(newTime);
+                      setAudioProgress(pct);
+                    }
+                  }}
+                >
+                  <View style={{ height: 6, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 3, overflow: 'hidden' }}>
+                    <View style={{ height: '100%', width: `${Math.min(100, Math.max(0, audioProgress * 100))}%`, backgroundColor: theme.colors.success, borderRadius: 3 }} />
+                  </View>
+                </TouchableOpacity>
+              )}
+            </View>
           )}
 
           {resultadoEval.mensaje_ia && (
@@ -737,13 +725,13 @@ export default function App() {
           {resultadoEval.resumen_dimensiones && (
             <View style={{ marginTop: 15, paddingTop: 15, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.3)' }}>
               <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', marginBottom: 8 }}>Resumen de bienestar:</Text>
-              
+
               <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Física: {resultadoEval.resumen_dimensiones["Física"]}</Text>
               {renderSemaforoBar(resultadoEval.resumen_dimensiones["Física"])}
-              
+
               <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Psicológica: {resultadoEval.resumen_dimensiones["Psicológica"]}</Text>
               {renderSemaforoBar(resultadoEval.resumen_dimensiones["Psicológica"])}
-              
+
               <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Emocional: {resultadoEval.resumen_dimensiones["Emocional"]}</Text>
               {renderSemaforoBar(resultadoEval.resumen_dimensiones["Emocional"])}
             </View>
@@ -757,32 +745,47 @@ export default function App() {
         </View>
       )}
 
-      {preguntasAMostrar.map((p: any) => (
-        <View key={p.id} style={[globalStyles.card, { padding: 15 }]}>
-          <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 10 }]}>
-            {tipoEvaluacion === 'baseline' ? `${p.id}. ${p.text}` : p.text}
-          </Text>
-          <View style={styles.likertContainer}>
-            {[0, 1, 2, 3, 4].map(val => (
-              <TouchableOpacity
-                key={val}
-                style={[styles.likertBtn, respuestas[p.id] === val && styles.likertSelected]}
-                onPress={() => handleSeleccion(p.id, val)}
-              >
-                <Text style={[styles.likertText, respuestas[p.id] === val && styles.likertTextSelected]}>{val}</Text>
-              </TouchableOpacity>
-            ))}
+      {preguntasAMostrar.map((p: any) => {
+        const minVal = 0;
+        const maxVal = p.max_score || 4;
+        const options = [];
+        for (let i = minVal; i <= maxVal; i++) options.push(i);
+
+        let minLabel = "Nunca";
+        let maxLabel = "Casi siempre";
+
+        if (p.test === 'PHQ-9' || p.test === 'GAD-7') {
+          minLabel = "Para nada";
+          maxLabel = "Casi todos los días";
+        }
+
+        return (
+          <View key={p.id} style={[globalStyles.card, { padding: 15 }]}>
+            <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 10 }]}>
+              {p.text}
+            </Text>
+            <View style={styles.likertContainer}>
+              {options.map(val => (
+                <TouchableOpacity
+                  key={val}
+                  style={[styles.likertBtn, respuestas[p.id] === val && styles.likertSelected]}
+                  onPress={() => handleSeleccion(p.id, val)}
+                >
+                  <Text style={[styles.likertText, respuestas[p.id] === val && styles.likertTextSelected]}>{val}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={styles.likertLabels}>
+              <Text style={styles.labelSmall}>{minLabel} ({minVal})</Text>
+              <Text style={styles.labelSmall}>{maxLabel} ({maxVal})</Text>
+            </View>
           </View>
-          <View style={styles.likertLabels}>
-            <Text style={styles.labelSmall}>Nunca (0)</Text>
-            <Text style={styles.labelSmall}>Casi Siempre (4)</Text>
-          </View>
-        </View>
-      ))}
+        )
+      })}
 
       <View style={globalStyles.card}>
         <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 10 }]}>
-          Tu espacio personal
+          Mi Diario
         </Text>
         <Text style={{ fontSize: 12, color: '#666', marginBottom: 10, fontFamily: 'Nunito-Regular' }}>
           {tipoEvaluacion === 'diario' ? 'Háblame sobre tu día. Escribir ayuda a liberar la carga.' : 'Háblame un poco de ti. Escribir ayuda a liberar la carga.'}
@@ -877,7 +880,7 @@ export default function App() {
     return (
       <ScrollView contentContainerStyle={globalStyles.container}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 10 }}>
-          <Text style={[globalStyles.headerTitle, { marginBottom: 0, marginLeft: 10 }]}>Profesionales de apoyo</Text>
+          <Text style={[globalStyles.headerTitle, { marginBottom: 0, marginLeft: 10 }]}>Recursos y Herramientas</Text>
         </View>
 
         <View style={[globalStyles.card, { backgroundColor: theme.colors.primaryLight, borderLeftWidth: 4, borderLeftColor: theme.colors.primaryMain, marginBottom: 15 }]}>
@@ -885,14 +888,39 @@ export default function App() {
             {riesgoCritico.activo ? '💛 Un momento para ti' : '💛 Apoyo profesional a tu alcance'}
           </Text>
           <Text style={[globalStyles.bodyText, { fontSize: 14, marginBottom: 12 }]}>
-            {riesgoCritico.activo 
+            {riesgoCritico.activo
               ? `${riesgoCritico.razon} Sé que cuidar a alguien puede ser agotador. ¿Te gustaría hablar con alguien que pueda ayudarte?`
               : 'Quiero acompañarte en cada paso. Si en algún momento sientes sobrecarga o necesitas conversar, pongo a tu disposición profesionales especializados en apoyo a cuidadores.'
             }
           </Text>
         </View>
 
-        <View style={{ marginTop: 12 }}>
+
+        {/* HERRAMIENTAS - REUBICADAS AQUÍ */}
+        <View style={[globalStyles.card, { backgroundColor: theme.colors.background, marginBottom: 15 }]}>
+          <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 16, marginBottom: 10 }]}>🛠️ Herramientas de Autocuidado</Text>
+
+          <View style={{ backgroundColor: theme.colors.primaryLight, padding: 15, borderRadius: 8, marginBottom: 8 }}>
+            <Text style={{ fontFamily: 'Nunito-Bold', color: theme.colors.primaryDark, marginBottom: 10 }}>Técnica de Respiración (4-7-8)</Text>
+            <Text style={{ fontFamily: 'Nunito-Regular', color: theme.colors.textSecondary, marginBottom: 10, fontSize: 12 }}>
+              1. Inhala profundamente por la nariz durante 4 segundos.
+              2. Mantén la respiración durante 7 segundos.
+              3. Exhala lentamente por la boca durante 8 segundos.
+            </Text>
+            <TouchableOpacity style={{ backgroundColor: theme.colors.primaryMain, padding: 10, borderRadius: 5, alignItems: 'center' }} onPress={reproducirAudio}>
+              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold' }}>
+                {isPlayingAudio ? '⏸ Pausar Ejercicio' : '▶ Reproducir Ejercicio'}
+              </Text>
+            </TouchableOpacity>
+            {(sound || audioProgress > 0) && (
+              <View style={{ height: 4, backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: 2, marginTop: 10, overflow: 'hidden', width: '100%' }}>
+                <View style={{ height: '100%', width: `${audioProgress * 100}%`, backgroundColor: theme.colors.primaryMain }} />
+              </View>
+            )}
+          </View>
+        </View>
+        <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 16, marginBottom: 10, marginLeft: 5 }]}>👨‍⚕️ Profesionales de apoyo</Text>
+        <View style={{ marginTop: 0 }}>
           {PROFESIONALES.map((p, i) => (
             <TouchableOpacity
               key={i}
@@ -915,10 +943,10 @@ export default function App() {
   const renderMensajeForo = (m: any, isRespuesta: boolean = false) => {
     const esMio = m.autor === nombreUsuario;
     return (
-      <View key={m.id} style={[globalStyles.card, { 
-        padding: 15, 
-        marginBottom: 15, 
-        backgroundColor: '#FFF', 
+      <View key={m.id} style={[globalStyles.card, {
+        padding: 15,
+        marginBottom: 15,
+        backgroundColor: '#FFF',
         marginLeft: isRespuesta ? 30 : 0,
         borderWidth: 1,
         borderColor: '#EAEAEA',
@@ -931,7 +959,7 @@ export default function App() {
         <Text style={{ fontFamily: 'Nunito-Bold', fontSize: 12, color: theme.colors.primaryMain, marginTop: 8 }}>
           - {m.autor}
         </Text>
-        
+
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10 }}>
           {!isRespuesta && (
             <TouchableOpacity onPress={() => { setMensajeAResponder(m); setMensajeAEditar(null); setNuevoMensajeForo(''); }} style={{ marginRight: 15 }}>
@@ -964,7 +992,7 @@ export default function App() {
       <View style={{ padding: 15, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#EEE' }}>
         <Text style={[globalStyles.headerTitle, { fontSize: 18, marginBottom: 8 }]}>Muro de Apoyo 💛</Text>
         <Text style={[globalStyles.bodyText, { fontSize: 12, color: '#666', marginBottom: 12 }]}>Un espacio seguro para compartir y leer mensajes de ánimo de otros cuidadores.</Text>
-        
+
         {(mensajeAResponder || mensajeAEditar) && (
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5, backgroundColor: '#FFF3CD', padding: 8, borderRadius: 5 }}>
             <Text style={{ fontSize: 12, color: '#856404', fontFamily: 'Nunito-Bold' }}>
@@ -984,7 +1012,7 @@ export default function App() {
           value={nuevoMensajeForo}
           onChangeText={setNuevoMensajeForo}
         />
-        <TouchableOpacity 
+        <TouchableOpacity
           style={{ backgroundColor: theme.colors.primaryMain, padding: 10, borderRadius: 8, marginTop: 10, alignItems: 'center' }}
           onPress={enviarMensajeForo}
         >
@@ -1024,10 +1052,16 @@ export default function App() {
         <SafeAreaView style={styles.mainSafeArea}>
           {/* Cabecera de Usuario Autenticado */}
           <View style={styles.userHeader}>
-            <Text style={styles.userHeaderText}>
-              Hola, <Text style={styles.userNameText}>{nombreUsuario}</Text> 💛
-              {rachaDias > 0 && <Text style={{ color: '#FF7F50', fontFamily: 'Nunito-Bold' }}> | 🔥 Racha: {rachaDias} {rachaDias === 1 ? 'día' : 'días'}</Text>}
-            </Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.userHeaderText}>
+                Hola, <Text style={styles.userNameText}>{nombreUsuario}</Text> 💛
+              </Text>
+              {rachaDias > 0 && (
+                <Text style={{ color: '#FF7F50', fontFamily: 'Nunito-Bold', fontSize: 11, marginTop: 2 }}>
+                  🔥 Racha: {rachaDias} {rachaDias === 1 ? 'día' : 'días'}
+                </Text>
+              )}
+            </View>
             <TouchableOpacity onPress={cerrarSesion} style={styles.logoutBtn}>
               <Text style={styles.logoutBtnText}>Cerrar sesión 🚪</Text>
             </TouchableOpacity>
@@ -1046,7 +1080,7 @@ export default function App() {
               <Text style={[styles.taskbarText, vistaActual === 'foro' && styles.taskbarTextActive]}>💛 Comunidad</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.taskbarBtn} onPress={() => setVistaActual('profesionales')}>
-              <Text style={[styles.taskbarText, vistaActual === 'profesionales' && styles.taskbarTextActive]}>💬 Ayuda</Text>
+              <Text style={[styles.taskbarText, vistaActual === 'profesionales' && styles.taskbarTextActive]}>📚 Recursos</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -1195,7 +1229,9 @@ const styles = StyleSheet.create({
   taskbarBtn: {
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
     flex: 1,
+    gap: 4,
   },
   taskbarText: {
     fontFamily: 'Nunito-Bold',
