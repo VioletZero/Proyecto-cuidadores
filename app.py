@@ -58,18 +58,8 @@ def limpiar_texto(texto):
 def predecir_emocion(texto_relato):
     """Clasifica el relato y devuelve la clase detectada junto con el nivel de sobrecarga probabilístico."""
     texto_limpio = limpiar_texto(texto_relato)
-    
-    # -------------------------------------------------------------------------
-    # APRENDIZAJE ACTIVO Y DETECCIÓN DE SARCASMO (Para la tesis)
-    # -------------------------------------------------------------------------
-    # El motor utiliza BERT para extraer embeddings contextuales, aprendiendo
-    # de las relaciones semánticas entre las palabras. Sin embargo, para detectar
-    # ironía/sarcasmo en una arquitectura que no fue finetuneada masivamente
-    # para esto, introducimos una heurística que ajusta el peso de la predicción
-    # si detectamos palabras clave de valencia muy negativa contrastando con positivas.
-    # Así, el modelo "aprende" a invalidar el contexto superficial ("qué maravilla")
-    # al detectar amenazas latentes ("bomba", "morir", "matar").
-    # -------------------------------------------------------------------------
+
+    #deteccion de sarcasmo
     palabras_positivas = ["maravilla", "excelente", "genial", "increíble", "feliz"]
     palabras_criticas = ["bomba", "morir", "matar", "infierno", "horrible", "desastre", "miserable"]
     
@@ -171,33 +161,33 @@ def analizar_emocion():
 # Definición de ítems para la Escala de Zarit, PHQ-9 y GAD-7
 ITEMS_EVALUACION = {
     # Zarit (7 ítems) - opciones 0 a 4
-    "Z1": {"test": "Zarit", "label": "¿Sientes que, por el tiempo que dedicas a cuidar a tu familiar, ya no tienes tiempo para ti mismo/a?", "max_score": 4},
-    "Z2": {"test": "Zarit", "label": "¿Te sientes estresado/a teniendo que cuidar a tu familiar y al mismo tiempo atender otras responsabilidades?", "max_score": 4},
-    "Z3": {"test": "Zarit", "label": "¿Crees que la situación de cuidado está afectando tu relación con amigos u otros familiares de forma negativa?", "max_score": 4},
-    "Z4": {"test": "Zarit", "label": "¿Te sientes agotado/a cuando tienes que estar junto a tu familiar?", "max_score": 4},
-    "Z5": {"test": "Zarit", "label": "¿Sientes que tu salud se ha visto afectada por tener que cuidar a tu familiar?", "max_score": 4},
-    "Z6": {"test": "Zarit", "label": "¿Sientes que has perdido el control de tu vida desde que empezaste a cuidar a tu familiar?", "max_score": 4},
-    "Z7": {"test": "Zarit", "label": "En general, ¿sientes que la tarea de cuidar te tiene muy sobrecargado/a?", "max_score": 4},
+    "Z1": {"test": "Zarit", "label": "¿Sientes que, por el tiempo que dedicas a cuidar a tu familiar, la falta de tiempo libre es un problema?", "max_score": 4},
+    "Z2": {"test": "Zarit", "label": "¿Sientes estrés por tener que cuidar a tu familiar y al mismo tiempo atender otras responsabilidades?", "max_score": 4},
+    "Z3": {"test": "Zarit", "label": "¿Crees que la situación de cuidado afecta la relación con amigos u otros familiares de forma negativa?", "max_score": 4},
+    "Z4": {"test": "Zarit", "label": "¿Sientes agotamiento cuando tienes que estar junto a tu familiar?", "max_score": 4},
+    "Z5": {"test": "Zarit", "label": "¿Sientes que tu salud ha empeorado por tener que cuidar a tu familiar?", "max_score": 4},
+    "Z6": {"test": "Zarit", "label": "¿Sientes la pérdida de control sobre tu vida desde que empezó la labor de cuidado?", "max_score": 4},
+    "Z7": {"test": "Zarit", "label": "En general, ¿sientes una carga excesiva por la tarea de cuidar?", "max_score": 4},
 
     # PHQ-9 (9 ítems) - opciones 0 a 4
-    "P1": {"test": "PHQ-9", "label": "¿Sientes poco interés o placer en hacer las cosas que antes disfrutabas?", "max_score": 4},
-    "P2": {"test": "PHQ-9", "label": "¿Te has sentido triste, desanimado/a o sin esperanza?", "max_score": 4},
-    "P3": {"test": "PHQ-9", "label": "¿Has tenido problemas para dormir, o al contrario, has dormido demasiado?", "max_score": 4},
-    "P4": {"test": "PHQ-9", "label": "¿Te has sentido cansado/a o sin energía para hacer las cosas del día?", "max_score": 4},
-    "P5": {"test": "PHQ-9", "label": "¿Has tenido poco apetito, o has comido mucho más de lo habitual?", "max_score": 4},
-    "P6": {"test": "PHQ-9", "label": "¿Has sentido que te has fallado a ti mismo/a o a tu familia?", "max_score": 4},
-    "P7": {"test": "PHQ-9", "label": "¿Has tenido dificultad para concentrarte en cosas como ver la televisión o leer?", "max_score": 4},
-    "P8": {"test": "PHQ-9", "label": "¿Has estado tan lento/a o agitado/a que otras personas lo han podido notar?", "max_score": 4},
-    "P9": {"test": "PHQ-9", "label": "¿Has tenido pensamientos de que estarías mejor muerto/a o de hacerte daño?", "max_score": 4},
+    "P1": {"test": "PHQ-9", "label": "¿Sientes poco interés o placer al hacer las cosas que antes te gustaban?", "max_score": 4},
+    "P2": {"test": "PHQ-9", "label": "¿Sientes tristeza, desánimo o falta de esperanza?", "max_score": 4},
+    "P3": {"test": "PHQ-9", "label": "¿Tienes problemas para dormir, o al contrario, duermes demasiado?", "max_score": 4},
+    "P4": {"test": "PHQ-9", "label": "¿Sientes cansancio o falta de energía para hacer las actividades del día?", "max_score": 4},
+    "P5": {"test": "PHQ-9", "label": "¿Tienes poco apetito, o al contrario, comes mucho más de lo habitual?", "max_score": 4},
+    "P6": {"test": "PHQ-9", "label": "¿Sientes que la falta de cumplimiento a tus propias expectativas o a las de tu familia te afecta?", "max_score": 4},
+    "P7": {"test": "PHQ-9", "label": "¿Tienes dificultad para mantener la concentración en actividades como ver televisión o leer?", "max_score": 4},
+    "P8": {"test": "PHQ-9", "label": "¿Notas lentitud o agitación a un nivel que otras personas lo perciben?", "max_score": 4},
+    "P9": {"test": "PHQ-9", "label": "¿Han surgido pensamientos vinculados con el deseo de no existir o hacerse daño?", "max_score": 4},
 
     # GAD-7 (7 ítems) - opciones 0 a 4
-    "G1": {"test": "GAD-7", "label": "¿Te has sentido nervioso/a, ansioso/a o con los nervios de punta?", "max_score": 4},
-    "G2": {"test": "GAD-7", "label": "¿Has sentido que no puedes parar de preocuparte aunque quieras?", "max_score": 4},
-    "G3": {"test": "GAD-7", "label": "¿Te preocupas demasiado por cosas distintas al mismo tiempo?", "max_score": 4},
-    "G4": {"test": "GAD-7", "label": "¿Te cuesta trabajo relajarte, aunque tengas un momento libre?", "max_score": 4},
-    "G5": {"test": "GAD-7", "label": "¿Has estado tan inquieto/a que no puedes quedarte quieto/a?", "max_score": 4},
-    "G6": {"test": "GAD-7", "label": "¿Te has irritado o molestado fácilmente por cosas pequeñas?", "max_score": 4},
-    "G7": {"test": "GAD-7", "label": "¿Has sentido miedo, como si algo malo fuera a pasar en cualquier momento?", "max_score": 4},
+    "G1": {"test": "GAD-7", "label": "¿Sientes nerviosismo, ansiedad o la sensación de tensión constante?", "max_score": 4},
+    "G2": {"test": "GAD-7", "label": "¿Sientes imposibilidad para dejar de sentir preocupación aunque lo intentes?", "max_score": 4},
+    "G3": {"test": "GAD-7", "label": "¿Sientes preocupación excesiva por distintos temas al mismo tiempo?", "max_score": 4},
+    "G4": {"test": "GAD-7", "label": "¿Hay dificultad para lograr la relajación, incluso en momentos libres?", "max_score": 4},
+    "G5": {"test": "GAD-7", "label": "¿Sientes un nivel de inquietud que dificulta la permanencia en calma?", "max_score": 4},
+    "G6": {"test": "GAD-7", "label": "¿Hay presencia de irritabilidad o molestia frecuente por detalles pequeños?", "max_score": 4},
+    "G7": {"test": "GAD-7", "label": "¿Sientes temor o la sensación de que algo malo va a pasar en cualquier momento?", "max_score": 4},
 }
 
 from adaptive_sampling import AdaptativeSampler

@@ -3381,5 +3381,423 @@
         "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
       ]
     }
+  },
+  {
+    "user_metadata": {
+      "id": "c91105c8-722c-4439-913a-81ff2b6a0370",
+      "nombre": "Maria Del Pilar Lopez Molina",
+      "fecha": "2026-09-29T00:01:37.920201Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": "Z1",
+        "label": "¿Sientes que, por el tiempo que dedicas a cuidar a tu familiar, ya no tienes tiempo para ti mismo/a?",
+        "score": 3,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z2",
+        "label": "¿Te sientes estresado/a teniendo que cuidar a tu familiar y al mismo tiempo atender otras responsabilidades?",
+        "score": 2,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z3",
+        "label": "¿Crees que la situación de cuidado está afectando tu relación con amigos u otros familiares de forma negativa?",
+        "score": 4,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z4",
+        "label": "¿Te sientes agotado/a cuando tienes que estar junto a tu familiar?",
+        "score": 2,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z5",
+        "label": "¿Sientes que tu salud se ha visto afectada por tener que cuidar a tu familiar?",
+        "score": 2,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z6",
+        "label": "¿Sientes que has perdido el control de tu vida desde que empezaste a cuidar a tu familiar?",
+        "score": 3,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z7",
+        "label": "En general, ¿sientes que la tarea de cuidar te tiene muy sobrecargado/a?",
+        "score": 3,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "P1",
+        "label": "¿Sientes poco interés o placer en hacer las cosas que antes disfrutabas?",
+        "score": 2,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P2",
+        "label": "¿Te has sentido triste, desanimado/a o sin esperanza?",
+        "score": 4,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P3",
+        "label": "¿Has tenido problemas para dormir, o al contrario, has dormido demasiado?",
+        "score": 0,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P4",
+        "label": "¿Te has sentido cansado/a o sin energía para hacer las cosas del día?",
+        "score": 3,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P5",
+        "label": "¿Has tenido poco apetito, o has comido mucho más de lo habitual?",
+        "score": 3,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P6",
+        "label": "¿Has sentido que te has fallado a ti mismo/a o a tu familia?",
+        "score": 1,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P7",
+        "label": "¿Has tenido dificultad para concentrarte en cosas como ver la televisión o leer?",
+        "score": 4,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P8",
+        "label": "¿Has estado tan lento/a o agitado/a que otras personas lo han podido notar?",
+        "score": 1,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P9",
+        "label": "¿Has tenido pensamientos de que estarías mejor muerto/a o de hacerte daño?",
+        "score": 0,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "G1",
+        "label": "¿Te has sentido nervioso/a, ansioso/a o con los nervios de punta?",
+        "score": 0,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G2",
+        "label": "¿Has sentido que no puedes parar de preocuparte aunque quieras?",
+        "score": 3,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G3",
+        "label": "¿Te preocupas demasiado por cosas distintas al mismo tiempo?",
+        "score": 1,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G4",
+        "label": "¿Te cuesta trabajo relajarte, aunque tengas un momento libre?",
+        "score": 3,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G5",
+        "label": "¿Has estado tan inquieto/a que no puedes quedarte quieto/a?",
+        "score": 4,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G6",
+        "label": "¿Te has irritado o molestado fácilmente por cosas pequeñas?",
+        "score": 4,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G7",
+        "label": "¿Has sentido miedo, como si algo malo fuera a pasar en cualquier momento?",
+        "score": 2,
+        "test": "GAD-7"
+      }
+    ],
+    "puntaje_proporcional": 54,
+    "puntajes_test": {
+      "Zarit": 19,
+      "PHQ-9": 18,
+      "GAD-7": 17
+    },
+    "tipo_evaluacion": "baseline",
+    "nlp_corpus": "Me siento muy feliz con tan extenuante trabajo de cuidado",
+    "predictive_target": "Bienestar Moderado",
+    "emocion_detectada": "Resiliencia",
+    "dimensiones_evaluadas": {
+      "Física": "Se detecta alta sobrecarga.",
+      "Psicológica": "Señales de ánimo bajo.",
+      "Emocional": "Niveles elevados de ansiedad."
+    },
+    "intervencion": {
+      "titulo": "Respiración (Técnica 4-7-8)",
+      "instrucciones": [
+        "1. Inhala profundamente por la nariz durante 4 segundos.",
+        "2. Mantén la respiración durante 7 segundos.",
+        "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
+      ]
+    }
+  },
+  {
+    "user_metadata": {
+      "id": "4ff719da-34f1-45b8-b83f-81258f955eb5",
+      "nombre": "Maria Del Pilar Lopez Molina",
+      "fecha": "2026-09-29T00:33:31.467283Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": "Z6",
+        "label": "¿Sientes que has perdido el control de tu vida desde que empezaste a cuidar a tu familiar?",
+        "score": 0,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z4",
+        "label": "¿Te sientes agotado/a cuando tienes que estar junto a tu familiar?",
+        "score": 0,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z2",
+        "label": "¿Te sientes estresado/a teniendo que cuidar a tu familiar y al mismo tiempo atender otras responsabilidades?",
+        "score": 0,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "P6",
+        "label": "¿Has sentido que te has fallado a ti mismo/a o a tu familia?",
+        "score": 0,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P4",
+        "label": "¿Te has sentido cansado/a o sin energía para hacer las cosas del día?",
+        "score": 0,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P8",
+        "label": "¿Has estado tan lento/a o agitado/a que otras personas lo han podido notar?",
+        "score": 0,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "G4",
+        "label": "¿Te cuesta trabajo relajarte, aunque tengas un momento libre?",
+        "score": 0,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G3",
+        "label": "¿Te preocupas demasiado por cosas distintas al mismo tiempo?",
+        "score": 0,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G2",
+        "label": "¿Has sentido que no puedes parar de preocuparte aunque quieras?",
+        "score": 0,
+        "test": "GAD-7"
+      }
+    ],
+    "puntaje_proporcional": 0,
+    "puntajes_test": {
+      "Zarit": 0,
+      "PHQ-9": 0,
+      "GAD-7": 0
+    },
+    "tipo_evaluacion": "diario",
+    "nlp_corpus": "Estoy full feliz",
+    "predictive_target": "Bienestar Alto",
+    "emocion_detectada": "Resiliencia",
+    "dimensiones_evaluadas": {
+      "Física": "Sobrecarga en rangos manejables.",
+      "Psicológica": "Ánimo estable.",
+      "Emocional": "Niveles de ansiedad estables."
+    },
+    "intervencion": null
+  },
+  {
+    "user_metadata": {
+      "id": "51e76593-cdaa-43c2-a9e3-365601845caf",
+      "nombre": "Maria Del Pilar Lopez Molina",
+      "fecha": "2026-09-29T00:47:16.870508Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": "Z4",
+        "label": "¿Te sientes agotado/a cuando tienes que estar junto a tu familiar?",
+        "score": 4,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z7",
+        "label": "En general, ¿sientes que la tarea de cuidar te tiene muy sobrecargado/a?",
+        "score": 4,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z5",
+        "label": "¿Sientes que tu salud se ha visto afectada por tener que cuidar a tu familiar?",
+        "score": 4,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "P1",
+        "label": "¿Sientes poco interés o placer en hacer las cosas que antes disfrutabas?",
+        "score": 4,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P8",
+        "label": "¿Has estado tan lento/a o agitado/a que otras personas lo han podido notar?",
+        "score": 4,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P6",
+        "label": "¿Has sentido que te has fallado a ti mismo/a o a tu familia?",
+        "score": 4,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "G3",
+        "label": "¿Te preocupas demasiado por cosas distintas al mismo tiempo?",
+        "score": 4,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G7",
+        "label": "¿Has sentido miedo, como si algo malo fuera a pasar en cualquier momento?",
+        "score": 4,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G6",
+        "label": "¿Te has irritado o molestado fácilmente por cosas pequeñas?",
+        "score": 4,
+        "test": "GAD-7"
+      }
+    ],
+    "puntaje_proporcional": 92,
+    "puntajes_test": {
+      "Zarit": 28,
+      "PHQ-9": 36,
+      "GAD-7": 28
+    },
+    "tipo_evaluacion": "diario",
+    "nlp_corpus": "Estoy descoñetado, tengo los nervios de punta, siento que no doy mas, necesito un respiro",
+    "predictive_target": "Bienestar Bajo",
+    "emocion_detectada": "Depresión",
+    "dimensiones_evaluadas": {
+      "Física": "Se detecta alta sobrecarga.",
+      "Psicológica": "Señales de ánimo bajo.",
+      "Emocional": "Niveles elevados de ansiedad."
+    },
+    "intervencion": {
+      "titulo": "Respiración (Técnica 4-7-8)",
+      "instrucciones": [
+        "1. Inhala profundamente por la nariz durante 4 segundos.",
+        "2. Mantén la respiración durante 7 segundos.",
+        "3. Exhala lentamente por la boca, haciendo un sonido de soplido, durante 8 segundos."
+      ]
+    }
+  },
+  {
+    "user_metadata": {
+      "id": "8f3daafc-6a16-4c6b-bec3-9cd6f0e8f937",
+      "nombre": "Maria Del Pilar Lopez Molina",
+      "fecha": "2026-09-29T00:52:36.976634Z",
+      "ubicacion": "Desconocida"
+    },
+    "item_scores": [
+      {
+        "item_id": "Z1",
+        "label": "¿Sientes que, por el tiempo que dedicas a cuidar a tu familiar, ya no tienes tiempo para ti mismo/a?",
+        "score": 0,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z5",
+        "label": "¿Sientes que tu salud se ha visto afectada por tener que cuidar a tu familiar?",
+        "score": 0,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "Z7",
+        "label": "En general, ¿sientes que la tarea de cuidar te tiene muy sobrecargado/a?",
+        "score": 0,
+        "test": "Zarit"
+      },
+      {
+        "item_id": "P9",
+        "label": "¿Has tenido pensamientos de que estarías mejor muerto/a o de hacerte daño?",
+        "score": 0,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P8",
+        "label": "¿Has estado tan lento/a o agitado/a que otras personas lo han podido notar?",
+        "score": 0,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "P5",
+        "label": "¿Has tenido poco apetito, o has comido mucho más de lo habitual?",
+        "score": 0,
+        "test": "PHQ-9"
+      },
+      {
+        "item_id": "G4",
+        "label": "¿Te cuesta trabajo relajarte, aunque tengas un momento libre?",
+        "score": 0,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G3",
+        "label": "¿Te preocupas demasiado por cosas distintas al mismo tiempo?",
+        "score": 0,
+        "test": "GAD-7"
+      },
+      {
+        "item_id": "G5",
+        "label": "¿Has estado tan inquieto/a que no puedes quedarte quieto/a?",
+        "score": 0,
+        "test": "GAD-7"
+      }
+    ],
+    "puntaje_proporcional": 0,
+    "puntajes_test": {
+      "Zarit": 0,
+      "PHQ-9": 0,
+      "GAD-7": 0
+    },
+    "tipo_evaluacion": "diario",
+    "nlp_corpus": "Estoy colapsada, no puedo más con esta presión, me quiero morir",
+    "predictive_target": "Bienestar Alto",
+    "emocion_detectada": "Depresión",
+    "dimensiones_evaluadas": {
+      "Física": "Sobrecarga en rangos manejables.",
+      "Psicológica": "Ánimo estable.",
+      "Emocional": "Niveles de ansiedad estables."
+    },
+    "intervencion": null
   }
 ]

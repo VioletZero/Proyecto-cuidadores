@@ -452,15 +452,16 @@ export default function App() {
           const ultimaRachaFecha = await AsyncStorage.getItem('@ultima_fecha_racha');
 
           let nuevaRacha = rachaDias;
+
           if (!ultimaRachaFecha) {
-            nuevaRacha = 1;
+            nuevaRacha = 0; // Primera vez que entra a la app/evaluación
           } else if (ultimaRachaFecha !== hoyStr) {
             const ayer = new Date();
             ayer.setDate(ayer.getDate() - 1);
             if (ultimaRachaFecha === ayer.toDateString()) {
-              nuevaRacha += 1;
+              nuevaRacha += 1; // Cumplió ayer, incrementa
             } else {
-              nuevaRacha = 1; // Reseteo o inicio de racha
+              nuevaRacha = 0; // Rompió racha, reinicia en 0
             }
           }
           if (ultimaRachaFecha !== hoyStr) {
@@ -636,7 +637,7 @@ export default function App() {
             style={[styles.tabBtn, tipoEvaluacion === 'diario' && styles.tabBtnActive]}
             onPress={() => { setTipoEvaluacion('diario'); setResultadoEval(null); }}
           >
-            <Text style={[styles.tabText, tipoEvaluacion === 'diario' && styles.tabTextActive]}>Check-in diario</Text>
+            <Text style={[styles.tabText, tipoEvaluacion === 'diario' && styles.tabTextActive]}>Test rápido</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.tabBtn, tipoEvaluacion === 'baseline' && styles.tabBtnActive]}
@@ -1057,8 +1058,8 @@ export default function App() {
                 Hola, <Text style={styles.userNameText}>{nombreUsuario}</Text> 💛
               </Text>
               {rachaDias > 0 && (
-                <Text style={{ color: '#FF7F50', fontFamily: 'Nunito-Bold', fontSize: 11, marginTop: 2 }}>
-                  🔥 Racha: {rachaDias} {rachaDias === 1 ? 'día' : 'días'}
+                <Text style={{ color: '#FF7F50', fontFamily: 'Nunito-Bold', fontSize: 12, marginTop: 2 }}>
+                  🔥 Racha: {rachaDias}
                 </Text>
               )}
             </View>
