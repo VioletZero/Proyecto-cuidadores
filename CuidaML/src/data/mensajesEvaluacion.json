@@ -1,0 +1,226 @@
+{
+  "bienestar": [
+    {
+      "id": "b1",
+      "titulo_corto": "Tu esfuerzo es valioso",
+      "cuerpo": "Es gratificante ver que logras mantener el equilibrio hoy. Reconocer tus propios logros es una parte fundamental del autocuidado.",
+      "sugerencia_accion": "Mantén este ritmo: tómate 5 minutos hoy solo para disfrutar de una bebida caliente o escuchar tu canción favorita."
+    },
+    {
+      "id": "b2",
+      "titulo_corto": "Un paso a la vez",
+      "cuerpo": "Tus niveles de bienestar indican calma. Es un excelente momento para afianzar hábitos positivos sin sobreexigirte.",
+      "sugerencia_accion": "Aprovecha esta energía para delegar una tarea pequeña. No tienes que hacerlo todo hoy."
+    },
+    {
+      "id": "b3",
+      "titulo_corto": "El mérito de tu descanso",
+      "cuerpo": "Has logrado priorizarte en medio de las responsabilidades. Cuidar de ti te permite cuidar mejor de los demás.",
+      "sugerencia_accion": "Antes de dormir, anota una cosa pequeña que te haya hecho sonreír hoy."
+    },
+    {
+      "id": "b4",
+      "titulo_corto": "Sembrando tranquilidad",
+      "cuerpo": "Tu estado actual refleja resiliencia. Celebra que has encontrado un espacio de paz en tu rutina.",
+      "sugerencia_accion": "Dedica unos minutos a estirar tu cuerpo y agradecer el descanso que te estás permitiendo."
+    },
+    {
+      "id": "b5",
+      "titulo_corto": "Equilibrio encontrado",
+      "cuerpo": "Hoy parece ser un buen día. Saber reconocer los días tranquilos nos ayuda a acumular energía para cuando más la necesitamos.",
+      "sugerencia_accion": "Date permiso para no hacer absolutamente nada durante al menos 10 minutos."
+    }
+  ],
+  "estres": [
+    {
+      "id": "e1",
+      "titulo_corto": "Reconoce tu tensión",
+      "cuerpo": "Es completamente normal sentir que todo ocurre al mismo tiempo. Has estado bajo mucha presión.",
+      "sugerencia_accion": "Libera tensión de tu mandíbula y cuello. Gira tu cabeza lentamente en círculos tres veces."
+    },
+    {
+      "id": "e2",
+      "titulo_corto": "Tu límite es importante",
+      "cuerpo": "El estrés es la señal de tu cuerpo pidiendo una pausa. No necesitas resolver todo en este preciso momento.",
+      "sugerencia_accion": "Intenta la 'Pausa de emergencia' en la sección de Recursos para calmar el ritmo."
+    },
+    {
+      "id": "e3",
+      "titulo_corto": "Baja la marcha",
+      "cuerpo": "Se nota que llevas una gran carga mental. Aceptar que hoy no puedes con todo es un acto de valentía.",
+      "sugerencia_accion": "Aleja la vista de las pantallas. Mira hacia un punto lejano por 20 segundos y respira hondo."
+    },
+    {
+      "id": "e4",
+      "titulo_corto": "Descompresión necesaria",
+      "cuerpo": "Tu nivel de tensión está alto. Cuidar implica muchos frentes, pero tú sigues siendo la prioridad.",
+      "sugerencia_accion": "Lávate la cara con agua fría y bebe un vaso de agua antes de continuar tu día."
+    },
+    {
+      "id": "e5",
+      "titulo_corto": "Haz espacio para ti",
+      "cuerpo": "A veces las responsabilidades se sienten como un embudo. Es vital que abras un espacio solo para respirar.",
+      "sugerencia_accion": "Escucha el audio de respiración guiada de 4-7-8 en la sección de Recursos."
+    }
+  ],
+  "ansiedad": [
+    {
+      "id": "a1",
+      "titulo_corto": "Anclaje al presente",
+      "cuerpo": "Es natural que la incertidumbre te inquiete. El futuro puede esperar; tu calma aquí y ahora es lo principal.",
+      "sugerencia_accion": "Encuentra 3 cosas a tu alrededor que sean de color azul y nómbralas en voz alta."
+    },
+    {
+      "id": "a2",
+      "titulo_corto": "Un respiro a la vez",
+      "cuerpo": "Tu mente parece ir a mil por hora. No estás solo/a en esto. Date permiso para detener los pensamientos un momento.",
+      "sugerencia_accion": "Inhala por la nariz contando hasta 4, exhala por la boca contando hasta 6. Repítelo 3 veces."
+    },
+    {
+      "id": "a3",
+      "titulo_corto": "Soltando el control",
+      "cuerpo": "A veces queremos anticipar todos los problemas y eso agota nuestra energía. Está bien no tener todas las respuestas hoy.",
+      "sugerencia_accion": "Escribe en un papel lo que te preocupa hoy y déjalo en un cajón hasta mañana."
+    },
+    {
+      "id": "a4",
+      "titulo_corto": "Calma en la tormenta",
+      "cuerpo": "La inquietud es una reacción esperable ante tantas demandas diarias. Sé amable contigo cuando sientas agitación.",
+      "sugerencia_accion": "Utiliza la técnica de 'Pausa de emergencia' en Recursos para reconectar con la calma."
+    },
+    {
+      "id": "a5",
+      "titulo_corto": "Vuelve a ti",
+      "cuerpo": "Cuando sientas que todo se acelera, recuerda que tienes el poder de pausar. No tienes que apresurarte.",
+      "sugerencia_accion": "Siente el peso de tus pies sobre el suelo. Conecta con la estabilidad física por un minuto."
+    }
+  ],
+  "agotamiento": [
+    {
+      "id": "ag1",
+      "titulo_corto": "Validando tu cansancio",
+      "cuerpo": "Has dado muchísimo de ti y tu energía está baja. Es una señal humana e innegable de que necesitas recargar.",
+      "sugerencia_accion": "Acuéstate o siéntate cómodamente con los ojos cerrados por 5 minutos enteros."
+    },
+    {
+      "id": "ag2",
+      "titulo_corto": "Permiso para pausar",
+      "cuerpo": "No eres una máquina infinita. Sentir agotamiento significa que tu cuerpo está pidiendo la recuperación que merece.",
+      "sugerencia_accion": "Si es posible, pospón cualquier tarea que no sea estrictamente urgente para otro día."
+    },
+    {
+      "id": "ag3",
+      "titulo_corto": "Cuidar a quien cuida",
+      "cuerpo": "Tu dedicación es profunda, pero hoy el cansancio pesa más. Permitirse un descanso no es renunciar, es reponer fuerzas.",
+      "sugerencia_accion": "Toma una infusión o bebida tibia lentamente, sintiendo el calor en tus manos."
+    },
+    {
+      "id": "ag4",
+      "titulo_corto": "El límite físico",
+      "cuerpo": "El agotamiento prolongado afecta tanto el cuerpo como la mente. Reconocer que ya no tienes batería es el primer paso.",
+      "sugerencia_accion": "Escucha el audio de respiración en la sección de Recursos para relajar tus músculos."
+    },
+    {
+      "id": "ag5",
+      "titulo_corto": "Energía en reserva",
+      "cuerpo": "Parece que estás funcionando con la reserva de energía. Trátate con la misma suavidad con la que cuidas a los demás.",
+      "sugerencia_accion": "Intenta dormir 30 minutos extras esta noche o toma una siesta corta si es posible."
+    }
+  ],
+  "depresion": [
+    {
+      "id": "d1",
+      "titulo_corto": "No estás en soledad",
+      "cuerpo": "Sentimos que hoy el día ha sido especialmente oscuro y pesado. Es válido sentir tristeza profunda, y mereces recibir apoyo.",
+      "sugerencia_accion": "Visita la sección de Recursos y considera enviar un mensaje a uno de los profesionales de apoyo. Estamos contigo."
+    },
+    {
+      "id": "d2",
+      "titulo_corto": "Abraza tu vulnerabilidad",
+      "cuerpo": "Reconocer que el ánimo no alcanza es de valientes. No tienes que fingir fortaleza todos los días.",
+      "sugerencia_accion": "Sé completamente compasivo/a contigo hoy. No te exijas más de lo mínimo necesario."
+    },
+    {
+      "id": "d3",
+      "titulo_corto": "Acompañamiento especial",
+      "cuerpo": "Cargar con todo el peso emocional en silencio agota el alma. Queremos recordarte que pedir ayuda es el mayor acto de autocuidado.",
+      "sugerencia_accion": "Si lo deseas, escribe cómo te sientes en la sección Comunidad. Hay muchas personas que te comprenden."
+    },
+    {
+      "id": "d4",
+      "titulo_corto": "Un día a la vez",
+      "cuerpo": "Cuando la esperanza parece escasa, la regla es vivir un día, o incluso una hora, a la vez. Tu presencia ya es suficiente.",
+      "sugerencia_accion": "Realiza la 'Pausa de emergencia' desde la pestaña de Recursos para reconfortar tu mente."
+    },
+    {
+      "id": "d5",
+      "titulo_corto": "Mereces ser sostenido/a",
+      "cuerpo": "Has sostenido a otros por mucho tiempo. Hoy, las señales indican que tú necesitas ser quien reciba ese sostén.",
+      "sugerencia_accion": "Habla con un amigo cercano o entra a la sección de Profesionales de Apoyo. Hay manos dispuestas a ayudarte."
+    }
+  ],
+  "sobrecarga": [
+    {
+      "id": "s1",
+      "titulo_corto": "El peso compartido",
+      "cuerpo": "Las demandas de cuidado están desbordando tus límites actuales. Cargar todo en solitario es insostenible a largo plazo.",
+      "sugerencia_accion": "Piensa en una pequeña tarea que puedas delegar o pedir ayuda a otra persona hoy mismo."
+    },
+    {
+      "id": "s2",
+      "titulo_corto": "Límites saludables",
+      "cuerpo": "Tu dedicación ha sido enorme, pero la sobrecarga indica que estás asumiendo más de lo que puedes procesar saludablemente.",
+      "sugerencia_accion": "Dedica 5 minutos a la 'Pausa de emergencia' en la pestaña de Recursos antes de retomar cualquier labor."
+    },
+    {
+      "id": "s3",
+      "titulo_corto": "Rompiendo el ciclo",
+      "cuerpo": "El exceso continuo de responsabilidades agota. Para seguir siendo un buen cuidador, primero debes cuidarte a ti mismo/a.",
+      "sugerencia_accion": "Di 'no' a cualquier compromiso o exigencia extra que surja durante este día."
+    },
+    {
+      "id": "s4",
+      "titulo_corto": "Atención prioritaria para ti",
+      "cuerpo": "Estamos detectando que tu nivel de responsabilidad supera tu capacidad actual de descanso. Es hora de detenerse un momento.",
+      "sugerencia_accion": "Escucha el ejercicio guiado en Recursos para reducir la frecuencia cardíaca y la saturación mental."
+    },
+    {
+      "id": "s5",
+      "titulo_corto": "Reconecta contigo",
+      "cuerpo": "Cuando nos volcamos totalmente en el otro, solemos perdernos a nosotros mismos. Es fundamental que regreses a ti.",
+      "sugerencia_accion": "Cierra los ojos y respira profundo tres veces repitiendo: 'Yo también importo'."
+    }
+  ],
+  "frustracion": [
+    {
+      "id": "f1",
+      "titulo_corto": "Validando tu enojo",
+      "cuerpo": "Sentir frustración es una reacción natural frente a situaciones que escapan a tu control o cuando el esfuerzo no parece rendir frutos.",
+      "sugerencia_accion": "Siéntate en silencio un momento. Reconoce tu frustración sin juzgarte por sentirla."
+    },
+    {
+      "id": "f2",
+      "titulo_corto": "Soltando lo incontrolable",
+      "cuerpo": "Hay circunstancias de la enfermedad y el cuidado que no puedes cambiar. Luchar contra eso genera un gran desgaste emocional.",
+      "sugerencia_accion": "Escribe en un papel lo que te frustra hoy, arrúgalo y tíralo. Es una forma de soltar esa carga."
+    },
+    {
+      "id": "f3",
+      "titulo_corto": "Un escape seguro",
+      "cuerpo": "Cuando la paciencia se acaba, es mejor retirarse un momento antes de colapsar. Tienes derecho a sentir que no puedes más.",
+      "sugerencia_accion": "Ve a otra habitación por un par de minutos, lávate las manos con agua fría y respira hondo."
+    },
+    {
+      "id": "f4",
+      "titulo_corto": "Cambiando la perspectiva",
+      "cuerpo": "La frustración suele venir de expectativas que chocan con la realidad del día a día. Sé flexible contigo y con la situación.",
+      "sugerencia_accion": "Repasa el recurso de 'Duelo Anticipado' en la sección de Recursos, puede darte perspectiva y alivio."
+    },
+    {
+      "id": "f5",
+      "titulo_corto": "La imperfección es humana",
+      "cuerpo": "A veces las cosas no salen como planeamos por más esfuerzo que pongamos. Eres humano/a, no tienes que hacerlo perfecto.",
+      "sugerencia_accion": "Haz la 'Pausa de emergencia' en Recursos para restablecer tu calma cuando la frustración suba."
+    }
+  ]
+}

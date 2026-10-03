@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, StyleSheet, Linking, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, StyleSheet, Linking, StatusBar, Modal, KeyboardAvoidingView, Platform, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LineChart, LineChartDataPoint } from './src/components/LineChart';
 import { globalStyles, theme } from './src/styles/theme';
 import { RegistroScreen } from './src/components/RegistroScreen';
 import mensajesSoporte from './src/data/mensajesSoporte.json';
+import mensajesEvaluacion from './src/data/mensajesEvaluacion.json';
 import { NotificacionModal } from './src/components/NotificacionModal';
 import { CustomAlertModal } from './src/components/CustomAlertModal';
 import Sound from 'react-native-sound';
@@ -23,7 +24,15 @@ interface EvaluacionResult {
   estado_bienestar: string;
   puntaje_total: number;
   es_alerta_clinica: boolean;
+  nivel_riesgo_clinico?: string;
+  deteccion?: string;
   mensaje_ia?: string;
+  mensaje_dinamico?: {
+    id: string;
+    titulo_corto: string;
+    cuerpo: string;
+    sugerencia_accion: string;
+  };
   resumen_dimensiones?: {
     Física: string;
     Psicológica: string;
@@ -94,12 +103,32 @@ export default function App() {
   const [mensajeNotificacionActivo, setMensajeNotificacionActivo] = useState<any | null>(null);
   const [modalNotificacionVisible, setModalNotificacionVisible] = useState(false);
   const [testCycleIndex, setTestCycleIndex] = useState(0);
-  const [loginCount, setLoginCount] = useState(1);
+  const [hasCompletedInitialTest, setHasCompletedInitialTest] = useState(false);
+  const [expandedHistorialItem, setExpandedHistorialItem] = useState<number | null>(null);
   const [sound, setSound] = useState<Sound | null>(null);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [audioProgress, setAudioProgress] = useState(0);
   const [audioDuration, setAudioDuration] = useState(0);
   const [audioBarWidth, setAudioBarWidth] = useState(0);
+
+  // Estados de Active Learning Feedback
+  const [feedbackEnviado, setFeedbackEnviado] = useState(false);
+  const [mostrarSelectorFeedback, setMostrarSelectorFeedback] = useState(false);
+
+  // Estados para Modal de Recursos
+  const [selectedResource, setSelectedResource] = useState<any>(null);
+  const [isResourceModalVisible, setIsResourceModalVisible] = useState(false);
+
+  const closeResourceModal = () => {
+    setIsResourceModalVisible(false);
+    if (sound && isPlayingAudio) {
+      sound.pause();
+      setIsPlayingAudio(false);
+    }
+    setTimeout(() => {
+        setSelectedResource(null);
+    }, 300);
+  };
 
   // Limpieza del audio al desmontar o cambiar de audio
   useEffect(() => {
@@ -125,15 +154,15 @@ export default function App() {
   }, [sound, isPlayingAudio, audioDuration]);
 
   const renderSemaforoBar = (texto: string) => {
-    let color = '#10B981'; // Verde - Alto Bienestar
+    let color = '#B8E0D2'; // Verde Pastel - Alto Bienestar
     let width = '100%';
     const lower = texto.toLowerCase();
 
     if (lower.includes('agotamiento') || lower.includes('elevados') || lower.includes('culpa') || lower.includes('irritabilidad')) {
-      color = '#EF4444'; // Rojo - Bajo Bienestar
+      color = '#B39DDB'; // Lavanda - Bajo Bienestar / Contención
       width = '33%';
     } else if (lower.includes('moderado') || lower.includes('regular') || lower.includes('parcial')) {
-      color = '#F59E0B'; // Amarillo - Bienestar Moderado
+      color = '#AED9E0'; // Azul Pastel - Bienestar Moderado
       width = '66%';
     }
 
@@ -189,32 +218,16 @@ export default function App() {
           setNombreUsuario(nombre);
           setUsuarioRegistrado(true);
 
-          // Cargar último resultado si coincide con la fecha de hoy
-          const guardadoFecha = await AsyncStorage.getItem('@ultimo_resultado_fecha');
-          if (guardadoFecha === new Date().toDateString()) {
-            const resultadoStr = await AsyncStorage.getItem('@ultimo_resultado');
-            if (resultadoStr) {
-              setResultadoEval(JSON.parse(resultadoStr));
-            }
-          }
-          const countStr = await AsyncStorage.getItem('@login_count');
-          if (countStr) setLoginCount(parseInt(countStr));
+          // Limpiar resultado de sesión anterior (Cold Start)
+          setResultadoEval(null);
 
           const rachaStr = await AsyncStorage.getItem('@racha_dias');
           if (rachaStr) setRachaDias(parseInt(rachaStr));
 
-          // Calcular días desde último test completo
           const ultimaFechaStr = await AsyncStorage.getItem('@ultimo_test_completo_fecha');
-          let dias = 7; // por defecto obligar si no hay registro
-          if (ultimaFechaStr) {
-            const ultimaFecha = new Date(ultimaFechaStr);
-            const hoy = new Date();
-            const diffTime = Math.abs(hoy.getTime() - ultimaFecha.getTime());
-            dias = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-          }
-          setDiasDesdeUltimoTest(dias);
+          setHasCompletedInitialTest(!!ultimaFechaStr);
 
-          if (dias >= 7 || !countStr) {
+          if (!ultimaFechaStr) {
             setTipoEvaluacion('baseline');
           } else {
             setTipoEvaluacion('diario');
@@ -236,27 +249,34 @@ export default function App() {
   const handleRegistroExitoso = async (nombre: string, emailParam?: string, passwordParam?: string, modoLogin?: boolean) => {
     try {
       if (modoLogin && emailParam && passwordParam) {
-        // Verificar credenciales guardadas
-        const emailGuardado = await AsyncStorage.getItem('@email_usuario');
-        const passGuardado = await AsyncStorage.getItem('@pass_usuario');
-        if (emailParam.trim().toLowerCase() !== emailGuardado || passwordParam !== passGuardado) {
+        // Lógica de Login vía Backend
+        const res = await fetch('https://cuidaml.luzserver.org/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailParam, password: passwordParam })
+        });
+        const data = await res.json();
+        
+        if (!res.ok || data.error) {
           showAlert(
             'Credenciales incorrectas',
-            'El correo o la contraseña no coinciden con una cuenta registrada. '
-            + 'Si eres nuevo, elige Regístrate.'
+            data.error || 'El correo o la contraseña no coinciden con una cuenta registrada.'
           );
           return;
         }
-        // Login exitoso: recuperar nombre guardado
-        const nombreGuardado = await AsyncStorage.getItem('@nombre_usuario') ?? nombre;
+
+        const nombreGuardado = data.user.nombre;
+        const userId = data.user.user_id;
+        
         await AsyncStorage.setItem('@usuario_registrado', 'true');
         await AsyncStorage.setItem('@nombre_usuario', nombreGuardado);
+        await AsyncStorage.setItem('@user_id', userId);
+        await AsyncStorage.setItem('@email_usuario', emailParam);
 
         const currentCountStr = await AsyncStorage.getItem('@login_count');
         const currentCount = currentCountStr ? parseInt(currentCountStr) : 1;
         const newCount = currentCount + 1;
         await AsyncStorage.setItem('@login_count', newCount.toString());
-        setLoginCount(newCount);
         setTipoEvaluacion('diario');
 
         await AsyncStorage.removeItem('@notificacion_diaria_index');
@@ -266,22 +286,38 @@ export default function App() {
         setUsuarioRegistrado(true);
         return;
       }
-      // Registro nuevo: guardar todo
-      await AsyncStorage.setItem('@usuario_registrado', 'true');
-      await AsyncStorage.setItem('@nombre_usuario', nombre);
-      await AsyncStorage.setItem('@login_count', '1');
-      if (emailParam) { await AsyncStorage.setItem('@email_usuario', emailParam.trim().toLowerCase()); }
-      if (passwordParam) { await AsyncStorage.setItem('@pass_usuario', passwordParam); }
-      setNombreUsuario(nombre);
-      setLoginCount(1);
+      
+      // Lógica de Registro vía Backend
+      if (emailParam && passwordParam && nombre) {
+        const res = await fetch('https://cuidaml.luzserver.org/registro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, email: emailParam, password: passwordParam })
+        });
+        const data = await res.json();
+        
+        if (!res.ok || data.error) {
+          showAlert('Error de Registro', data.error || 'No se pudo crear la cuenta.');
+          return;
+        }
+        
+        const userId = data.user.user_id;
+        await AsyncStorage.setItem('@usuario_registrado', 'true');
+        await AsyncStorage.setItem('@nombre_usuario', nombre);
+        await AsyncStorage.setItem('@user_id', userId);
+        await AsyncStorage.setItem('@email_usuario', emailParam);
+        await AsyncStorage.setItem('@login_count', '1');
+        
+        setNombreUsuario(nombre);
 
-      await AsyncStorage.removeItem('@notificacion_diaria_index');
-      await AsyncStorage.removeItem('@notificacion_ultima_fecha');
+        await AsyncStorage.removeItem('@notificacion_diaria_index');
+        await AsyncStorage.removeItem('@notificacion_ultima_fecha');
 
-      setTipoEvaluacion('baseline');
-      setUsuarioRegistrado(true);
+        setTipoEvaluacion('baseline');
+        setUsuarioRegistrado(true);
+      }
     } catch (e) {
-      showAlert('Error', 'No se pudieron guardar los datos de registro localmente.');
+      showAlert('Error de conexión', 'No se pudo comunicar con el servidor.');
     }
   };
 
@@ -305,7 +341,7 @@ export default function App() {
         const response = await fetch('https://cuidaml.luzserver.org/preguntas_diarias', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ login_count: loginCount, tipo_evaluacion: tipoEvaluacion })
+          body: JSON.stringify({ login_count: new Date().getDay(), tipo_evaluacion: tipoEvaluacion })
         });
         const data = await response.json();
         if (data.preguntas && data.preguntas.length > 0) {
@@ -318,7 +354,7 @@ export default function App() {
     if (usuarioRegistrado) {
       fetchPreguntas();
     }
-  }, [usuarioRegistrado, loginCount, tipoEvaluacion]);
+  }, [usuarioRegistrado, hasCompletedInitialTest, tipoEvaluacion]);
 
   const processDeepLink = (url: string) => {
     if (!url) return;
@@ -416,6 +452,7 @@ export default function App() {
     }
 
     const enviarDatos = async () => {
+      const userId = await AsyncStorage.getItem('@user_id') || 'local-user';
       const payload = {
         respuestas: Object.keys(respuestas).map(id => ({
           item_id: id,
@@ -423,7 +460,9 @@ export default function App() {
         })),
         comentarios_generales: comentarios,
         nombre_usuario: nombreUsuario.trim() || 'Cuidador',
-        tipo_evaluacion: tipoEvaluacion
+        user_id: userId,
+        tipo_evaluacion: tipoEvaluacion,
+        tipo_test: tipoEvaluacion === 'baseline' ? 'Test completo' : 'Test rápido'
       };
 
       try {
@@ -437,8 +476,25 @@ export default function App() {
         if (data.error) {
           showAlert("Error", data.error);
         } else {
-          setResultadoEval(data as EvaluacionResult);
-          await AsyncStorage.setItem('@ultimo_resultado', JSON.stringify(data));
+          // --- LÓGICA DE MENSAJE DINÁMICO ANTI-REPETICIÓN ---
+          let categoria = data.deteccion || 'bienestar';
+          if (data.es_alerta_clinica && categoria === 'bienestar') categoria = 'sobrecarga';
+          
+          const catalogo = (mensajesEvaluacion as any)[categoria] || (mensajesEvaluacion as any)['bienestar'];
+          
+          const lastMsgId = await AsyncStorage.getItem(`@last_msg_id_${categoria}`);
+          let opcionesFiltradas = catalogo.filter((m: any) => m.id !== lastMsgId);
+          if (opcionesFiltradas.length === 0) opcionesFiltradas = catalogo; // fallback
+          
+          const rndIndex = Math.floor(Math.random() * opcionesFiltradas.length);
+          const msgElegido = opcionesFiltradas[rndIndex];
+          
+          await AsyncStorage.setItem(`@last_msg_id_${categoria}`, msgElegido.id);
+          
+          const finalResult = { ...data, mensaje_dinamico: msgElegido } as EvaluacionResult;
+
+          setResultadoEval(finalResult);
+          await AsyncStorage.setItem('@ultimo_resultado', JSON.stringify(finalResult));
           await AsyncStorage.setItem('@ultimo_resultado_fecha', new Date().toDateString());
           if (tipoEvaluacion === 'baseline') {
             await AsyncStorage.setItem('@ultimo_test_completo_fecha', new Date().toISOString());
@@ -446,38 +502,23 @@ export default function App() {
           }
           setRespuestas({});
           setComentarios('');
+          setFeedbackEnviado(false);
+          setMostrarSelectorFeedback(false);
 
-          // --- LOGICA DE RACHA ---
-          const hoyStr = new Date().toDateString();
-          const ultimaRachaFecha = await AsyncStorage.getItem('@ultima_fecha_racha');
-
-          let nuevaRacha = rachaDias;
-
-          if (!ultimaRachaFecha) {
-            nuevaRacha = 0; // Primera vez que entra a la app/evaluación
-          } else if (ultimaRachaFecha !== hoyStr) {
-            const ayer = new Date();
-            ayer.setDate(ayer.getDate() - 1);
-            if (ultimaRachaFecha === ayer.toDateString()) {
-              nuevaRacha += 1; // Cumplió ayer, incrementa
-            } else {
-              nuevaRacha = 0; // Rompió racha, reinicia en 0
-            }
-          }
-          if (ultimaRachaFecha !== hoyStr) {
-            setRachaDias(nuevaRacha);
-            await AsyncStorage.setItem('@racha_dias', nuevaRacha.toString());
-            await AsyncStorage.setItem('@ultima_fecha_racha', hoyStr);
+          // --- LOGICA DE RACHA DESDE BACKEND ---
+          if (data.nueva_racha !== undefined) {
+            setRachaDias(data.nueva_racha);
+            await AsyncStorage.setItem('@racha_dias', data.nueva_racha.toString());
 
             // Notificaciones de Hitos
-            if (nuevaRacha === 3) {
+            if (data.nueva_racha === 3) {
               notifee.displayNotification({
                 id: 'racha-3',
                 title: '¡Qué bien! 🔥',
                 body: 'Llevas 3 días cuidando de ti. Sigue así.',
                 android: { channelId: 'default' }
               });
-            } else if (nuevaRacha === 7) {
+            } else if (data.nueva_racha === 7) {
               notifee.displayNotification({
                 id: 'racha-7',
                 title: '¡Felicidades! 🎉',
@@ -517,8 +558,9 @@ export default function App() {
 
   const fetchHistorial = async () => {
     try {
+      const userId = await AsyncStorage.getItem('@user_id') || 'local-user';
       const [resHist, resRiesgo] = await Promise.all([
-        fetch('https://cuidaml.luzserver.org/historial_evaluaciones'),
+        fetch(`https://cuidaml.luzserver.org/usuario/${userId}/evaluaciones?limit=50`),
         fetch('https://cuidaml.luzserver.org/nivel_riesgo_acumulado'),
       ]);
       const dataHist = await resHist.json();
@@ -533,6 +575,26 @@ export default function App() {
       setVistaActual('historial');
     } catch (e) {
       showAlert("Error", "No se pudo cargar el historial");
+    }
+  };
+
+  const enviarFeedback = async (emocionCorregida: string) => {
+    try {
+      const userId = await AsyncStorage.getItem('@user_id') || 'local-user';
+      await fetch('https://cuidaml.luzserver.org/evaluaciones/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          texto_libre: (resultadoEval as any)?.texto_narrativo || '',
+          emocion_predicha: (resultadoEval as any)?.deteccion || '',
+          emocion_corregida: emocionCorregida
+        })
+      });
+      setFeedbackEnviado(true);
+      setMostrarSelectorFeedback(false);
+    } catch (e) {
+      console.warn("Error enviando feedback:", e);
     }
   };
 
@@ -613,13 +675,17 @@ export default function App() {
     // Tomar los últimos 10
     const ordenados = [...filtered].reverse().slice(-10);
     return ordenados.map((item, index) => {
-      const estado = item.predictive_target || 'Bienestar Moderado';
+      const estado = item.puntaje_resumen || item.predictive_target || 'Bienestar Moderado';
       let value = 2;
       let color = theme.colors.warning;
-      if (estado === 'Bienestar Alto') { value = 3; color = theme.colors.success; }
-      else if (estado === 'Bienestar Bajo') { value = 1; color = theme.colors.error; }
+      if (estado === 'Bienestar Alto') { 
+        value = 3; color = theme.colors.success; 
+      } else if (estado === 'Bienestar Bajo' || estado === 'Riesgo Vital / Crisis' || estado === 'Atención Prioritaria') { 
+        value = 1; color = theme.colors.error; 
+      }
 
-      const label = new Date(item.user_metadata?.fecha).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit' });
+      const dateObj = new Date(item.fecha || item.user_metadata?.fecha);
+      const label = dateObj.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit' });
       return { label, value, color };
     });
   };
@@ -627,26 +693,30 @@ export default function App() {
   const preguntasAMostrar = preguntasActivas;
 
   const renderEvaluacion = () => (
-    <ScrollView
-      ref={scrollViewRef}
-      contentContainerStyle={globalStyles.container}
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }} 
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      {diasDesdeUltimoTest < 7 && (
-        <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20, marginTop: 10 }}>
-          <TouchableOpacity
-            style={[styles.tabBtn, tipoEvaluacion === 'diario' && styles.tabBtnActive]}
-            onPress={() => { setTipoEvaluacion('diario'); setResultadoEval(null); }}
-          >
-            <Text style={[styles.tabText, tipoEvaluacion === 'diario' && styles.tabTextActive]}>Test rápido</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tabBtn, tipoEvaluacion === 'baseline' && styles.tabBtnActive]}
-            onPress={() => { setTipoEvaluacion('baseline'); setResultadoEval(null); }}
-          >
-            <Text style={[styles.tabText, tipoEvaluacion === 'baseline' && styles.tabTextActive]}>Test completo</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={globalStyles.container}
+      >
+        {hasCompletedInitialTest && (
+          <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20, marginTop: 10 }}>
+            <TouchableOpacity
+              style={[styles.tabBtn, tipoEvaluacion === 'diario' && styles.tabBtnActive]}
+              onPress={() => { setTipoEvaluacion('diario'); setResultadoEval(null); }}
+            >
+              <Text style={[styles.tabText, tipoEvaluacion === 'diario' && styles.tabTextActive]}>Test rápido</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tabBtn, tipoEvaluacion === 'baseline' && styles.tabBtnActive]}
+              onPress={() => { setTipoEvaluacion('baseline'); setResultadoEval(null); }}
+            >
+              <Text style={[styles.tabText, tipoEvaluacion === 'baseline' && styles.tabTextActive]}>Test completo</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
       <Text style={[globalStyles.headerTitle, { textAlign: 'center', marginBottom: 20 }]}>
         {tipoEvaluacion === 'diario' ? 'Hoy quiero saber cómo estás 💛 (30 segundos)' : 'Háblame un poco de ti'}
@@ -664,16 +734,21 @@ export default function App() {
         </Text>
       </View>
 
-      {resultadoEval && (
-        <View style={[globalStyles.card, { backgroundColor: '#3B82F6' }]}>
-          <Text style={[globalStyles.headerTitle, { fontSize: 18, color: '#FFF' }]}>
-            Estado de bienestar: {resultadoEval.estado_bienestar}
-          </Text>
+      {resultadoEval && (() => {
+        const colorBanner = resultadoEval.estado_bienestar === 'Riesgo Vital / Crisis' || resultadoEval.es_alerta_clinica ? '#9B59B6' : (resultadoEval.estado_bienestar === 'Bienestar Bajo' ? '#B39DDB' : '#AED9E0');
+        const textColorBanner = resultadoEval.estado_bienestar === 'Riesgo Vital / Crisis' || resultadoEval.es_alerta_clinica ? '#FFF' : '#1F2937';
+        const textoBanner = resultadoEval.estado_bienestar === 'Riesgo Vital / Crisis' || resultadoEval.es_alerta_clinica ? 'Atención Prioritaria' : resultadoEval.estado_bienestar.replace('Bienestar ', '');
+        
+        return (
+          <View style={[globalStyles.card, { backgroundColor: colorBanner }]}>
+            <Text style={[globalStyles.headerTitle, { fontSize: 18, color: textColorBanner }]}>
+              Estado de bienestar: {textoBanner}
+            </Text>
 
           {(resultadoEval.estado_bienestar !== 'Bienestar Alto' || resultadoEval.es_alerta_clinica) && (
             <View style={{ marginTop: 10, padding: 15, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 8 }}>
               <TouchableOpacity style={{ alignItems: 'center', marginBottom: 10 }} onPress={reproducirAudio}>
-                <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold' }}>
+                <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Bold' }}>
                   {isPlayingAudio ? '⏸ Pausar ejercicio' : '▶ Reproducir ejercicio'}
                 </Text>
               </TouchableOpacity>
@@ -701,22 +776,36 @@ export default function App() {
             </View>
           )}
 
-          {resultadoEval.mensaje_ia && (
-            <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', fontSize: 15, marginTop: 10, textAlign: 'center' }}>
-              {resultadoEval.mensaje_ia}
-            </Text>
+          {resultadoEval.mensaje_dinamico ? (
+            <View style={{ marginTop: 15, padding: 15, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 10 }}>
+              <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Bold', fontSize: 16, marginBottom: 5 }}>
+                {resultadoEval.mensaje_dinamico.titulo_corto}
+              </Text>
+              <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Regular', fontSize: 14, marginBottom: 10 }}>
+                {nombreUsuario.split(' ')[0]}, {resultadoEval.mensaje_dinamico.cuerpo.charAt(0).toLowerCase() + resultadoEval.mensaje_dinamico.cuerpo.slice(1)}
+              </Text>
+              <Text style={{ color: theme.colors.warning, fontFamily: 'Nunito-Bold', fontSize: 13 }}>
+                💡 {resultadoEval.mensaje_dinamico.sugerencia_accion}
+              </Text>
+            </View>
+          ) : (
+            resultadoEval.mensaje_ia && (
+              <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Bold', fontSize: 15, marginTop: 10, textAlign: 'center' }}>
+                {resultadoEval.mensaje_ia}
+              </Text>
+            )
           )}
 
           {resultadoEval.guia_respiracion && (
             <View style={{ marginTop: 15, padding: 15, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10 }}>
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', fontSize: 16, marginBottom: 5 }}>
+              <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Bold', fontSize: 16, marginBottom: 5 }}>
                 ⚠️ {resultadoEval.guia_respiracion.titulo}
               </Text>
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', marginBottom: 10, fontSize: 12 }}>
+              <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Regular', marginBottom: 10, fontSize: 12 }}>
                 Hemos detectado niveles altos de sobrecarga. Por favor, antes de continuar, acompáñame en este ejercicio:
               </Text>
               {resultadoEval.guia_respiracion.instrucciones.map((inst: string, idx: number) => (
-                <Text key={idx} style={{ color: '#FFF', fontFamily: 'Nunito-Bold', marginTop: 5 }}>
+                <Text key={idx} style={{ color: textColorBanner, fontFamily: 'Nunito-Bold', marginTop: 5 }}>
                   {inst}
                 </Text>
               ))}
@@ -725,26 +814,58 @@ export default function App() {
 
           {resultadoEval.resumen_dimensiones && (
             <View style={{ marginTop: 15, paddingTop: 15, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.3)' }}>
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', marginBottom: 8 }}>Resumen de bienestar:</Text>
+              <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Bold', marginBottom: 8 }}>Resumen de bienestar:</Text>
 
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Física: {resultadoEval.resumen_dimensiones["Física"]}</Text>
-              {renderSemaforoBar(resultadoEval.resumen_dimensiones["Física"])}
+              <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Física: {resultadoEval.es_alerta_clinica ? "Alta carga detectada" : resultadoEval.resumen_dimensiones["Física"]}</Text>
+              {renderSemaforoBar(resultadoEval.es_alerta_clinica ? "agotamiento" : resultadoEval.resumen_dimensiones["Física"])}
 
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Psicológica: {resultadoEval.resumen_dimensiones["Psicológica"]}</Text>
-              {renderSemaforoBar(resultadoEval.resumen_dimensiones["Psicológica"])}
+              <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Psicológica: {resultadoEval.es_alerta_clinica ? "Requiere contención" : resultadoEval.resumen_dimensiones["Psicológica"]}</Text>
+              {renderSemaforoBar(resultadoEval.es_alerta_clinica ? "elevados" : resultadoEval.resumen_dimensiones["Psicológica"])}
 
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Emocional: {resultadoEval.resumen_dimensiones["Emocional"]}</Text>
-              {renderSemaforoBar(resultadoEval.resumen_dimensiones["Emocional"])}
+              <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Regular', fontSize: 13 }}>• Emocional: {resultadoEval.es_alerta_clinica ? "Vulnerabilidad activa" : resultadoEval.resumen_dimensiones["Emocional"]}</Text>
+              {renderSemaforoBar(resultadoEval.es_alerta_clinica ? "culpa" : resultadoEval.resumen_dimensiones["Emocional"])}
             </View>
           )}
 
-          {resultadoEval.es_alerta_clinica && !resultadoEval.guia_respiracion && (
-            <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', marginTop: 15, textAlign: 'center' }}>
-              Te recomendamos tomar un descanso o buscar apoyo. Cuidar de ti es lo más importante.
-            </Text>
-          )}
-        </View>
-      )}
+            {resultadoEval.es_alerta_clinica && !resultadoEval.guia_respiracion && (
+              <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Bold', marginTop: 15, textAlign: 'center' }}>
+                Te recomendamos tomar un descanso o buscar apoyo. Cuidar de ti es lo más importante.
+              </Text>
+            )}
+
+            {!feedbackEnviado && (
+              <View style={{ marginTop: 20, paddingTop: 15, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.3)' }}>
+                <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Bold', fontSize: 14, textAlign: 'center', marginBottom: 10 }}>
+                  ¿Sientes que este resultado refleja cómo te sientes hoy?
+                </Text>
+                {!mostrarSelectorFeedback ? (
+                  <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 15 }}>
+                    <TouchableOpacity style={{ backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20 }} onPress={() => enviarFeedback((resultadoEval as any).deteccion || 'bienestar')}>
+                      <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Bold' }}>👍 Sí</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20 }} onPress={() => setMostrarSelectorFeedback(true)}>
+                      <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Bold' }}>👎 No</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Regular', fontSize: 13, textAlign: 'center', marginBottom: 10 }}>
+                      Ayúdanos a entenderte mejor. ¿Cuál de estas emociones describe mejor tu estado actual?
+                    </Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
+                      {['bienestar', 'estres', 'ansiedad', 'agotamiento', 'depresion', 'sobrecarga', 'frustracion'].map(emocion => (
+                        <TouchableOpacity key={emocion} style={{ backgroundColor: 'rgba(255,255,255,0.3)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 15 }} onPress={() => enviarFeedback(emocion)}>
+                          <Text style={{ color: textColorBanner, fontFamily: 'Nunito-Bold', fontSize: 12, textTransform: 'capitalize' }}>{emocion}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+        );
+      })()}
 
       {preguntasAMostrar.map((p: any) => {
         const minVal = 0;
@@ -808,13 +929,13 @@ export default function App() {
 
 
       <View style={{ height: 100 }} />
-    </ScrollView>
+      <View style={{ height: 100 }} />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 
   const renderHistorial = () => {
-    const historialFiltrado = historialData.filter(
-      item => item.user_metadata?.nombre === nombreUsuario
-    );
+    const historialFiltrado = historialData; // Backend ya filtra por user_id
     const lineData = prepararDatosLineChart(historialFiltrado);
 
     return (
@@ -827,28 +948,37 @@ export default function App() {
 
 
         {/* Line chart de evolución */}
-        {lineData.length > 0 && (
-          <View style={[globalStyles.card, { alignItems: 'center', paddingBottom: 10 }]}>
-            <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 10 }]}>Evolución del Bienestar</Text>
-            <LineChart data={lineData} />
-          </View>
-        )}
+        {lineData.length > 0 && (() => {
+          const screenWidth = Dimensions.get('window').width;
+          const chartWidth = Math.max(screenWidth - 60, lineData.length * 60);
+          return (
+            <View style={[globalStyles.card, { alignItems: 'center', paddingBottom: 10 }]}>
+              <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', marginBottom: 10 }]}>Evolución del Bienestar</Text>
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                <LineChart data={lineData} width={chartWidth} />
+              </ScrollView>
+            </View>
+          );
+        })()}
 
         {/* Lista de evaluaciones */}
         {historialFiltrado.length === 0 ? (
           <Text style={globalStyles.bodyText}>No hay evaluaciones previas guardadas.</Text>
         ) : (
           historialFiltrado.map((item, index) => {
-            const fecha = new Date(item.user_metadata?.fecha).toLocaleDateString();
-            const hora = new Date(item.user_metadata?.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const riesgo = item.predictive_target || 'Desconocido';
-            const emocion = item.emocion_detectada || 'No calculada';
-            const nombre = item.user_metadata?.nombre;
-            const tipo = item.tipo_evaluacion === 'baseline' ? 'Test Completo' : 'Check-in Diario';
-            const tipoBg = item.tipo_evaluacion === 'baseline' ? theme.colors.secondaryPastel : theme.colors.primaryPastel;
+            const dateObj = new Date(item.fecha || item.user_metadata?.fecha);
+            const fecha = dateObj.toLocaleDateString();
+            const hora = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const riesgo = item.puntaje_resumen || item.predictive_target || 'Desconocido';
+            const riesgoMapeado = riesgo === 'Riesgo Vital / Crisis' ? 'Atención Prioritaria' : riesgo;
+            const emocion = item.emocion_predominante || item.emocion_detectada || 'No calculada';
+            const emocionCapitalized = emocion.charAt(0).toUpperCase() + emocion.slice(1);
+            const nombre = item.user_metadata?.nombre || nombreUsuario;
+            const tipo = item.tipo_test || (item.tipo_evaluacion === 'baseline' ? 'Test completo' : 'Test rápido');
+            const tipoBg = tipo === 'Test completo' ? theme.colors.secondaryPastel : theme.colors.primaryPastel;
 
             return (
-              <View key={index} style={[globalStyles.card, { padding: 15, marginBottom: 15 }]}>
+              <TouchableOpacity key={index} style={[globalStyles.card, { padding: 15, marginBottom: 15 }]} activeOpacity={0.8} onPress={() => setExpandedHistorialItem(expandedHistorialItem === index ? null : index)}>
                 {/* Fila superior: fecha + badge tipo */}
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                   <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 13, color: theme.colors.textSecondary }]}>
@@ -861,14 +991,20 @@ export default function App() {
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
                   <Text style={[globalStyles.bodyText, { fontSize: 14, fontFamily: 'Nunito-Bold' }]}>Estado de Bienestar:</Text>
-                  <Text style={[globalStyles.bodyText, { fontSize: 14, color: riesgo === 'Bienestar Bajo' || riesgo === 'Bienestar Moderado' ? theme.colors.error : theme.colors.success }]}>{riesgo}</Text>
+                  <Text style={[globalStyles.bodyText, { fontSize: 14, color: riesgo === 'Bienestar Bajo' || riesgo === 'Riesgo Vital / Crisis' ? '#B39DDB' : (riesgo === 'Bienestar Moderado' ? '#AED9E0' : theme.colors.success) }]}>{riesgoMapeado}</Text>
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
                   <Text style={[globalStyles.bodyText, { fontSize: 14, fontFamily: 'Nunito-Bold' }]}>Emoción (NLP):</Text>
-                  <Text style={[globalStyles.bodyText, { fontSize: 14 }]}>{emocion}</Text>
+                  <Text style={[globalStyles.bodyText, { fontSize: 14 }]}>{emocionCapitalized}</Text>
                 </View>
-              </View>
+                
+                {item.texto_libre ? (
+                  <Text style={{ backgroundColor: '#f0f4f8', borderRadius: 8, color: '#555', fontStyle: 'italic', marginTop: 10, padding: 8 }}>
+                    "{item.texto_libre}"
+                  </Text>
+                ) : null}
+              </TouchableOpacity>
             );
           })
         )}
@@ -897,31 +1033,8 @@ export default function App() {
         </View>
 
 
-        {/* HERRAMIENTAS - REUBICADAS AQUÍ */}
-        <View style={[globalStyles.card, { backgroundColor: theme.colors.background, marginBottom: 15 }]}>
-          <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 16, marginBottom: 10 }]}>🛠️ Herramientas de Autocuidado</Text>
-
-          <View style={{ backgroundColor: theme.colors.primaryLight, padding: 15, borderRadius: 8, marginBottom: 8 }}>
-            <Text style={{ fontFamily: 'Nunito-Bold', color: theme.colors.primaryDark, marginBottom: 10 }}>Técnica de Respiración (4-7-8)</Text>
-            <Text style={{ fontFamily: 'Nunito-Regular', color: theme.colors.textSecondary, marginBottom: 10, fontSize: 12 }}>
-              1. Inhala profundamente por la nariz durante 4 segundos.
-              2. Mantén la respiración durante 7 segundos.
-              3. Exhala lentamente por la boca durante 8 segundos.
-            </Text>
-            <TouchableOpacity style={{ backgroundColor: theme.colors.primaryMain, padding: 10, borderRadius: 5, alignItems: 'center' }} onPress={reproducirAudio}>
-              <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold' }}>
-                {isPlayingAudio ? '⏸ Pausar Ejercicio' : '▶ Reproducir Ejercicio'}
-              </Text>
-            </TouchableOpacity>
-            {(sound || audioProgress > 0) && (
-              <View style={{ height: 4, backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: 2, marginTop: 10, overflow: 'hidden', width: '100%' }}>
-                <View style={{ height: '100%', width: `${audioProgress * 100}%`, backgroundColor: theme.colors.primaryMain }} />
-              </View>
-            )}
-          </View>
-        </View>
         <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 16, marginBottom: 10, marginLeft: 5 }]}>👨‍⚕️ Profesionales de apoyo</Text>
-        <View style={{ marginTop: 0 }}>
+        <View style={{ marginTop: 0, marginBottom: 20 }}>
           {PROFESIONALES.map((p, i) => (
             <TouchableOpacity
               key={i}
@@ -933,6 +1046,29 @@ export default function App() {
                 <Text style={[globalStyles.bodyText, { fontSize: 12, color: theme.colors.textSecondary }]}>{p.especialidad}</Text>
               </View>
               <Text style={{ fontSize: 22 }}>💬</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* HERRAMIENTAS - REUBICADAS AQUÍ */}
+        <View style={[globalStyles.card, { backgroundColor: theme.colors.background, marginBottom: 15 }]}>
+          <Text style={[globalStyles.bodyText, { fontFamily: 'Nunito-Bold', fontSize: 16, marginBottom: 10 }]}>🛠️ Herramientas de Autocuidado</Text>
+
+          {mensajesSoporte.map((res: any, index: number) => (
+            <TouchableOpacity 
+              key={index}
+              style={{ backgroundColor: theme.colors.primaryLight, padding: 15, borderRadius: 8, marginBottom: 10 }}
+              onPress={() => {
+                setSelectedResource(res);
+                setIsResourceModalVisible(true);
+              }}
+            >
+              <Text style={{ fontFamily: 'Nunito-Bold', color: theme.colors.primaryDark, marginBottom: 4 }}>
+                {res.modalHeader || res.notificationTitle}
+              </Text>
+              <Text style={{ fontFamily: 'Nunito-Regular', color: theme.colors.textSecondary, fontSize: 12 }}>
+                {res.notificationPreview}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -1055,7 +1191,7 @@ export default function App() {
           <View style={styles.userHeader}>
             <View style={{ flex: 1 }}>
               <Text style={styles.userHeaderText}>
-                Hola, <Text style={styles.userNameText}>{nombreUsuario}</Text> 💛
+                Hola, <Text style={styles.userNameText}>{nombreUsuario.split(' ')[0]}</Text> 💛
               </Text>
               {rachaDias > 0 && (
                 <Text style={{ color: '#FF7F50', fontFamily: 'Nunito-Bold', fontSize: 12, marginTop: 2 }}>
@@ -1072,16 +1208,16 @@ export default function App() {
           {/* Taskbar flotante */}
           <View style={styles.taskbarContainer}>
             <TouchableOpacity style={styles.taskbarBtn} onPress={() => { setVistaActual('historial'); fetchHistorial(); }}>
-              <Text style={[styles.taskbarText, vistaActual === 'historial' && styles.taskbarTextActive]}>📊 Historial</Text>
+              <Text style={[styles.taskbarText, vistaActual === 'historial' && styles.taskbarTextActive]}>Historial</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.taskbarBtn} onPress={() => setVistaActual('evaluacion')}>
-              <Text style={[styles.taskbarText, vistaActual === 'evaluacion' && styles.taskbarTextActive]}>📝 Test</Text>
+              <Text style={[styles.taskbarText, vistaActual === 'evaluacion' && styles.taskbarTextActive]}>Test</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.taskbarBtn} onPress={() => { setVistaActual('foro'); fetchForoMensajes(); }}>
-              <Text style={[styles.taskbarText, vistaActual === 'foro' && styles.taskbarTextActive]}>💛 Comunidad</Text>
+              <Text style={[styles.taskbarText, vistaActual === 'foro' && styles.taskbarTextActive]}>Comunidad</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.taskbarBtn} onPress={() => setVistaActual('profesionales')}>
-              <Text style={[styles.taskbarText, vistaActual === 'profesionales' && styles.taskbarTextActive]}>📚 Recursos</Text>
+              <Text style={[styles.taskbarText, vistaActual === 'profesionales' && styles.taskbarTextActive]}>Recursos</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -1096,6 +1232,64 @@ export default function App() {
         }}
         data={mensajeNotificacionActivo}
       />
+
+      {/* Modal Emergente de Recursos de Autocuidado */}
+      <Modal
+        visible={isResourceModalVisible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={closeResourceModal}
+      >
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+          <View style={{ width: '100%', maxHeight: '85%', backgroundColor: '#FFF', borderRadius: 20, overflow: 'hidden', elevation: 10 }}>
+            {selectedResource && (
+              <ScrollView contentContainerStyle={{ padding: 20 }}>
+                <Text style={{ fontSize: 20, fontFamily: 'Nunito-Bold', color: theme.colors.primaryDark, marginBottom: 15 }}>
+                  {selectedResource.modalHeader}
+                </Text>
+                
+                <View style={{ marginBottom: 20 }}>
+                  {selectedResource.modalBody.split('\n').map((par: string, pIdx: number) => {
+                    const chunks = par.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+                    return (
+                      <Text key={pIdx} style={{ fontSize: 14, fontFamily: 'Nunito-Regular', color: theme.colors.textMain, lineHeight: 22, marginBottom: 10 }}>
+                        {chunks.map((text, i) => {
+                          if (text.startsWith('**') && text.endsWith('**')) return <Text key={i} style={{ fontFamily: 'Nunito-Bold' }}>{text.slice(2, -2)}</Text>;
+                          if (text.startsWith('*') && text.endsWith('*')) return <Text key={i} style={{ fontStyle: 'italic' }}>{text.slice(1, -1)}</Text>;
+                          return text;
+                        })}
+                      </Text>
+                    )
+                  })}
+                </View>
+
+                {selectedResource.id === 'eje4' && (
+                  <View style={{ backgroundColor: theme.colors.primaryLight, padding: 15, borderRadius: 10, marginBottom: 20 }}>
+                    <Text style={{ fontFamily: 'Nunito-Bold', color: theme.colors.primaryDark, marginBottom: 10 }}>Control de Audio Guía</Text>
+                    <TouchableOpacity style={{ backgroundColor: theme.colors.primaryMain, padding: 12, borderRadius: 8, alignItems: 'center' }} onPress={reproducirAudio}>
+                      <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold' }}>
+                        {isPlayingAudio ? '⏸ Pausar Ejercicio Guiado' : '▶ Reproducir Ejercicio Guiado'}
+                      </Text>
+                    </TouchableOpacity>
+                    {(sound || audioProgress > 0) && (
+                      <View style={{ height: 6, backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: 3, marginTop: 15, overflow: 'hidden', width: '100%' }}>
+                        <View style={{ height: '100%', width: `${Math.min(100, Math.max(0, audioProgress * 100))}%`, backgroundColor: theme.colors.primaryMain }} />
+                      </View>
+                    )}
+                  </View>
+                )}
+
+                <TouchableOpacity 
+                  style={{ backgroundColor: theme.colors.textSecondary, padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 10 }}
+                  onPress={closeResourceModal}
+                >
+                  <Text style={{ color: '#FFF', fontFamily: 'Nunito-Bold', fontSize: 16 }}>{selectedResource.actionButtonText || 'Cerrar'}</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            )}
+          </View>
+        </View>
+      </Modal>
 
       <CustomAlertModal
         visible={alertConfig.visible}
@@ -1237,7 +1431,7 @@ const styles = StyleSheet.create({
   taskbarText: {
     fontFamily: 'Nunito-Bold',
     fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: '#E0E0E0',
     textAlign: 'center',
   },
   taskbarTextActive: {

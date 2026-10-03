@@ -9,8 +9,11 @@ from flask_cors import CORS
 from transformers import BertTokenizer, BertForSequenceClassification
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import uuid
+from risk_detector import RiskDetector
+
+detector_riesgo = RiskDetector()
 
 # ==========================================
 # 1. Configuración de Recursos de IA y NLP
@@ -82,6 +85,7 @@ def predecir_emocion(texto_relato):
         predicted_class_id = torch.argmax(logits, dim=1).item()
     
     clase_detectada = id_to_class[str(predicted_class_id)]
+    prob_clase_detectada = probs[0][predicted_class_id].item()
     
     # Buscar probabilidad de la clase "Sobrecarga"
     id_sobrecarga = None
@@ -99,8 +103,35 @@ def predecir_emocion(texto_relato):
             nivel_sobrecarga = "Sobrecarga ligera"
         else:
             nivel_sobrecarga = "Sobrecarga intensa"
+            
+    # --- HEURÍSTICA DE CONTRASTE ---
+    conectores = ["pero", "aunque", "sin embargo"]
+    frases_resolucion = ["salir adelante", "lo logre", "lo logré", "pude", "sobrevivi", "sobreviví", "bien", "contenta", "buen dia", "buen día"]
+    texto_eval = texto_relato.lower()
     
-    return clase_detectada, nivel_sobrecarga
+    if any(c in texto_eval for c in conectores) and any(f in texto_eval for f in frases_resolucion):
+        if clase_detectada.lower() == "depresion":
+            clase_detectada = "bienestar" if "contenta" in texto_eval or "buen d" in texto_eval else "agotamiento"
+            
+    # --- HEURÍSTICA DE INTERCEPCIÓN (WHITELIST RESILIENCIA ABSOLUTA) ---
+    WHITELIST_RESILIENCIA = ["esperanza", "actitud positiva", "todo irá bien", "todo ira bien", "saldré adelante", "saldre adelante", "optimista", "paz", "tranquila", "agradecida", "muy bien", "estoy bien", "excelente", "feliz", "buen dia"]
+    BLACKLIST_CONTRADICCION = ["explotar", "llorando", "rabia", "harto", "no aguanto", "mentira", "horrible", "peor", "desesperacion", "ironia", "sarcasmo", "colapsar"]
+    RIESGO_VITAL = ["quitarme la vida", "acabar con todo", "no vale la pena", "desaparecer", "dormir y no despertar", "matar", "morir", "ya no quiero vivir", "tirarme", "no quiero estar vivo", "quiero morir"]
+    
+    tiene_positividad = any(w in texto_eval for w in WHITELIST_RESILIENCIA)
+    tiene_contradiccion = any(c in texto_eval for c in BLACKLIST_CONTRADICCION)
+    tiene_riesgo_vital = any(r in texto_eval for r in RIESGO_VITAL)
+
+    # 1. FRENO DE EMERGENCIA ABSOLUTO
+    if tiene_riesgo_vital:
+        clase_detectada = "depresion"
+    # 2. Solo si no hay riesgo de vida, evaluar sarcasmo/positividad
+    elif tiene_positividad and not tiene_contradiccion:
+        clase_detectada = "bienestar"
+    elif tiene_positividad and tiene_contradiccion:
+        clase_detectada = "frustracion"
+            
+    return clase_detectada, nivel_sobrecarga, prob_clase_detectada
 
 # ==========================================
 # 3. Rutas de la API (Interoperabilidad)
@@ -115,7 +146,16 @@ def analizar_emocion():
         nombre_usuario = data.get('nombre_usuario', 'Cuidador')
 
         # 1. Predicción IA con mapeo Zarit
-        clase_detectada, nivel_sobrecarga = predecir_emocion(relato_cuidador)
+        clase_detectada_bruta, nivel_sobrecarga, prob_clase = predecir_emocion(relato_cuidador)
+        
+        # Evaluacion rapida para el endpoint viejo
+        riesgo_dict = detector_riesgo.evaluar_riesgo_clinico(
+            texto_libre=relato_cuidador, 
+            estado_cuestionario="Bienestar Alto" if puntaje_likert <= 2 else "Bienestar Moderado",
+            clase_nlp_bruta=clase_detectada_bruta,
+            prob_nlp=prob_clase
+        )
+        clase_detectada = riesgo_dict["clase_final"]
         
         # --- AJUSTE PARA CORREGIR DETECCIÓN ERRÓNEA ---
         texto_comparar = relato_cuidador.lower()
@@ -123,21 +163,21 @@ def analizar_emocion():
         
         # Si el usuario dice que está bien y el Likert es bajo, ignoramos el error de la IA
         if any(p in texto_comparar for p in palabras_bienestar) and puntaje_likert <= 2:
-            clase_detectada = "Resiliencia"
+            clase_detectada = "bienestar"
             nivel_sobrecarga = "No sobrecarga"
         # ----------------------------------------------
 
         # 2. Generación de respuesta (Personalizada)
-        if "Resiliencia" in clase_detectada:
+        if clase_detectada == "bienestar":
             mensaje_ia = f"Hola {nombre_usuario}, es gratificante leer que te sientes con '{clase_detectada}'. El descanso es vital."
-        elif "Depresión" in clase_detectada:
+        elif clase_detectada == "depresion":
             mensaje_ia = f"Hola {nombre_usuario}, he detectado señales de tristeza profunda. Cuentas con nuestro apoyo."
-        elif "Sobrecarga" in clase_detectada:
+        elif clase_detectada == "sobrecarga":
             mensaje_ia = f"Hola {nombre_usuario}, parece que hoy ha sido un día pesado. Se perciben niveles de agotamiento ({nivel_sobrecarga}). Tu bienestar es prioridad."
         else:
             mensaje_ia = f"Hola {nombre_usuario}, se perciben señales de '{clase_detectada}'."
 
-        es_alerta_clinica = clase_detectada in ["Sobrecarga", "Depresión"] or nivel_sobrecarga == "Sobrecarga intensa" or puntaje_likert >= 4
+        es_alerta_clinica = clase_detectada in ["sobrecarga", "depresion"] or nivel_sobrecarga == "Sobrecarga intensa" or puntaje_likert >= 4
         
         print(f"Relato: {relato_cuidador} | Predicción final: {clase_detectada} ({nivel_sobrecarga}) | Likert: {puntaje_likert}")
 
@@ -224,6 +264,7 @@ def evaluacion_mental():
         ubicacion = data.get('ubicacion', 'Desconocida')
         nombre_usuario = data.get('nombre_usuario', 'Cuidador')
         tipo_evaluacion = data.get('tipo_evaluacion', 'diario') # 'baseline' o 'diario'
+        tipo_test = data.get('tipo_test', 'Test rápido')
 
         if not respuestas or len(respuestas) == 0:
             return jsonify({"error": "No se enviaron respuestas."}), 400
@@ -285,23 +326,129 @@ def evaluacion_mental():
             estado_bienestar = "Bienestar Moderado"
 
         # Análisis NLP del texto de desahogo
-        clase_detectada = "No detectada"
+        clase_detectada_bruta = "bienestar"
         nivel_sobrecarga_ml = "No calculable"
+        prob_clase = 0.0
+        
         if comentarios_generales.strip():
-            clase_detectada, nivel_sobrecarga_ml = predecir_emocion(comentarios_generales)
+            clase_detectada_bruta, nivel_sobrecarga_ml, prob_clase = predecir_emocion(comentarios_generales)
 
-        # Trigger Alerta
-        es_alerta_clinica = False
-        if estado_bienestar in ["Bienestar Moderado", "Bienestar Bajo"] or clase_detectada in ["Sobrecarga", "Depresión"]:
+        # Evaluación de Riesgo Clínico Avanzado
+        riesgo_dict = detector_riesgo.evaluar_riesgo_clinico(
+            texto_libre=comentarios_generales, 
+            estado_cuestionario=estado_bienestar, 
+            clase_nlp_bruta=clase_detectada_bruta, 
+            prob_nlp=prob_clase
+        )
+        
+        es_alerta_clinica = riesgo_dict["es_alerta_clinica"]
+        nivel_riesgo_clinico = riesgo_dict["nivel_riesgo"]
+        incongruencia_evaluacion = riesgo_dict["incongruencia_evaluacion"]
+        razon_override = riesgo_dict["razon_override"]
+        clase_detectada = riesgo_dict["clase_final"] # Estandarizada a las 7 oficiales
+        
+        # --- HEURÍSTICA DE INTERCEPCIÓN (WHITELIST RESILIENCIA ABSOLUTA) ---
+        WHITELIST_RESILIENCIA = ["esperanza", "actitud positiva", "todo irá bien", "todo ira bien", "saldré adelante", "saldre adelante", "optimista", "paz", "tranquila", "agradecida", "muy bien", "estoy bien", "excelente", "feliz", "buen dia"]
+        BLACKLIST_CONTRADICCION = ["explotar", "llorando", "rabia", "harto", "no aguanto", "mentira", "horrible", "peor", "desesperacion", "ironia", "sarcasmo", "colapsar"]
+        RIESGO_VITAL = ["quitarme la vida", "acabar con todo", "no vale la pena", "desaparecer", "dormir y no despertar", "matar", "morir", "ya no quiero vivir", "tirarme", "no quiero estar vivo", "quiero morir"]
+        
+        texto_eval_mental = comentarios_generales.lower()
+        tiene_positividad = any(w in texto_eval_mental for w in WHITELIST_RESILIENCIA)
+        tiene_contradiccion = any(c in texto_eval_mental for c in BLACKLIST_CONTRADICCION)
+        tiene_riesgo_vital = any(r in texto_eval_mental for r in RIESGO_VITAL)
+
+        # 1. FRENO DE EMERGENCIA ABSOLUTO
+        if tiene_riesgo_vital:
+            clase_detectada = "depresion"
+            clase_detectada_bruta = "depresion"
             es_alerta_clinica = True
+        # 2. Solo si no hay riesgo de vida, evaluar sarcasmo/positividad
+        elif tiene_positividad and not tiene_contradiccion:
+            clase_detectada = "bienestar"
+            clase_detectada_bruta = "bienestar"
+        elif tiene_positividad and tiene_contradiccion:
+            clase_detectada = "frustracion"
+            clase_detectada_bruta = "frustracion"
 
-        # Generación de mensaje personalizado (Cambiado 'registro' a 'Diario')
-        if "Resiliencia" in clase_detectada or (clase_detectada == "No detectada" and estado_bienestar == "Bienestar Alto"):
-            mensaje_ia = f"Hola {nombre_usuario}, nos alegra ver que te encuentras en un buen estado. Sigue cuidándote."
-        elif "Depresión" in clase_detectada:
-            mensaje_ia = f"Hola {nombre_usuario}, hemos notado señales de decaimiento en tu Diario. Cuentas con nuestro apoyo."
-        elif estado_bienestar in ["Bienestar Moderado", "Bienestar Bajo"] or clase_detectada == "Sobrecarga":
-            mensaje_ia = f"Hola {nombre_usuario}, parece que hoy ha sido un día pesado. Tienes un estado de {estado_bienestar}. Tu bienestar es prioridad."
+        # --- LÓGICA: NLP SOBREESCRIBE CUESTIONARIO ---
+        # Árbitro de Ponderación Híbrido (Stress Test Fix)
+        if clase_detectada == "bienestar" and prob_clase > 0.4:
+            es_alerta_clinica = False
+            nivel_riesgo_clinico = "BAJO"
+            if estado_bienestar in ["Bienestar Bajo", "Riesgo Vital / Crisis"]:
+                estado_bienestar = "Bienestar Moderado"
+            incongruencia_evaluacion = True
+            razon_override = "Texto libre positivo neutraliza cuestionario negativo."
+
+        # Aislamiento de Crisis (Solo el catálogo léxico de riesgo vital activa la alerta clínica)
+        if nivel_riesgo_clinico != "CRITICO":
+            es_alerta_clinica = False
+
+        # Reglas del Punto Medio
+        if estado_bienestar == "Bienestar Alto" and clase_detectada == "agotamiento":
+            estado_bienestar = "Bienestar Moderado"
+        elif estado_bienestar == "Bienestar Moderado" and clase_detectada in ["bienestar", "estres", "sobrecarga"]:
+            estado_bienestar = "Bienestar Moderado"
+
+        if es_alerta_clinica:
+            estado_bienestar = "Riesgo Vital / Crisis"
+        elif clase_detectada in ["sobrecarga", "agotamiento", "depresion", "frustracion"] and not es_alerta_clinica and estado_bienestar != "Bienestar Moderado":
+            if estado_bienestar == "Bienestar Alto" and prob_clase < 0.5:
+                pass # Baja confianza en ML no anula un test 100% positivo
+            else:
+                estado_bienestar = "Bienestar Bajo"
+
+        if nivel_riesgo_clinico == "CRITICO":
+            estado_bienestar = "Riesgo Vital / Crisis"
+
+        # Memoria Clínica (Historial para contexto del mensaje)
+        path_evaluaciones = os.path.join('data', 'evaluaciones.json')
+        evaluaciones_existentes = []
+        historial_reciente = []
+        volatilidad_alta = False
+        
+        if os.path.exists(path_evaluaciones):
+            try:
+                with open(path_evaluaciones, 'r', encoding='utf-8') as f:
+                    evaluaciones_existentes = json.load(f)
+                    
+                evals_usuario = [e for e in evaluaciones_existentes if e.get('user_metadata', {}).get('id') == user_id]
+                evals_usuario.sort(key=lambda x: x.get('user_metadata', {}).get('fecha', ''), reverse=True)
+                historial_reciente = evals_usuario[:3]
+                
+                # Check Volatility
+                if len(historial_reciente) > 0:
+                    last_eval = historial_reciente[0]
+                    last_date_str = last_eval.get('user_metadata', {}).get('fecha', '')
+                    if last_date_str:
+                        try:
+                            last_date = datetime.fromisoformat(last_date_str.replace('Z', '+00:00'))
+                            if (datetime.now(timezone.utc) - last_date).total_seconds() < 86400: # 24 hours
+                                past_target = last_eval.get('predictive_target', '')
+                                if (estado_bienestar == "Bienestar Alto" and past_target in ["Riesgo Vital / Crisis", "Bienestar Bajo"]) or \
+                                   (estado_bienestar in ["Riesgo Vital / Crisis", "Bienestar Bajo"] and past_target == "Bienestar Alto"):
+                                    volatilidad_alta = True
+                        except:
+                            pass
+            except json.JSONDecodeError:
+                pass
+
+        # Generación de mensaje personalizado (Contextualizado con memoria)
+        es_historial_negativo = any(e.get('predictive_target') in ["Bienestar Bajo", "Riesgo Vital / Crisis"] for e in historial_reciente)
+        es_historial_positivo = all(e.get('predictive_target') in ["Bienestar Alto", "Bienestar Moderado"] for e in historial_reciente) if len(historial_reciente) > 0 else False
+
+        if estado_bienestar == "Bienestar Alto":
+            if es_historial_negativo:
+                mensaje_ia = f"Qué alegría ver este avance, {nombre_usuario}. Sabemos que vienes de días pesados, así que celebra este momento de bienestar. Te lo mereces."
+            else:
+                mensaje_ia = f"Hola {nombre_usuario}, nos alegra ver que te encuentras en un buen estado. Sigue cuidándote."
+        elif clase_detectada == "depresion" or nivel_riesgo_clinico == "CRITICO" or estado_bienestar == "Riesgo Vital / Crisis":
+            if es_historial_positivo and volatilidad_alta:
+                mensaje_ia = f"Hola {nombre_usuario}, has llevado un buen ritmo, es normal tener un día de bajón tan drástico. No te exijas de más hoy."
+            else:
+                mensaje_ia = f"Hola {nombre_usuario}, sentimos que hoy ha sido un día especialmente pesado. Recuerda que no tienes que cargar con todo en soledad. Queremos brindarte apoyo."
+        elif estado_bienestar in ["Bienestar Moderado", "Bienestar Bajo"] or clase_detectada in ["sobrecarga", "agotamiento", "estres", "ansiedad", "frustracion"]:
+            mensaje_ia = f"Hola {nombre_usuario}, parece que ha sido una jornada difícil. Tu bienestar es prioridad, tomate un momento para ti."
         else:
             mensaje_ia = f"Hola {nombre_usuario}, gracias por completar tu Diario de hoy."
 
@@ -338,48 +485,68 @@ def evaluacion_mental():
             "puntaje_proporcional": puntaje_proporcional,
             "puntajes_test": scores,
             "tipo_evaluacion": tipo_evaluacion,
+            "tipo_test": tipo_test,
             "nlp_corpus": comentarios_generales,
             "predictive_target": estado_bienestar,
             "emocion_detectada": clase_detectada,
+            "nivel_riesgo_clinico": nivel_riesgo_clinico,
+            "incongruencia_evaluacion": incongruencia_evaluacion,
+            "razon_override": razon_override,
             "dimensiones_evaluadas": resumen_dimensiones,
-            "intervencion": guia_respiracion
+            "intervencion": guia_respiracion,
+            "volatilidad_alta": volatilidad_alta
         }
 
         # Guardar en archivo JSON local
-        path_evaluaciones = os.path.join('data', 'evaluaciones.json')
-        # Crear data/ si no existe
         os.makedirs('data', exist_ok=True)
-        
-        evaluaciones_existentes = []
-        if os.path.exists(path_evaluaciones):
-            try:
-                with open(path_evaluaciones, 'r', encoding='utf-8') as f:
-                    evaluaciones_existentes = json.load(f)
-            except json.JSONDecodeError:
-                pass # Si el archivo está vacío o corrupto, lo inicializamos de nuevo
-
         evaluaciones_existentes.append(evaluacion_ml_ready)
 
         with open(path_evaluaciones, 'w', encoding='utf-8') as f:
             json.dump(evaluaciones_existentes, f, ensure_ascii=False, indent=2)
+
+        # Lógica de Racha Centralizada
+        path_usuarios = os.path.join('data', 'usuarios.json')
+        nueva_racha = 1
+        if os.path.exists(path_usuarios):
+            with open(path_usuarios, 'r', encoding='utf-8') as f:
+                usuarios = json.load(f)
+            hoy_str = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+            for u in usuarios:
+                if u.get('user_id') == user_id or u.get('id') == user_id:
+                    ultima_fecha = u.get('ultima_fecha_racha')
+                    racha_actual = u.get('racha', 0)
+                    racha_actual += 1
+                    
+                    u['racha'] = racha_actual
+                    u['ultima_fecha_racha'] = hoy_str
+                    nueva_racha = racha_actual
+                    break
+            with open(path_usuarios, 'w', encoding='utf-8') as f:
+                json.dump(usuarios, f, ensure_ascii=False, indent=2)
 
         return jsonify({
             "status": "success",
             "puntaje_total": puntaje_proporcional,
             "estado_bienestar": estado_bienestar,
             "es_alerta_clinica": es_alerta_clinica,
+            "nivel_riesgo_clinico": nivel_riesgo_clinico,
+            "incongruencia_evaluacion": incongruencia_evaluacion,
+            "razon_override": razon_override,
             "resumen_dimensiones": resumen_dimensiones,
             "guia_respiracion": guia_respiracion,
             "mensaje": "Registro procesado y guardado correctamente.",
-            "mensaje_ia": mensaje_ia
+            "mensaje_ia": mensaje_ia,
+            "texto_narrativo": comentarios_generales,
+            "deteccion": clase_detectada,
+            "nueva_racha": nueva_racha
         }), 200
 
     except Exception as e:
         print(f"Error procesando evaluación: {str(e)}")
         return jsonify({"error": "Error interno en el servidor."}), 500
 
-@app.route('/historial_evaluaciones', methods=['GET'])
-def historial_evaluaciones():
+@app.route('/usuario/<user_id>/evaluaciones', methods=['GET'])
+def historial_evaluaciones_usuario(user_id):
     try:
         path_evaluaciones = os.path.join('data', 'evaluaciones.json')
         if not os.path.exists(path_evaluaciones):
@@ -388,21 +555,143 @@ def historial_evaluaciones():
         with open(path_evaluaciones, 'r', encoding='utf-8') as f:
             evaluaciones = json.load(f)
             
+        # Aislamiento estricto por user_id
+        evaluaciones_usuario = [e for e in evaluaciones if e.get('user_metadata', {}).get('id') == user_id]
+            
         # Ordenar por fecha descendente
-        evaluaciones.sort(
+        evaluaciones_usuario.sort(
             key=lambda x: x.get('user_metadata', {}).get('fecha', ''),
             reverse=True
         )
         
-        # Devolver las últimas 50
+        limit = request.args.get('limit', default=50, type=int)
+        evaluaciones_usuario = evaluaciones_usuario[:limit]
+        
+        historial_estandar = []
+        for ev in evaluaciones_usuario:
+            historial_estandar.append({
+                "id_evaluacion": str(uuid.uuid4()), # Generar ID si no había
+                "fecha": ev.get('user_metadata', {}).get('fecha'),
+                "tipo_evaluacion": ev.get("tipo_evaluacion", "diario"),
+                "tipo_test": ev.get("tipo_test", "Test rápido"),
+                "emocion_predominante": ev.get("emocion_detectada", "bienestar"),
+                "puntaje_resumen": ev.get("predictive_target", ""),
+                "requirio_atencion": ev.get("es_alerta_clinica", False),
+                "texto_libre": ev.get("nlp_corpus", "")
+            })
+        
         return jsonify({
             "status": "success",
-            "historial": evaluaciones[:50]
+            "historial": historial_estandar
         }), 200
         
     except Exception as e:
         print(f"Error leyendo historial: {str(e)}")
         return jsonify({"error": "Error interno al obtener el historial."}), 500
+
+PATH_DATASET_ENTRENAMIENTO = os.path.join('data', 'dataset_entrenamiento.json')
+
+@app.route('/evaluaciones/feedback', methods=['POST'])
+def registrar_feedback_evaluacion():
+    try:
+        data = request.json
+        user_id = data.get('user_id')
+        texto_libre = data.get('texto_libre', '').strip()
+        emocion_predicha = data.get('emocion_predicha')
+        emocion_corregida = data.get('emocion_corregida')
+
+        if not user_id or not texto_libre or not emocion_corregida:
+            return jsonify({"error": "Faltan datos obligatorios (user_id, texto_libre o emocion_corregida)."}), 400
+
+        feedback_entry = {
+            "id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "texto_libre": texto_libre,
+            "emocion_predicha": emocion_predicha,
+            "emocion_corregida": emocion_corregida,
+            "fecha": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
+        }
+
+        os.makedirs('data', exist_ok=True)
+        dataset = []
+        if os.path.exists(PATH_DATASET_ENTRENAMIENTO):
+            with open(PATH_DATASET_ENTRENAMIENTO, 'r', encoding='utf-8') as f:
+                try:
+                    dataset = json.load(f)
+                except json.JSONDecodeError:
+                    dataset = []
+
+        dataset.append(feedback_entry)
+
+        with open(PATH_DATASET_ENTRENAMIENTO, 'w', encoding='utf-8') as f:
+            json.dump(dataset, f, ensure_ascii=False, indent=2)
+
+        return jsonify({"status": "success", "mensaje": "Feedback guardado exitosamente."}), 200
+
+    except Exception as e:
+        print(f"Error registrando feedback: {str(e)}")
+        return jsonify({"error": "Error interno al guardar feedback."}), 500
+
+PATH_USUARIOS = os.path.join('data', 'usuarios.json')
+
+@app.route('/registro', methods=['POST'])
+def registro_usuario():
+    try:
+        data = request.json
+        nombre = data.get('nombre', '').strip()
+        email = data.get('email', '').strip().lower()
+        password = data.get('password', '')
+
+        if not email or not password or not nombre:
+            return jsonify({"error": "Faltan datos obligatorios"}), 400
+
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            return jsonify({"error": "Correo electrónico con formato inválido"}), 400
+
+        os.makedirs('data', exist_ok=True)
+        usuarios = []
+        if os.path.exists(PATH_USUARIOS):
+            with open(PATH_USUARIOS, 'r', encoding='utf-8') as f:
+                usuarios = json.load(f)
+
+        if any(u.get('email') == email for u in usuarios):
+            return jsonify({"error": "Este correo electrónico ya se encuentra registrado"}), 409
+
+        user_id = str(uuid.uuid4())
+        nuevo_usuario = {
+            "user_id": user_id,
+            "nombre": nombre,
+            "email": email,
+            "password": password
+        }
+        usuarios.append(nuevo_usuario)
+
+        with open(PATH_USUARIOS, 'w', encoding='utf-8') as f:
+            json.dump(usuarios, f, ensure_ascii=False, indent=2)
+
+        return jsonify({"status": "success", "user": {"user_id": user_id, "nombre": nombre, "email": email}}), 201
+    except Exception as e:
+        print(f"Error en registro: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+@app.route('/login', methods=['POST'])
+def login_usuario():
+    try:
+        data = request.json
+        email = data.get('email', '').strip().lower()
+        password = data.get('password', '')
+
+        if os.path.exists(PATH_USUARIOS):
+            with open(PATH_USUARIOS, 'r', encoding='utf-8') as f:
+                usuarios = json.load(f)
+            for u in usuarios:
+                if u.get('email') == email and u.get('password') == password:
+                    return jsonify({"status": "success", "user": {"user_id": u["user_id"], "nombre": u["nombre"], "email": u["email"]}}), 200
+
+        return jsonify({"error": "Credenciales inválidas"}), 401
+    except Exception as e:
+        print(f"Error en login: {e}")
+        return jsonify({"error": "Error interno"}), 500
 
 
 @app.route('/nivel_riesgo_acumulado', methods=['GET'])

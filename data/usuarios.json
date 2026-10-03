@@ -1,0 +1,72 @@
+[
+  {
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "nombre": "Maria del Pilar Lopez Molina",
+    "email": "nutritionandnutrients@gmail.com",
+    "password": "123456",
+    "racha": 12,
+    "ultima_fecha_racha": "2026-10-03"
+  },
+  {
+    "user_id": "a4a2607d-485b-4d58-a783-7313b657965b",
+    "nombre": "Marco Espiritu Martinez",
+    "email": "espirituaum@gmail.com",
+    "password": "zarfala",
+    "racha": 1,
+    "ultima_fecha_racha": "2026-10-03"
+  },
+  {
+    "user_id": "cf08ad08-f85a-46fc-9c5b-9e38007cbac3",
+    "nombre": "Maria Jaramillo",
+    "email": "creartepsicologia5@gmail.com",
+    "password": "12345.M",
+    "racha": 2,
+    "ultima_fecha_racha": "2026-10-03"
+  },
+  {
+    "user_id": "659ca3da-ea1e-476d-b5a5-3948ef5c297c",
+    "nombre": "Luis Gil",
+    "email": "arjunagil20@gmail.com",
+    "password": "123456"
+  },
+  {
+    "user_id": "e188181b-9f7a-4355-af01-443d275ead66",
+    "nombre": "Oliver Acosta",
+    "email": "oliverkhan03@gmail.com",
+    "password": "AHhmUfaB4r7_BvH",
+    "racha": 2,
+    "ultima_fecha_racha": "2026-10-03"
+  },
+  {
+    "user_id": "187443dd-6c1f-48d4-ba17-3f82bd137688",
+    "nombre": "Myriam Martinez Gaviria",
+    "email": "myrimarco@yahoo.com",
+    "password": "sagitario",
+    "racha": 1,
+    "ultima_fecha_racha": "2026-10-03"
+  },
+  {
+    "user_id": "23806dfd-ad39-4b0a-9767-3dbf8054493c",
+    "nombre": "José Rojas",
+    "email": "emanuelrojasrivas@gmail.com",
+    "password": "23465004",
+    "racha": 1,
+    "ultima_fecha_racha": "2026-10-03"
+  },
+  {
+    "user_id": "77b8a8fd-b7d7-42db-b33b-c8b5e4951427",
+    "nombre": "Andrea Gómez Angarita",
+    "email": "angoan.sane@hotmail.com",
+    "password": "Andrea123",
+    "racha": 1,
+    "ultima_fecha_racha": "2026-10-03"
+  },
+  {
+    "user_id": "5cccd263-9b4e-4b0a-a1bd-735e296bbd93",
+    "nombre": "Gerardo Pirela",
+    "email": "gpirela@gmail.com",
+    "password": "gapm26!",
+    "racha": 1,
+    "ultima_fecha_racha": "2026-10-03"
+  }
+]

@@ -23,7 +23,7 @@ export const theme = {
     alertIntense: '#4A90E2',    // Mantenemos compatibilidad
     success: '#52B788',
     warning: '#F4A261',
-    error: '#E76F51',
+    error: '#B39DDB',           // Lavanda suave para reemplazar el rojo
     
     // Textos
     textMain: '#2D3436',        // Gris muy oscuro / Negro suave

@@ -1,0 +1,98 @@
+[
+  {
+    "id": "7f1cb4b7-4333-4eca-9f8c-d0b57940f15e",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Estoy muy mal, no puedo seguir con esto",
+    "emocion_predicha": "depresion",
+    "emocion_corregida": "depresion",
+    "fecha": "2026-10-02T03:42:37.321444Z"
+  },
+  {
+    "id": "4eb91d83-4e49-4bcc-9af0-6c7919c9afa5",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Ha sido un día bastante difícil y desordenado, espero descansar pronto",
+    "emocion_predicha": "depresion",
+    "emocion_corregida": "depresion",
+    "fecha": "2026-10-02T04:00:41.678866Z"
+  },
+  {
+    "id": "c6bfe00c-8537-4ff9-a55b-6cd1241111a9",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Estoy demasiado cansada, el cuidado me está matando",
+    "emocion_predicha": "depresion",
+    "emocion_corregida": "agotamiento",
+    "fecha": "2026-10-02T04:02:47.828899Z"
+  },
+  {
+    "id": "06bf00d2-5de6-440c-b933-c53715ccf18e",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Me siento en paz conmigo misma hoy, ha sido un día completo con el cuidado",
+    "emocion_predicha": "depresion",
+    "emocion_corregida": "bienestar",
+    "fecha": "2026-10-02T04:03:59.586189Z"
+  },
+  {
+    "id": "4d48a784-88f8-4ed4-99ef-d470ba97bd5f",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Estoy muy feliz hoy! El día no podría estar mejor",
+    "emocion_predicha": "bienestar",
+    "emocion_corregida": "bienestar",
+    "fecha": "2026-10-02T04:16:40.734297Z"
+  },
+  {
+    "id": "b9a4ee09-32aa-4fa8-8b0e-969110bbaedc",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "ha sido un día difícil, pero pude salir adelante como pude",
+    "emocion_predicha": "depresion",
+    "emocion_corregida": "agotamiento",
+    "fecha": "2026-10-02T04:20:22.144970Z"
+  },
+  {
+    "id": "10e43d07-bcdd-4cfd-9492-30a21aa472c3",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Estoy cansada pero contenta, fue un buen día a pesar de todo",
+    "emocion_predicha": "depresion",
+    "emocion_corregida": "bienestar",
+    "fecha": "2026-10-02T04:27:13.063807Z"
+  },
+  {
+    "id": "03cc8342-e549-4372-a996-69568e5d2572",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Hay días que son estresantes, pero quiero mantener una actitud positiva frente a la situación, con esperanza que todo irá bien",
+    "emocion_predicha": "depresion",
+    "emocion_corregida": "bienestar",
+    "fecha": "2026-10-02T04:36:34.224890Z"
+  },
+  {
+    "id": "a85f7f8f-931a-4603-a1a7-6823baff9312",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Intento mantener la actitud positiva, aunque últimamente ha sido díficil",
+    "emocion_predicha": "depresion",
+    "emocion_corregida": "depresion",
+    "fecha": "2026-10-02T04:43:06.255907Z"
+  },
+  {
+    "id": "f4a7f6c5-9187-4fa6-8531-b6420f946321",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Hoy fue un buen día, se complicaron algunas cosas en el trabajo pero pude salir adelante",
+    "emocion_predicha": "depresion",
+    "emocion_corregida": "bienestar",
+    "fecha": "2026-10-03T01:43:49.254357Z"
+  },
+  {
+    "id": "ab5a0798-6d5f-487e-8563-7734dbd684ac",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Estoy muy bien hoy!",
+    "emocion_predicha": "depresion",
+    "emocion_corregida": "bienestar",
+    "fecha": "2026-10-03T01:54:22.881945Z"
+  },
+  {
+    "id": "2f4ee6a2-98ea-43e0-984f-4cb485d612a0",
+    "user_id": "cc3824df-99e4-4b23-b430-e19f44dd3967",
+    "texto_libre": "Hoy fue un día excelente, ya no quiero estar vivo",
+    "emocion_predicha": "bienestar",
+    "emocion_corregida": "depresion",
+    "fecha": "2026-10-03T02:11:16.605649Z"
+  }
+]

@@ -1,31 +1,9 @@
 [
     {
-        "id": "c1c65fef-a368-4cef-8057-616671432cec",
-        "autor": "Maria Lopez",
-        "texto": "Hola a todos! Las personas que cuido tienen dificultades motoras ¿Alguien puede darme sugerencias?",
-        "fecha": "2026-09-22T23:59:58.374453+00:00",
+        "id": "2b4e1979-ed26-4ca1-bcdd-9b9e05e0f79e",
+        "autor": "Sigerist Rodríguez",
+        "texto": "Podemos con esto.",
+        "fecha": "2026-10-03T17:28:53.872099+00:00",
         "respuestas": []
-    },
-    {
-        "id": "6ad45387-14ac-4adf-8e0b-01cf90c91674",
-        "autor": "Luis",
-        "texto": "hola",
-        "fecha": "2026-09-13T22:01:25.278646+00:00",
-        "respuestas": [
-            {
-                "id": "596244c1-f7cd-495f-82d4-d5109885971a",
-                "autor": "Luis",
-                "texto": "Como estás?",
-                "fecha": "2026-09-14T00:11:30.395219+00:00",
-                "respuestas": []
-            }
-        ]
-    },
-    {
-        "id": "58ba4d96-4760-4f04-8dec-359d7db5f09c",
-        "autor": "Luis",
-        "texto": "Mensaje de prueba.",
-        "fecha": "2026-09-13T21:43:10.416349+00:00",
-        "editado": true
     }
 ]
